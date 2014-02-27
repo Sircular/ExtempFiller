@@ -31,7 +31,7 @@ public class Main {
 		try {
 			System.out.println("CHS Extemporaneous Researcher");
 			if(args.length > 0) {
-				filename = args[0];
+				String filename = args[0];
 				System.out.println("Starting CLI using questions-list \"" + filename + ".\"");
 				
 				return;
@@ -41,7 +41,7 @@ public class Main {
 				return;
 			}
 			// Create a new Evernote Client
-			final EvernoteClient evernoteClient = new EvernoteClient();
+			/*final EvernoteClient evernoteClient = new EvernoteClient();
 
 			// Create a notebook for our notes
 			Notebook HTMLNotebook = evernoteClient.getNotebook("Web Notes");
@@ -51,7 +51,7 @@ public class Main {
 			}
 
 			// Questions must be in UTF-8 encoding for special characters
-			final FileInputStream questions = new FileInputStream(filename);
+			final FileInputStream questions = new FileInputStream("");
 			final Scanner scanner = new Scanner(questions, "UTF-8");
 			while(scanner.hasNext()) {
 				// Get the next question
@@ -139,7 +139,7 @@ public class Main {
 					System.out.println("TAG FOUND. CONTINUING.");
 					System.out.println();
 				}
-			}
+			} */
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
