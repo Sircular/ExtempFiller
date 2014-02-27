@@ -5,6 +5,7 @@ import com.chs.extemp.google.GoogleClient;
 import com.chs.extemp.google.GoogleResults;
 import com.evernote.edam.type.Notebook;
 import com.evernote.edam.type.Tag;
+import com.chs.extemp.cli.CLI;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,23 +30,15 @@ public class Main {
 	public static void main(final String[] args) {
 		try {
 			System.out.println("CHS Extemporaneous Researcher");
-			String filename = "Questions.txt";
 			if(args.length > 0) {
 				filename = args[0];
-				System.out.println("Using " + filename + " for questions-list");
-				if(!new File(filename).exists()) {
-					System.out.println(filename + " does not exist! Closing...");
-					return;
-				}
+				System.out.println("Starting CLI using questions-list \"" + filename + ".\"");
+				
+				return;
 			} else {
-				System.out.println("Usage: java -jar ExtempFiller.jar [questions-list]");
-				System.out.println("Questions-list is a UTF-8 .txt file with each question separated by a single return.");
-				System.out.println("If no list is specified, the program will look for Questions.txt in the working directory and display this message");
-				System.out.println();
-				if(!new File("Questions.txt").exists()) {
-					System.out.println("Questions.txt does not exist! Closing...");
-					return;
-				}
+				System.out.println("No questions list specified. Starting GUI interface...");
+				// Will eventually start the GUI
+				return;
 			}
 			// Create a new Evernote Client
 			final EvernoteClient evernoteClient = new EvernoteClient();
