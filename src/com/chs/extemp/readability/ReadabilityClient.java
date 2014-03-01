@@ -1,10 +1,12 @@
 package com.chs.extemp.readability;
 
+import com.chs.extemp.ExtempLogger;
 import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.logging.Logger;
 
 /**
  * Client for the Readability Parser API
@@ -12,8 +14,9 @@ import java.net.URL;
  */
 public class ReadabilityClient {
 	private final static String API = "https://readability.com/api/content/v1/";
-	private final static String AUTH = "put your own auth token here";
+	private final static String AUTH = "7dfac7d927e842450e174100a83a65039ad52bcb";
 	private static int retries = 1;
+	private static Logger logger = ExtempLogger.getLogger();
 
 	/**
 	 * Retrieves the main content from any web page using the Readability Parser API
@@ -31,7 +34,7 @@ public class ReadabilityClient {
 			return parserResults;
 		} catch (IOException io) {
 			if(retries <= 5) {
-				System.err.println("READABILITY ERROR. RETRYING. (" + retries + " of 5): " + io.getMessage());
+				logger.info("Readability error. Retrying (" + retries + " of 5): " + io.getMessage());
 				retries++;
 				Thread.sleep(1000);
 				return getReadableContent(address);

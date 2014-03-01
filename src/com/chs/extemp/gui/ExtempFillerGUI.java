@@ -1,11 +1,11 @@
 package com.chs.extemp.gui;
 
-import java.util.logging.Logger;
+import javax.swing.JFrame;
+import javax.swing.JTabbedPane;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
-import javax.swing.*;
-
-import com.chs.extemp.ExtempLogger;
-
+@SuppressWarnings("serial")
 public class ExtempFillerGUI extends JFrame{
 	public static final int GUI_WIDTH  = 800;
 	public static final int GUI_HEIGHT = 600;
@@ -17,15 +17,15 @@ public class ExtempFillerGUI extends JFrame{
 		pack();
 		setVisible(true);
 		
-		Logger logger = ExtempLogger.getLogger();
+		//Logger logger = ExtempLogger.getLogger();
 		
 		
 	}
 	public void init() {
 		// initialize research worker
-				researchWorker = new ResearchWorker();
-				Thread researchThread = new Thread(researchWorker);
-				researchThread.start();
+		researchWorker = new ResearchWorker();
+		Thread researchThread = new Thread(researchWorker);
+		researchThread.start();
 		
 		// Tries to make the app look native
 		try {

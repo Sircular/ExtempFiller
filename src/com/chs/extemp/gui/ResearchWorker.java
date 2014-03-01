@@ -10,6 +10,7 @@ public class ResearchWorker implements Runnable{
 	
 	private LinkedBlockingQueue<String> topicQueue;
 	private Logger logger;
+	private Researcher researcher;
 
 	@Override
 	public void run(){
@@ -17,7 +18,7 @@ public class ResearchWorker implements Runnable{
 		logger.info("Starting research thread...");
 		
 		topicQueue = new LinkedBlockingQueue<String>();
-		Researcher researcher = new Researcher();
+		researcher = new Researcher();
 		if(!researcher.isUsable()) {
 			return;
 		}
@@ -40,7 +41,11 @@ public class ResearchWorker implements Runnable{
 	
 	private void handleTopic() throws InterruptedException {
 		String topic = topicQueue.take();
-		// research the topic
+		try {
+			researcher.researchTopic(topic);
+		} catch (Exception e) {
+			logger.severe("Error researching topic \"" + topic + "\": " + e);
+		}
 	}
 
 }
