@@ -4,16 +4,19 @@ import java.awt.BorderLayout;
 import java.util.logging.Logger;
 
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
 
+import com.chs.extemp.ExtempLogger;
+
 public class DebugPanel extends JPanel{
 	
-	public DebugPanel(int width, int height) {
-		init(width, height);
+	public DebugPanel() {
+		init();
 	}
 	
-	private void init(int width, int height) {
+	private void init() {
 		// set up some basic aesthetic stuff
 		setBorder(new EmptyBorder(10, 10, 10, 10));
 		
@@ -22,17 +25,20 @@ public class DebugPanel extends JPanel{
 		
 		// add debug log
 		JTextPane log = new JTextPane();
-		initLogger(log, width, height);
-		add(log, BorderLayout.CENTER);
+		initLogger(log);
+		JScrollPane scroll = new JScrollPane(log);
+		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		add(scroll, BorderLayout.CENTER);
 		
 	}
 	
-	private void initLogger(JTextPane log, int width, int height) {
+	private void initLogger(JTextPane log) {
 		// set up the log panel
 		log.setEditable(false);
 		
 		// set up the log handler
-		Logger logger = Logger.getLogger("CHS-Extemp");
+		Logger logger = ExtempLogger.getLogger();
 		DebugHandler handler = new DebugHandler(log);
 		logger.addHandler(handler);
 		

@@ -23,18 +23,18 @@ public class Main {
 				return;
 			} else {
 				System.out.println("No questions list specified. Starting GUI interface...");
-				/*ExtempFillerGUI gui = */new ExtempFillerGUI();
+				ExtempFillerGUI gui = new ExtempFillerGUI();
 				return;
 			}
 
 		} catch (Exception e) {
-			logger.severe(e.toString());
+			System.out.println(e.toString());
 		}
 	}
 	
 	// Used to prevent nasty console output
 	private static void initLogger() {
-		Logger logger = Logger.getLogger("CHS-Extemp");
+		logger = ExtempLogger.getLogger();
 		logger.setUseParentHandlers(false);
 	}
 }

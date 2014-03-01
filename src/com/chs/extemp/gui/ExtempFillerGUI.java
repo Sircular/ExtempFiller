@@ -1,26 +1,32 @@
 package com.chs.extemp.gui;
 
+import java.util.logging.Logger;
+
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import com.chs.extemp.ExtempLogger;
+
 @SuppressWarnings("serial")
+
 public class ExtempFillerGUI extends JFrame{
 	public static final int GUI_WIDTH  = 800;
 	public static final int GUI_HEIGHT = 600;
 	
 	public ResearchWorker researchWorker;
+	private Logger logger;
 	
 	public ExtempFillerGUI() {
 		init();
 		pack();
 		setVisible(true);
 		
-		//Logger logger = ExtempLogger.getLogger();
-		
-		
-	}
+		logger = ExtempLogger.getLogger();
+		logger.info("Initialied GUI.");
+	}	
+	
 	public void init() {
 		// initialize research worker
 		researchWorker = new ResearchWorker();
@@ -31,17 +37,13 @@ public class ExtempFillerGUI extends JFrame{
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.info(e.toString());
 		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.info(e.toString());
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.info(e.toString());
 		} catch (UnsupportedLookAndFeelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.info(e.toString());
 		}
 		
 		setTitle("CHS Extemp Filler");
@@ -49,8 +51,10 @@ public class ExtempFillerGUI extends JFrame{
 		// set up some tabs
 		JTabbedPane tabs = new JTabbedPane();
 		
-		DebugPanel debugpanel = new DebugPanel(GUI_WIDTH, GUI_HEIGHT);
-		tabs.addTab("Extemp Filler", null);
+		TopicPanel topicpanel = new TopicPanel();
+		DebugPanel debugpanel = new DebugPanel();
+		
+		tabs.addTab("Topics", topicpanel);
 		tabs.addTab("Debug", debugpanel);
 		add(tabs);
 	}
