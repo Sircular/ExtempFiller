@@ -3,6 +3,7 @@ package com.chs.extemp;
 import com.chs.extemp.evernote.EvernoteClient;
 import com.chs.extemp.google.GoogleClient;
 import com.chs.extemp.google.GoogleResults;
+import com.chs.extemp.gui.ExtempFillerGUI;
 import com.evernote.edam.type.Notebook;
 import com.evernote.edam.type.Tag;
 import com.chs.extemp.cli.CLI;
@@ -13,6 +14,8 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.Scanner;
+import java.util.logging.Handler;
+import java.util.logging.Logger;
 
 /**
  * ExtempFiller program
@@ -26,8 +29,11 @@ public class Main {
 
 	// How long to wait between each api request in milliseconds
 	private static final int TIMER = 1000;
+	
+	private static Logger logger;
 
 	public static void main(final String[] args) {
+		initLogger();
 		try {
 			System.out.println("CHS Extemporaneous Researcher");
 			if(args.length > 0) {
@@ -37,7 +43,7 @@ public class Main {
 				return;
 			} else {
 				System.out.println("No questions list specified. Starting GUI interface...");
-				// Will eventually start the GUI
+				ExtempFillerGUI gui = new ExtempFillerGUI();
 				return;
 			}
 			// Create a new Evernote Client
@@ -154,5 +160,11 @@ public class Main {
 			Thread.sleep(rateTimer + TIMER - Calendar.getInstance().getTimeInMillis());
 		}
 		rateTimer = Calendar.getInstance().getTimeInMillis();
+	}
+	
+	// Used to prevent nasty console output
+	private static void initLogger() {
+		Logger logger = Logger.getLogger("CHS-Extemp");
+		logger.setUseParentHandlers(false);
 	}
 }
