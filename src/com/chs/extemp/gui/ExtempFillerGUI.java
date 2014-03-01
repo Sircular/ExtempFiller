@@ -8,6 +8,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import com.chs.extemp.ExtempLogger;
+import com.chs.extemp.gui.messaging.MessageEvent;
+import com.chs.extemp.gui.messaging.MessageEventListener;
 
 @SuppressWarnings("serial")
 
@@ -16,6 +18,7 @@ public class ExtempFillerGUI extends JFrame{
 	public static final int GUI_HEIGHT = 600;
 	
 	public ResearchWorker researchWorker;
+	private GUIMessageListener listener;
 	private Logger logger;
 	
 	public ExtempFillerGUI() {
@@ -25,6 +28,8 @@ public class ExtempFillerGUI extends JFrame{
 		
 		logger = ExtempLogger.getLogger();
 		logger.info("Initialied GUI.");
+		
+		researchWorker.enqueue("Here is my topic.");
 	}	
 	
 	public void init() {
@@ -32,6 +37,9 @@ public class ExtempFillerGUI extends JFrame{
 		researchWorker = new ResearchWorker();
 		Thread researchThread = new Thread(researchWorker);
 		researchThread.start();
+		
+		listener = new GUIMessageListener(this);
+		researchWorker.addListener(listener);	
 		
 		// Tries to make the app look native
 		try {
@@ -57,5 +65,26 @@ public class ExtempFillerGUI extends JFrame{
 		tabs.addTab("Topics", topicpanel);
 		tabs.addTab("Debug", debugpanel);
 		add(tabs);
+	}
+	
+	public void topicResearched(String topic) {
+		// more code
+	}
+	
+	public class GUIMessageListener implements MessageEventListener {
+		
+		private ExtempFillerGUI gui;
+		
+		public GUIMessageListener(ExtempFillerGUI gui) {
+			this.gui = gui;
+		}
+
+		@Override
+		public void handleMessageEvent(MessageEvent e) {
+			if(e.getType() == MessageEvent.Type.TOPIC_RESEARCHED) {
+				gui.topicResearched((String)e.getData());
+			}
+		}
+		
 	}
 }
