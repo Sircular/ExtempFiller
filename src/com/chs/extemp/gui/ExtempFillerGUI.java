@@ -37,12 +37,12 @@ public class ExtempFillerGUI extends JFrame{
 	
 	public void init() {
 		// initialize research worker
-		/*researchWorker = new ResearchWorker();
+		researchWorker = new ResearchWorker();
 		Thread researchThread = new Thread(researchWorker);
 		researchThread.start();
 		
 		listener = new GUIMessageListener(this);
-		researchWorker.addListener(listener);*/
+		researchWorker.addListener(listener);
 		
 		// Tries to make the app look native
 		// (lots of exceptions to catch)
@@ -71,19 +71,37 @@ public class ExtempFillerGUI extends JFrame{
 		tabs.addTab("Topics", topicPanel);
 		tabs.addTab("Debug", debugPanel);
 		add(tabs);
+		
+		topicPanel.setContentsEnabled(false);
+		
 	}
 	
 	public void addTopic(String topic) {
-		this.topicPanel.addTopic(topic);
+		topicPanel.addTopic(topic);
+		researchWorker.enqueueTopic(topic);
 	}
 	
 	public void topicResearched(String topic) {
 		// more code
+		logger.info("Finished researching topic: " + topic);
+		topicPanel.setTopicState(topic, TopicListItem.State.RESEARCHED);
 	}
 	
 	public void topicList(String[] topics) {
 		// used to populate the list of
 		// already-researched topics
+		logger.info("loaded pre-researched tags");
+		topicPanel.setContentsEnabled(true);
+		for(int i = 0; i < topics.length; i++) {
+			logger.info("Pre-researched tag: " + topics[i]);
+			topicPanel.addTopic(topics[i], TopicListItem.State.RESEARCHED);
+		}
+	}
+	
+	public void topicError(String topic) {
+		topicPanel.setTopicState(topic, TopicListItem.State.RESEARCH_ERROR);
+		displayError("Error while researching topic: " + topic + 
+				". Please see debug log for details.");
 	}
 
 	public void displayError(String error) {
@@ -107,7 +125,7 @@ public class ExtempFillerGUI extends JFrame{
 			}else if(e.getType() == MessageEvent.Type.TOPIC_LIST) {
 				gui.topicList((String[])e.getData());
 			}else if(e.getType() == MessageEvent.Type.ERROR) {
-				gui.displayError((String)e.getData());
+				gui.topicError((String)e.getData());
 			}
 		}
 		

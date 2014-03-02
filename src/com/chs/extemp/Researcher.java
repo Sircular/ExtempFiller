@@ -131,7 +131,7 @@ public class Researcher {
 					evClient.createHTMLNote(result.getUrl(), HTMLNotebook, Arrays.asList(tag));
 				}
 			} catch (Exception e) {
-				logger.severe("SKIPPING SOURCE");
+				logger.severe("Skipping source");
 				e.printStackTrace();
 			}
 			logger.info("Finished researching topic.");

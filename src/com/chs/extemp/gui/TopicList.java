@@ -49,7 +49,7 @@ public class TopicList extends JList {
 				"the data manually.");
 	}
 	
-	public void setTopicResearched(String topic, TopicListItem.State state) {
+	public void setTopicState(String topic, TopicListItem.State state) {
 		for(int i = 0; i < this.listModel.size(); i++) {
 			TopicListItem item = (TopicListItem)this.listModel.get(i);
 			if(item.getTopic() == topic) {

@@ -9,6 +9,7 @@ import com.chs.extemp.ExtempLogger;
 import com.chs.extemp.Researcher;
 import com.chs.extemp.gui.messaging.MessageEvent;
 import com.chs.extemp.gui.messaging.MessageEventListener;
+import com.evernote.edam.type.Tag;
 
 public class ResearchWorker implements Runnable{
 	
@@ -29,6 +30,18 @@ public class ResearchWorker implements Runnable{
 		
 		topicQueue = new LinkedBlockingQueue<String>();
 		researcher = new Researcher();
+		
+		// get the list of already researched tags
+		// and send them to the GUI so they can be
+		// added to the list.
+		List<Tag> taglist = researcher.getCurrentTags();
+		String[] tagnames = new String[taglist.size()];
+		for(int i = 0; i < taglist.size(); i++) {
+			tagnames[i] = taglist.get(i).getName();
+		}
+		
+		dispatchEvent(MessageEvent.Type.TOPIC_LIST, tagnames);
+		
 		if(!researcher.isUsable()) {
 			return;
 		}
@@ -41,7 +54,7 @@ public class ResearchWorker implements Runnable{
 		}
 	}
 	
-	public void enqueue(String topic) {
+	public void enqueueTopic(String topic) {
 		try { 
 			topicQueue.add(topic);
 			logger.info("Added topic to research queue.");
@@ -58,9 +71,10 @@ public class ResearchWorker implements Runnable{
 		String topic = topicQueue.take();
 		try {
 			researcher.researchTopic(topic);
-			dispatchEvent(MessageEvent.Type.ERROR, topic);
+			dispatchEvent(MessageEvent.Type.TOPIC_RESEARCHED, topic);
 		} catch (Exception e) {
 			logger.severe("Error researching topic \"" + topic + "\": " + e);
+			dispatchEvent(MessageEvent.Type.ERROR, topic);
 		}
 	}
 	

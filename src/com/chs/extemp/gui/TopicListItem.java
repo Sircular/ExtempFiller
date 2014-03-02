@@ -3,7 +3,8 @@ package com.chs.extemp.gui;
 public class TopicListItem {
 	public static enum State {
 		NOT_RESEARCHED,
-		RESEARCHED
+		RESEARCHED,
+		RESEARCH_ERROR
 	}
 	
 	private State currentState;
@@ -39,6 +40,10 @@ public class TopicListItem {
 			break;
 		case RESEARCHED:
 			stateString = "Researched";
+			break;
+		case RESEARCH_ERROR:
+			stateString = "Error while researching";
+			break;
 		}
 		return "(" + stateString + ") " + this.topic;
 	}

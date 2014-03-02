@@ -39,6 +39,10 @@ public class AddTopicPanel extends JPanel{
 		
 	}
 	
+	public void setContentsEnabled(boolean state) {
+		this.textbox.setEnabled(state);
+	}
+	
 	public void addTypedTopic() {
 		String topic = this.textbox.getText();
 		this.textbox.setText("");
