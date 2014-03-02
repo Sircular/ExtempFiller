@@ -1,4 +1,4 @@
-package com.chs.extemp.gui;
+package com.chs.extemp.gui.topicview;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -10,14 +10,16 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import com.chs.extemp.gui.ResearchGUI;
+
 @SuppressWarnings("serial")
 public class AddTopicPanel extends JPanel{
 	private JTextField textbox;
 	private JButton addButton;
 	
-	private ExtempFillerGUI gui;
+	private ResearchGUI gui;
 	
-	public AddTopicPanel(ExtempFillerGUI gui) {
+	public AddTopicPanel(ResearchGUI gui) {
 		this.gui = gui;
 		init();
 	}
@@ -27,7 +29,7 @@ public class AddTopicPanel extends JPanel{
 		addButton = new JButton("Add Topic");
 		addButton.setEnabled(false);
 		
-		KeyTypeListener keyListener = new KeyTypeListener(addButton);
+		KeyTypeListener keyListener = new KeyTypeListener(addButton, this);
 		textbox.addKeyListener(keyListener);
 		
 		AddButtonListener addListener = new AddButtonListener(this);
@@ -53,9 +55,11 @@ public class AddTopicPanel extends JPanel{
 	private class KeyTypeListener implements KeyListener {
 		
 		private JButton addButton;
+		private AddTopicPanel addPanel;
 		
-		public KeyTypeListener(JButton addButton) {
+		public KeyTypeListener(JButton addButton, AddTopicPanel addPanel) {
 			this.addButton = addButton;
+			this.addPanel = addPanel;
 		}
 
 		@Override
@@ -65,7 +69,16 @@ public class AddTopicPanel extends JPanel{
 
 		@Override
 		public void keyReleased(KeyEvent e) {
+			
 			String currentText = ((JTextField)e.getSource()).getText();
+			// check to see if they pressed enter
+			if(e.getKeyChar() == KeyEvent.VK_ENTER) {
+				if(currentText.length() > 0) {
+					addPanel.addTypedTopic();
+					return;
+				}
+			}
+			
 			this.addButton.setEnabled(currentText.length() > 0);
 		}
 
@@ -86,7 +99,7 @@ public class AddTopicPanel extends JPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			this.addPanel.addTypedTopic();
+			addPanel.addTypedTopic();
 		}
 		
 	}

@@ -1,4 +1,4 @@
-package com.chs.extemp.gui;
+package com.chs.extemp.gui.debug;
 
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -34,6 +34,7 @@ public class DebugHandler extends Handler{
 		String message = arg0.getMessage();
 		String old_log = debuglog.getText();
 		debuglog.setText(old_log + "[" + level.getName() + "] " + message+"\n");
+		debuglog.setCaretPosition(debuglog.getText().length());
 	}
 
 }

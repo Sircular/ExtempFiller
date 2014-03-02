@@ -1,18 +1,21 @@
-package com.chs.extemp.gui;
+package com.chs.extemp.gui.topicview;
 
 import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import com.chs.extemp.gui.ResearchGUI;
+
+@SuppressWarnings("serial")
 public class TopicPanel extends JPanel{
 	
-	private ExtempFillerGUI gui;
+	private ResearchGUI gui;
 	
 	private TopicList topicList;
 	private AddTopicPanel atp;
 	
-	public TopicPanel(ExtempFillerGUI gui) {
+	public TopicPanel(ResearchGUI gui) {
 		this.gui = gui;
 		init();
 	}

@@ -40,7 +40,6 @@ public class Researcher {
 		} catch (Exception e) {
 			logger.severe("Could not initialize Evernote Client: " + e);
 			usable = false;
-			e.printStackTrace();
 			return;
 		}
 		initChecks();

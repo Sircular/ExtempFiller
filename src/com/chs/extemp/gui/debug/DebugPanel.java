@@ -1,4 +1,4 @@
-package com.chs.extemp.gui;
+package com.chs.extemp.gui.debug;
 
 import java.awt.BorderLayout;
 import java.util.logging.Logger;
@@ -10,6 +10,7 @@ import javax.swing.border.EmptyBorder;
 
 import com.chs.extemp.ExtempLogger;
 
+@SuppressWarnings("serial")
 public class DebugPanel extends JPanel{
 	
 	public DebugPanel() {

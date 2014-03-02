@@ -1,4 +1,4 @@
-package com.chs.extemp.gui;
+package com.chs.extemp.gui.topicview;
 
 public class TopicListItem {
 	public static enum State {

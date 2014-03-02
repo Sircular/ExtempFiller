@@ -1,4 +1,4 @@
-package com.chs.extemp.gui;
+package com.chs.extemp.gui.topicview;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
@@ -6,13 +6,9 @@ import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionListener;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Family
- * Date: 2/5/14
- * Time: 5:16 PM
- * To change this template use File | Settings | File Templates.
- */
+import com.chs.extemp.gui.topicview.TopicListItem.State;
+
+@SuppressWarnings("serial")
 public class TopicList extends JList {
 	
 	private DefaultListModel listModel;

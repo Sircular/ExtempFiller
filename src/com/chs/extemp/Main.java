@@ -2,7 +2,7 @@ package com.chs.extemp;
 
 import java.util.logging.Logger;
 
-import com.chs.extemp.gui.ExtempFillerGUI;
+import com.chs.extemp.gui.ResearchGUI;
 
 /**
  * ExtempFiller program
@@ -23,7 +23,7 @@ public class Main {
 				return;
 			} else {
 				System.out.println("No questions list specified. Starting GUI interface...");
-				ExtempFillerGUI gui = new ExtempFillerGUI();
+				ResearchGUI gui = new ResearchGUI();
 				return;
 			}
 
