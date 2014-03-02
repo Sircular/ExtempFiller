@@ -1,2 +1,4 @@
 ExtempFiller is a Java program for researching Extemporaneous Speaking topics.
 The program makes use of Evernote, Google, and Readability.
+
+Backend created by Zalog2462, GUI and associated code (worker threads, etc.) created by Sircular.
