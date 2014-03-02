@@ -7,7 +7,12 @@ import javax.swing.border.EmptyBorder;
 
 public class TopicPanel extends JPanel{
 	
-	public TopicPanel() {
+	private ExtempFillerGUI gui;
+	
+	private TopicList topicList;
+	
+	public TopicPanel(ExtempFillerGUI gui) {
+		this.gui = gui;
 		init();
 	}
 	
@@ -18,10 +23,24 @@ public class TopicPanel extends JPanel{
 		// set up the layout manager
 		this.setLayout(new BorderLayout());
 		
-		ListPanel lp = new ListPanel();
-		add(lp, BorderLayout.CENTER);
-		AddTopicPanel atp = new AddTopicPanel();
+		topicList = new TopicList();
+		add(topicList, BorderLayout.CENTER);
+		AddTopicPanel atp = new AddTopicPanel(this.gui);
 		add(atp, BorderLayout.PAGE_END);
+		
+		topicList.addTopic("custom topic", TopicListItem.State.RESEARCHED);
+	}
+	
+	public void addTopic(String topic) {
+		topicList.addTopic(topic);
+	}
+	
+	public void addTopic(String topic, TopicListItem.State state){
+		topicList.addTopic(topic, state);
+	}
+	
+	public void setTopicResearched(String topic, TopicListItem.State state) {
+		topicList.setTopicResearched(topic, state);
 	}
 
 }

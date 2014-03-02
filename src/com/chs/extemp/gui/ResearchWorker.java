@@ -58,7 +58,7 @@ public class ResearchWorker implements Runnable{
 		String topic = topicQueue.take();
 		try {
 			researcher.researchTopic(topic);
-			dispatchEvent(MessageEvent.Type.TOPIC_RESEARCHED, topic);
+			dispatchEvent(MessageEvent.Type.ERROR, topic);
 		} catch (Exception e) {
 			logger.severe("Error researching topic \"" + topic + "\": " + e);
 		}
