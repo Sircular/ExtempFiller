@@ -4,7 +4,7 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
-public class CLIHandler extends Handler{
+public class CLILogHandler extends Handler{
 
 	@Override
 	public void close() throws SecurityException {

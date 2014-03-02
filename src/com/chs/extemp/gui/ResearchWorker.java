@@ -63,7 +63,7 @@ public class ResearchWorker implements Runnable{
 		}
 	}
 	
-	public void enqueueRequest(String topic) {
+	public void enqueueTopic(String topic) {
 		try { 
 			topicQueue.add(topic);
 			logger.info("Added topic to research queue.");

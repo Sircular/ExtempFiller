@@ -1,14 +1,16 @@
 package com.chs.extemp.gui;
 
+import java.io.File;
 import java.util.logging.Logger;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.chs.extemp.ExtempLogger;
+import com.chs.extemp.TopicFileReader;
 import com.chs.extemp.gui.debug.DebugPanel;
 import com.chs.extemp.gui.menu.ResearchMenuBar;
 import com.chs.extemp.gui.messaging.ResearchMessage;
@@ -67,39 +69,68 @@ public class ResearchGUI extends JFrame{
 		
 		topicPanel.setContentsEnabled(false);
 		
-		
-		
 	}
 	
 	public void addTopic(String topic) {
 		topicPanel.addTopic(topic);
-		researchWorker.enqueueRequest(topic);
+		researchWorker.enqueueTopic(topic);
 	}
 	
-	public void topicResearched(String topic) {
+	public void removeSelectedTopic() {
+		// as yet unimplemented on the server side,
+		// so not implemented on the client side.
+		// Currently displays a message box saying
+		// as much.
+		
+		JOptionPane.showMessageDialog(null, "Deletion of a topic through the client is not yet implemented.\n\n"+
+				"Please go to evernote.com, sign into the web interface, and delete " +
+				"the data manually.");
+		
+	}
+	
+	public void loadTopicsFromFile() {
+		JFileChooser fileChooser = new JFileChooser();
+		
+		FileNameExtensionFilter fileFilter = new FileNameExtensionFilter("Text Files", "txt", "text");
+		fileChooser.setFileFilter(fileFilter);
+		
+		int choice = fileChooser.showOpenDialog(null);
+		if(choice == JFileChooser.APPROVE_OPTION) {
+			File file = fileChooser.getSelectedFile();
+			String path = file.getAbsolutePath();
+			String[] newTopics = TopicFileReader.readTopicFile(path);
+			for(int i = 0; i < newTopics.length; i++) {
+				String currentTopic = newTopics[i];
+				if(!topicPanel.hasTopic(currentTopic)) {
+					topicPanel.addTopic(currentTopic);
+					researchWorker.enqueueTopic(currentTopic);
+				}
+			}
+		}
+	}
+	
+	public void onTopicResearched(String topic) {
 		// more code
 		logger.info("Finished researching topic: " + topic);
 		topicPanel.setTopicState(topic, TopicListItem.State.RESEARCHED);
 	}
 	
-	public void topicList(String[] topics) {
+	public void onRemoteTopicListLoaded(String[] topics) {
 		// used to populate the list of
 		// already-researched topics
-		logger.info("loaded pre-researched tags");
 		topicPanel.setContentsEnabled(true);
 		for(int i = 0; i < topics.length; i++) {
-			logger.info("Pre-researched tag: " + topics[i]);
 			topicPanel.addTopic(topics[i], TopicListItem.State.RESEARCHED);
 		}
 	}
 	
-	public void topicError(String topic) {
+	public void onTopicError(String topic) {
 		topicPanel.setTopicState(topic, TopicListItem.State.RESEARCH_ERROR);
 		displayError("Error while researching topic: " + topic + 
 				". Please see debug log for details.");
 	}
 	
-	public void evernoteError() {
+	public void onEvernoteError() {
 		displayError("There was an error connecting to evernote.\n" +
 				"Please close the program, check your internet settings, " + 
 				"and try again.");
@@ -122,13 +153,13 @@ public class ResearchGUI extends JFrame{
 		@Override
 		public void handleMessageEvent(ResearchMessage e) {
 			if(e.getType() == ResearchMessage.Type.TOPIC_RESEARCHED) {
-				gui.topicResearched((String)e.getData());
+				gui.onTopicResearched((String)e.getData());
 			}else if(e.getType() == ResearchMessage.Type.TOPIC_LIST) {
-				gui.topicList((String[])e.getData());
+				gui.onRemoteTopicListLoaded((String[])e.getData());
 			}else if(e.getType() == ResearchMessage.Type.RESEARCH_ERROR) {
-				gui.topicError((String)e.getData());
+				gui.onTopicError((String)e.getData());
 			}else if(e.getType() == ResearchMessage.Type.EVERNOTE_CONNECTION_ERROR) {
-				gui.evernoteError();
+				gui.onEvernoteError();
 			}
 		}
 		

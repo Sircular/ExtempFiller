@@ -40,7 +40,7 @@ public class DebugPanel extends JPanel{
 		
 		// set up the log handler
 		Logger logger = ExtempLogger.getLogger();
-		DebugHandler handler = new DebugHandler(log);
+		DebugLogHandler handler = new DebugLogHandler(log);
 		logger.addHandler(handler);
 		
 	}

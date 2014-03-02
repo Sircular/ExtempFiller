@@ -10,11 +10,6 @@ public class TopicListItem {
 	private State currentState;
 	private String topic;
 	
-	public TopicListItem(String topic) {
-		this.topic = topic;
-		this.currentState = State.NOT_RESEARCHED;
-	}
-	
 	public TopicListItem(String topic, State state) {
 		this.topic = topic;
 		this.currentState = state;

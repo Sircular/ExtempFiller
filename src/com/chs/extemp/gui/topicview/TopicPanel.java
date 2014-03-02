@@ -12,7 +12,7 @@ public class TopicPanel extends JPanel{
 	
 	private ResearchGUI gui;
 	
-	private TopicList topicList;
+	private TopicListPanel topicListPanel;
 	private AddTopicPanel atp;
 	
 	public TopicPanel(ResearchGUI gui) {
@@ -27,30 +27,32 @@ public class TopicPanel extends JPanel{
 		// set up the layout manager
 		this.setLayout(new BorderLayout());
 		
-		topicList = new TopicList();
-		add(topicList, BorderLayout.CENTER);
+		topicListPanel = new TopicListPanel(gui);
+		add(topicListPanel, BorderLayout.CENTER);
 		atp = new AddTopicPanel(this.gui);
 		add(atp, BorderLayout.PAGE_END);
 	}
 	
 	public void setContentsEnabled(boolean state) {
-		topicList.setEnabled(state);
+		topicListPanel.setEnabled(state);
 		atp.setContentsEnabled(state);
 	}
 	
 	public void addTopic(String topic) {
-		topicList.addTopic(topic);
-		topicList.repaint();
+		addTopic(topic, TopicListItem.State.NOT_RESEARCHED);
 	}
 	
 	public void addTopic(String topic, TopicListItem.State state){
-		topicList.addTopic(topic, state);
-		topicList.repaint();
+		topicListPanel.addTopic(topic, state);
 	}
 	
 	public void setTopicState(String topic, TopicListItem.State state) {
-		topicList.setTopicState(topic, state);
-		topicList.repaint();
+		topicListPanel.setTopicState(topic, state);
+		topicListPanel.repaint();
+	}
+	
+	public boolean hasTopic(String topic) {
+		return topicListPanel.hasTopic(topic);
 	}
 
 }

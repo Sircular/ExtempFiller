@@ -8,11 +8,11 @@ import javax.swing.JTextPane;
 
 // Class used to connect the debug output with the logger
 
-public class DebugHandler extends Handler{
+public class DebugLogHandler extends Handler{
 	
 	private JTextPane debuglog;
 	
-	public DebugHandler(JTextPane debuglog) {
+	public DebugLogHandler(JTextPane debuglog) {
 		this.debuglog = debuglog;
 	}
 
