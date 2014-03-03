@@ -20,7 +20,7 @@ public class TopicFileReader {
 			reader.close();
 			logger.info("Topic file read successfully.");
 			return lines.toArray(new String[lines.size()]);
-		} catch (Exception e) {
+		} catch (IOException e) {
 			logger.info("Error while reading topic file: " + e.getMessage());
 			return null;
 		}
