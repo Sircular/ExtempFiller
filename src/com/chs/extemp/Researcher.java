@@ -31,7 +31,6 @@ public class Researcher {
 	
 	public Researcher() { 
 		logger = ExtempLogger.getLogger();
-		
 		logger.info("Attempting to initialize Evernote Client...");
 		
 		try {
@@ -42,10 +41,10 @@ public class Researcher {
 			usable = false;
 			return;
 		}
-		initChecks();
+		initialChecks();
 	}
 	
-	private void initChecks() {
+	private void initialChecks() {
 		try {
 			HTMLNotebook = evClient.getNotebook("Web Notes");
 			if(HTMLNotebook == null) {
