@@ -4,8 +4,12 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -15,6 +19,7 @@ import com.chs.extemp.gui.ResearchGUI;
 public class TopicListPanel extends JPanel{
 	private ResearchGUI gui;
 	private TopicList topicList;
+	private JScrollPane topicListScroll;
 	private JButton deleteButton;
 	
 	private DeleteButtonListener deleteListener;
@@ -26,6 +31,8 @@ public class TopicListPanel extends JPanel{
 	}
 	
 	private void init() {
+		setBorder(new EmptyBorder(0, 0, 10, 0));
+		
 		topicList = new TopicList();
 		deleteButton = new JButton("Delete");
 		deleteButton.setEnabled(false);
@@ -38,7 +45,12 @@ public class TopicListPanel extends JPanel{
 		
 		setLayout(new BorderLayout());
 		
-		add(topicList, BorderLayout.CENTER);
+		topicListScroll = new JScrollPane(topicList);
+		topicListScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		topicListScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		topicListScroll.setBorder(BorderFactory.createCompoundBorder(new EmptyBorder(0, 0, 10, 0), new EtchedBorder()));
+		
+		add(topicListScroll, BorderLayout.CENTER);
 		add(deleteButton, BorderLayout.PAGE_END);
 	}
 	

@@ -1,11 +1,14 @@
 package com.chs.extemp.gui;
 
+import java.awt.BorderLayout;
 import java.io.File;
 import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -28,9 +31,11 @@ public class ResearchGUI extends JFrame{
 	private GUIMessageListener listener;
 	private Logger logger;
 	
+	private JPanel mainContainer;
 	private TopicPanel topicPanel;
 	private DebugPanel debugPanel;
 	private ResearchMenuBar menuBar;
+	private JProgressBar waitingBar;
 	
 	public ResearchGUI() {
 		init();
@@ -53,22 +58,38 @@ public class ResearchGUI extends JFrame{
 		
 		setTitle("CHS Extemp Filler");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setLayout(new BorderLayout());
 		
 		// set up some tabs
 		JTabbedPane tabs = new JTabbedPane();
 		
+		mainContainer = new JPanel();
 		topicPanel = new TopicPanel(this);
 		debugPanel = new DebugPanel();
 		menuBar = new ResearchMenuBar(this);
+		waitingBar = new JProgressBar();
+		
+		mainContainer.setLayout(new BorderLayout());
 		
 		tabs.addTab("Topics", topicPanel);
 		tabs.addTab("Debug", debugPanel);
-		add(tabs);
+		mainContainer.add(tabs);
+		
+		add(mainContainer, BorderLayout.CENTER);
+		add(waitingBar, BorderLayout.PAGE_END);
+		
+		waitingBar.setIndeterminate(true);
 		
 		setJMenuBar(menuBar);
 		
 		topicPanel.setContentsEnabled(false);
 		
+	}
+	
+	@Override
+	public void dispose() {
+		
+		System.exit(0);
 	}
 	
 	public void addTopic(String topic) {
@@ -101,6 +122,7 @@ public class ResearchGUI extends JFrame{
 			String[] newTopics = TopicFileReader.readTopicFile(path);
 			for(int i = 0; i < newTopics.length; i++) {
 				String currentTopic = newTopics[i];
+				System.out.println(topicPanel.hasTopic(currentTopic));
 				if(!topicPanel.hasTopic(currentTopic)) {
 					topicPanel.addTopic(currentTopic);
 					researchWorker.enqueueTopic(currentTopic);
@@ -118,10 +140,14 @@ public class ResearchGUI extends JFrame{
 	public void onRemoteTopicListLoaded(String[] topics) {
 		// used to populate the list of
 		// already-researched topics
+		remove(waitingBar);
 		topicPanel.setContentsEnabled(true);
+		System.out.println(topics);
 		for(int i = 0; i < topics.length; i++) {
 			topicPanel.addTopic(topics[i], TopicListItem.State.RESEARCHED);
 		}
+		pack();
+		repaint();
 	}
 	
 	public void onTopicError(String topic) {

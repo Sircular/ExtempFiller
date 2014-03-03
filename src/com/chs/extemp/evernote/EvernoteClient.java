@@ -533,6 +533,7 @@ public class EvernoteClient {
 		}
 		rateTimer = Calendar.getInstance().getTimeInMillis();
 	}
+
 }
 
 
