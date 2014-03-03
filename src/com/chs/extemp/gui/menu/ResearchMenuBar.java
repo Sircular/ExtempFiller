@@ -8,6 +8,7 @@ import com.chs.extemp.gui.ResearchGUI;
 public class ResearchMenuBar extends JMenuBar{
 	
 	private ResearchGUI gui;
+	private JMenu fileMenu;
 	
 	public ResearchMenuBar(ResearchGUI gui) {
 		this.gui = gui;
@@ -15,7 +16,7 @@ public class ResearchMenuBar extends JMenuBar{
 	}
 	
 	private void init() {
-		JMenu fileMenu = new JMenu("File");
+		fileMenu = new JMenu("File");
 		
 		// if anyone can suggest an alternative
 		// to anonymous runnables that requires
@@ -46,6 +47,10 @@ public class ResearchMenuBar extends JMenuBar{
 		fileMenu.add(chooseFile);
 		fileMenu.add(exit);
 		add(fileMenu);
+	}
+	
+	public void setContentsEnabled(boolean state) {
+		fileMenu.setEnabled(state);
 	}
 
 }

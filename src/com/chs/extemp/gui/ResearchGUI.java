@@ -83,6 +83,7 @@ public class ResearchGUI extends JFrame{
 		setJMenuBar(menuBar);
 		
 		topicPanel.setContentsEnabled(false);
+		menuBar.setContentsEnabled(false);
 		
 	}
 	
@@ -142,6 +143,7 @@ public class ResearchGUI extends JFrame{
 		// already-researched topics
 		remove(waitingBar);
 		topicPanel.setContentsEnabled(true);
+		menuBar.setContentsEnabled(true);
 		System.out.println(topics);
 		for(int i = 0; i < topics.length; i++) {
 			topicPanel.addTopic(topics[i], TopicListItem.State.RESEARCHED);
