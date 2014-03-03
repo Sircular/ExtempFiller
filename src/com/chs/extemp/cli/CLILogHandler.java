@@ -7,20 +7,14 @@ import java.util.logging.LogRecord;
 public class CLILogHandler extends Handler{
 
 	@Override
-	public void close() throws SecurityException {
-		// TODO Auto-generated method stub
-		
-	}
+	public void close() throws SecurityException { }
 
 	@Override
-	public void flush() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void flush() { }
 
 	@Override
 	public void publish(LogRecord arg0) {
-		Level level    = arg0.getLevel();
+		Level level = arg0.getLevel();
 		String message = arg0.getMessage();
 		
 		if(level == Level.WARNING || level == Level.SEVERE) {
