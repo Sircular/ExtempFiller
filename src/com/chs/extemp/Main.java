@@ -2,6 +2,7 @@ package com.chs.extemp;
 
 import java.util.logging.Logger;
 
+import com.chs.extemp.cli.CLI;
 import com.chs.extemp.gui.ResearchGUI;
 
 /**
@@ -18,12 +19,11 @@ public class Main {
 			System.out.println("CHS Extemporaneous Researcher");
 			if(args.length > 0) {
 				String filename = args[0];
-				System.out.println("Starting CLI using questions-list \"" + filename + ".\"");
-				
+				new CLI(args[0]);
 				return;
 			} else {
 				System.out.println("No questions list specified. Starting GUI interface...");
-				ResearchGUI gui = new ResearchGUI();
+				new ResearchGUI();
 				return;
 			}
 
