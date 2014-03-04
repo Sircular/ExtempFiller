@@ -31,51 +31,44 @@ public class ResearchGUI extends JFrame{
 	private GUIMessageListener listener;
 	private Logger logger;
 	
-	private JPanel mainContainer;
 	private TopicPanel topicPanel;
 	private DebugPanel debugPanel;
 	private ResearchMenuBar menuBar;
 	private JProgressBar waitingBar;
 	
 	public ResearchGUI() {
-		init();
-		pack();
-		setVisible(true);
-		
 		logger = ExtempLogger.getLogger();
 		logger.info("Initialized GUI.");
 		
-	}	
-	
-	public void init() {
 		// initialize research worker
 		researchWorker = new ResearchWorker();
 		Thread researchThread = new Thread(researchWorker);
-		researchThread.start();
 		
 		listener = new GUIMessageListener(this);
 		researchWorker.addListener(listener);
+		researchThread.start();
 		
+		init();
+		pack();
+		setVisible(true);
+	}	
+	
+	public void init() {
 		setTitle("CHS Extemp Filler");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(new BorderLayout());
 		
 		// set up some tabs
 		JTabbedPane tabs = new JTabbedPane();
-		
-		mainContainer = new JPanel();
 		topicPanel = new TopicPanel(this);
 		debugPanel = new DebugPanel();
 		menuBar = new ResearchMenuBar(this);
 		waitingBar = new JProgressBar();
 		
-		mainContainer.setLayout(new BorderLayout());
-		
 		tabs.addTab("Topics", topicPanel);
 		tabs.addTab("Debug", debugPanel);
-		mainContainer.add(tabs);
 		
-		add(mainContainer, BorderLayout.CENTER);
+		add(tabs, BorderLayout.CENTER);
 		add(waitingBar, BorderLayout.PAGE_END);
 		
 		waitingBar.setIndeterminate(true);
@@ -89,7 +82,6 @@ public class ResearchGUI extends JFrame{
 	
 	@Override
 	public void dispose() {
-		
 		System.exit(0);
 	}
 	
@@ -113,7 +105,7 @@ public class ResearchGUI extends JFrame{
 	public void loadTopicsFromFile() {
 		JFileChooser fileChooser = new JFileChooser();
 		
-		FileNameExtensionFilter fileFilter = new FileNameExtensionFilter("Text Files", "txt", "text");
+		FileNameExtensionFilter fileFilter = new FileNameExtensionFilter("Text Files (.txt)", "txt", "text");
 		fileChooser.setFileFilter(fileFilter);
 		
 		int choice = fileChooser.showOpenDialog(null);
@@ -182,11 +174,11 @@ public class ResearchGUI extends JFrame{
 		public void handleMessageEvent(ResearchMessage e) {
 			if(e.getType() == ResearchMessage.Type.TOPIC_RESEARCHED) {
 				gui.onTopicResearched((String)e.getData());
-			}else if(e.getType() == ResearchMessage.Type.TOPIC_LIST) {
+			} else if(e.getType() == ResearchMessage.Type.TOPIC_LIST) {
 				gui.onRemoteTopicListLoaded((String[])e.getData());
-			}else if(e.getType() == ResearchMessage.Type.RESEARCH_ERROR) {
+			} else if(e.getType() == ResearchMessage.Type.RESEARCH_ERROR) {
 				gui.onTopicError((String)e.getData());
-			}else if(e.getType() == ResearchMessage.Type.EVERNOTE_CONNECTION_ERROR) {
+			} else if(e.getType() == ResearchMessage.Type.EVERNOTE_CONNECTION_ERROR) {
 				gui.onEvernoteError();
 			}
 		}
