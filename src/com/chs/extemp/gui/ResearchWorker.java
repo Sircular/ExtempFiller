@@ -1,6 +1,5 @@
 package com.chs.extemp.gui;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
@@ -8,7 +7,6 @@ import java.util.logging.Logger;
 import com.chs.extemp.ExtempLogger;
 import com.chs.extemp.Researcher;
 import com.chs.extemp.gui.messaging.ResearchMessage;
-import com.chs.extemp.gui.messaging.ResearchMessageListener;
 import com.evernote.edam.type.Tag;
 
 public class ResearchWorker implements Runnable{
@@ -17,10 +15,10 @@ public class ResearchWorker implements Runnable{
 	private Logger logger;
 	private Researcher researcher;
 	
-	private List<ResearchMessageListener> listeners;
+	private ResearchGUI.GUIResearchListener researchListener;
 	
-	public ResearchWorker() {
-		listeners = new ArrayList<ResearchMessageListener>();
+	public ResearchWorker(ResearchGUI.GUIResearchListener researchListener) {
+		this.researchListener = researchListener;
 	}
 
 	@Override
@@ -72,10 +70,6 @@ public class ResearchWorker implements Runnable{
 		}
 	}
 	
-	public void addListener(ResearchMessageListener l) {
-		listeners.add(l);
-	}
-	
 	private void handleTopic() throws InterruptedException {
 		String topic = topicQueue.take();
 		try {
@@ -89,9 +83,7 @@ public class ResearchWorker implements Runnable{
 	
 	private void dispatchEvent(ResearchMessage.Type eventType, Object data) {
 		ResearchMessage event = new ResearchMessage(this, eventType, data);
-		for(int i = 0; i < listeners.size(); i++) {
-			listeners.get(i).handleMessageEvent(event);
-		}
+		researchListener.handleMessageEvent(event);
 	}
 
 }

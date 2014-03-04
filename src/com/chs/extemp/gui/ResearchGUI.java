@@ -2,12 +2,12 @@ package com.chs.extemp.gui;
 
 import java.awt.BorderLayout;
 import java.io.File;
+import java.util.EventListener;
 import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -17,7 +17,6 @@ import com.chs.extemp.TopicFileReader;
 import com.chs.extemp.gui.debug.DebugPanel;
 import com.chs.extemp.gui.menu.ResearchMenuBar;
 import com.chs.extemp.gui.messaging.ResearchMessage;
-import com.chs.extemp.gui.messaging.ResearchMessageListener;
 import com.chs.extemp.gui.topicview.TopicListItem;
 import com.chs.extemp.gui.topicview.TopicPanel;
 
@@ -28,7 +27,7 @@ public class ResearchGUI extends JFrame{
 	public static final int GUI_HEIGHT = 600;
 	
 	private ResearchWorker researchWorker;
-	private GUIMessageListener listener;
+	private GUIResearchListener listener;
 	private Logger logger;
 	
 	private TopicPanel topicPanel;
@@ -40,12 +39,13 @@ public class ResearchGUI extends JFrame{
 		logger = ExtempLogger.getLogger();
 		logger.info("Initialized GUI.");
 		
-		// initialize research worker
-		researchWorker = new ResearchWorker();
-		Thread researchThread = new Thread(researchWorker);
+		// initialize research message listener
 		
-		listener = new GUIMessageListener(this);
-		researchWorker.addListener(listener);
+		listener = new GUIResearchListener(this);
+		
+		// initialize research worker
+		researchWorker = new ResearchWorker(listener);
+		Thread researchThread = new Thread(researchWorker);
 		researchThread.start();
 		
 		init();
@@ -162,15 +162,14 @@ public class ResearchGUI extends JFrame{
 		JOptionPane.showMessageDialog(null, error);
 	}
 	
-	public class GUIMessageListener implements ResearchMessageListener {
+	public class GUIResearchListener implements EventListener {
 		
 		private ResearchGUI gui;
 		
-		public GUIMessageListener(ResearchGUI gui) {
+		public GUIResearchListener(ResearchGUI gui) {
 			this.gui = gui;
 		}
 
-		@Override
 		public void handleMessageEvent(ResearchMessage e) {
 			if(e.getType() == ResearchMessage.Type.TOPIC_RESEARCHED) {
 				gui.onTopicResearched((String)e.getData());
