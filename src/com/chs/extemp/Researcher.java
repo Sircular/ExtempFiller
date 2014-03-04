@@ -114,6 +114,13 @@ public class Researcher {
 						logger.info("Filetype is RTF. Excluding page.");
 						continue;
 					}
+					// we don't want to use wikipedia as a source
+					// (possibly use some sources cited by the article?)
+					if(gResult.getUrl().contains("wikipedia.org")) {
+						logger.info("This page is a wikipedia article (generally considered " + 
+								"innacurate.) Excluding page.");
+						continue;
+					}
 					totalSearchResults.add(gResult);
 				}
 
