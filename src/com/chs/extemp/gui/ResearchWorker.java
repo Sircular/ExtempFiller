@@ -86,6 +86,5 @@ public class ResearchWorker implements Runnable {
 
 	public void removeTopicFromQueue(String topic) {
 		topicQueue.remove(topic);
-		
 	}
 }

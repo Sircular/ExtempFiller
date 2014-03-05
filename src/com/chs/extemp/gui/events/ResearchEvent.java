@@ -6,15 +6,11 @@ import java.util.EventObject;
 public class ResearchEvent extends EventObject {
 
 	public enum Type {
-		// these types are used server-to-client
 		TOPIC_RESEARCHING,
 		TOPIC_RESEARCHED,
 		TOPIC_LIST_LOADED,
 		RESEARCH_ERROR,
 		EVERNOTE_CONNECTION_ERROR,
-		// no client-to-server message types
-		// (let's burn that bridge when we
-		// come to it)
 	}
 
 	private Type type;
