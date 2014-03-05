@@ -84,8 +84,7 @@ public class ResearchWorker implements Runnable {
 		}
 	}
 
-	public void removeTopicFromQueue(String topic) {
-		topicQueue.remove(topic);
-		
+	public boolean removeTopicFromQueue(String topic) {
+		return topicQueue.remove(topic);
 	}
 }

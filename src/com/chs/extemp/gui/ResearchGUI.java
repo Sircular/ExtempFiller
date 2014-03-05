@@ -102,9 +102,14 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		if(topic.getState() == TopicListItem.State.NOT_RESEARCHED) {
 			//simply removes the topic from the queue
 			
-			topicPanel.removeTopic(topic.getTopic());
-			researchWorker.removeTopicFromQueue(topic.getTopic());
-			return;
+			if(researchWorker.removeTopicFromQueue(topic.getTopic())) {
+				topicPanel.removeTopic(topic.getTopic());
+				logger.info("Removed topic from queue: " + topic.getTopic());
+			} else {
+				displayError("Unable to remove message from queue (see debug for details)");
+				logger.severe("Error removing topic from queue: " + topic.getTopic() + 
+						" (topic already being researched)");
+			}
 		} else {
 			
 			// deletes the data from the server
