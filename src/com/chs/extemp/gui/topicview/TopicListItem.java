@@ -2,6 +2,7 @@ package com.chs.extemp.gui.topicview;
 
 public class TopicListItem {
 	public static enum State {
+		DELETING,
 		RESEARCHING,
 		NOT_RESEARCHED,
 		RESEARCHED,
@@ -31,6 +32,9 @@ public class TopicListItem {
 	public String toString() {
 		String stateString = "";
 		switch (this.currentState) {
+			case DELETING:
+				stateString = "Deleting...";
+				break;
 			case NOT_RESEARCHED:
 				stateString = "Not Researched";
 				break;

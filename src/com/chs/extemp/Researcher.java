@@ -136,7 +136,6 @@ public class Researcher {
 		return results;
 	}
 
-
 	private void checkRateTimer() throws InterruptedException {
 		if (Calendar.getInstance().getTimeInMillis() < rateTimer + TIMER) {
 			Thread.sleep(rateTimer + TIMER - Calendar.getInstance().getTimeInMillis());

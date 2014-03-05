@@ -3,6 +3,7 @@ package com.chs.extemp.gui;
 import com.chs.extemp.ExtempLogger;
 import com.chs.extemp.TopicFileReader;
 import com.chs.extemp.gui.debug.DebugPanel;
+import com.chs.extemp.gui.events.ResearchCommand;
 import com.chs.extemp.gui.events.ResearchEvent;
 import com.chs.extemp.gui.menu.ResearchMenuBar;
 import com.chs.extemp.gui.topicview.TopicListItem;
@@ -23,7 +24,6 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	public static final int GUI_HEIGHT = 600;
 
 	private ResearchWorker researchWorker;
-	private Thread researchWorkerThread;
 	private Logger logger;
 
 	private TopicPanel topicPanel;
@@ -37,14 +37,12 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 
 		researchWorker = new ResearchWorker();
 		researchWorker.registerListener(this);
-		researchWorkerThread = new Thread(researchWorker);
 
 		// initialize GUI
 		init();
 		pack();
-
-		researchWorkerThread.start();
 		setVisible(true);
+		researchWorker.startWorkerThreads();
 	}
 
 	public void init() {
@@ -86,33 +84,33 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 
 	@Override
 	public void dispose() {
-		researchWorkerThread.interrupt();
+		researchWorker.interruptWorkerThreads();
 		System.exit(0);
 	}
 
 	public void addTopic(String topic) {
 		topicPanel.addTopic(topic);
-		researchWorker.enqueueTopic(topic);
+		researchWorker.enqueueCommand(
+				new ResearchCommand(
+						this,
+						ResearchCommand.Type.RESEARCH_TOPIC,
+						topic
+				)
+		);
 	}
 
 	public void deleteSelectedTopic() {
 		TopicListItem topic = topicPanel.getSelectedTopic();
-		if (topic.getState() == TopicListItem.State.NOT_RESEARCHED) {
-			//simply removes the topic from the queue
-			
-			if(researchWorker.removeTopicFromQueue(topic.getTopic())) {
-				topicPanel.removeTopic(topic.getTopic());
-				logger.info("Removed topic from queue: " + topic.getTopic());
-			} else {
-				displayError("Unable to remove message from queue (see debug for details)");
-				logger.severe("Error removing topic from queue: " + topic.getTopic() + 
-						" (topic already being researched)");
-			}
-
+		if (topic.getState() != TopicListItem.State.RESEARCHING) {
+			researchWorker.enqueueCommand(
+					new ResearchCommand(
+							this,
+							ResearchCommand.Type.DELETE_TOPIC,
+							topicPanel.getSelectedTopic().getTopic()
+					)
+			);
 		} else {
-			displayError("Deletion of a topic through the client is not yet implemented.\n\n" +
-					"Please go to evernote.com, sign into the web interface, and delete " +
-					"the data manually.");
+			displayError("Please wait until the topic finishes being researched.");
 		}
 	}
 
@@ -129,7 +127,13 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 			for (String currentTopic : TopicFileReader.readTopicFile(path)) {
 				if (!topicPanel.hasTopic(currentTopic)) {
 					topicPanel.addTopic(currentTopic);
-					researchWorker.enqueueTopic(currentTopic);
+					researchWorker.enqueueCommand(
+							new ResearchCommand(
+									this,
+									ResearchCommand.Type.RESEARCH_TOPIC,
+									currentTopic
+							)
+					);
 				}
 			}
 		}
@@ -140,8 +144,15 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	}
 
 	public void onTopicResearched(String topic) {
-		// more code
 		topicPanel.setTopicState(topic, TopicListItem.State.RESEARCHED);
+	}
+
+	public void onTopicDeleting(String topic) {
+		topicPanel.setTopicState(topic, TopicListItem.State.DELETING);
+	}
+
+	public void onTopicDeleted(String topic) {
+		topicPanel.removeTopic(topic);
 	}
 
 	public void onRemoteTopicListLoaded(String[] topics) {
@@ -181,6 +192,10 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 			onTopicResearching((String) e.getData());
 		} else if (e.getType() == ResearchEvent.Type.TOPIC_RESEARCHED) {
 			onTopicResearched((String) e.getData());
+		} else if (e.getType() == ResearchEvent.Type.TOPIC_DELETING) {
+			onTopicDeleting((String) e.getData());
+		} else if (e.getType() == ResearchEvent.Type.TOPIC_DELETED) {
+			onTopicDeleted((String) e.getData());
 		} else if (e.getType() == ResearchEvent.Type.TOPIC_LIST_LOADED) {
 			onRemoteTopicListLoaded((String[]) e.getData());
 		} else if (e.getType() == ResearchEvent.Type.RESEARCH_ERROR) {

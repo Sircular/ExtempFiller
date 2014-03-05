@@ -46,6 +46,8 @@ public class EvernoteClient {
 
 	private Logger logger = ExtempLogger.getLogger();
 
+	private Object evernoteLock = new Object();
+
 	/**
 	 * Creates a new instance of an Evernote client.
 	 *
@@ -83,7 +85,7 @@ public class EvernoteClient {
 	 * @return A list of notes held on the server matching the filter
 	 * @throws Exception All exceptions are thrown to the calling program
 	 */
-	public List<Note> getNotes(final NoteFilter filter, final int amount) throws Exception {
+	public synchronized List<Note> getNotes(final NoteFilter filter, final int amount) throws Exception {
 		try {
 			// Always check the rate timer to make sure we do not overburden the server
 			checkRateTimer();
@@ -153,7 +155,7 @@ public class EvernoteClient {
 	 * @return A list of the notebooks held on the server
 	 * @throws Exception All exceptions are thrown to the calling program
 	 */
-	public List<Notebook> getNotebooks() throws Exception {
+	public synchronized List<Notebook> getNotebooks() throws Exception {
 		try {
 			// Always check the rate timer to make sure we do not overburden the server
 			checkRateTimer();
@@ -214,7 +216,7 @@ public class EvernoteClient {
 	 * @return A list of the tags held on the server
 	 * @throws Exception All exceptions are thrown to the calling program
 	 */
-	public List<Tag> getTags() throws Exception {
+	public synchronized List<Tag> getTags() throws Exception {
 		try {
 			checkRateTimer();
 			return noteStore.listTags();
@@ -259,7 +261,7 @@ public class EvernoteClient {
 	 * @return The note created on the server
 	 * @throws Exception All exceptions are thrown to the calling program
 	 */
-	public Note createHTMLNote(final String link, final Notebook notebook, final List<Tag> tags) throws Exception {
+	public synchronized Note createHTMLNote(final String link, final Notebook notebook, final List<Tag> tags) throws Exception {
 		// Translate HTML to ENML
 		HtmlToENMLifier translator = new HtmlToENMLifier(link);
 
@@ -325,8 +327,8 @@ public class EvernoteClient {
 	 * @return The note created on the server
 	 * @throws Exception All exceptions are thrown ot hte calling program
 	 */
-	private Note createTroubledHTMLNote(final HtmlToENMLifier translator, final EDAMUserException edam,
-	                                    final Notebook notebook, final List<Tag> tags) throws Exception {
+	private synchronized Note createTroubledHTMLNote(final HtmlToENMLifier translator, final EDAMUserException edam,
+	                                                 final Notebook notebook, final List<Tag> tags) throws Exception {
 		// Try to fix the html to enml error
 		translator.fixEdam(edam);
 		// Finish the translation
@@ -392,7 +394,7 @@ public class EvernoteClient {
 	 * @return The note created on the server
 	 * @throws Exception All exceptions are thrown to the calling program
 	 */
-	public Note createTextNote(final String title, final String content, final Notebook notebook, final List<Tag> tags) throws Exception {
+	public synchronized Note createTextNote(final String title, final String content, final Notebook notebook, final List<Tag> tags) throws Exception {
 		// Create a local note
 		final Note note = new Note();
 
@@ -438,13 +440,23 @@ public class EvernoteClient {
 	}
 
 	/**
+	 * Deletes a note on the Evernote servers
+	 *
+	 * @param note Note to delete
+	 * @throws Exception All exceptions are thrown to the calling program
+	 */
+	public synchronized void deleteNote(final Note note) throws Exception {
+		noteStore.expungeNote(note.getGuid());
+	}
+
+	/**
 	 * Creates a notebook on the Evernote servers with a given title
 	 *
 	 * @param desiredTitle The title to name the notebook
 	 * @return The notebook created on the server
 	 * @throws Exception All exceptions are thrown to the calling program
 	 */
-	public Notebook createNotebook(final String desiredTitle) throws Exception {
+	public synchronized Notebook createNotebook(final String desiredTitle) throws Exception {
 		// Create a local notebook
 		final Notebook notebook = new Notebook();
 		// Set the title; the title can be 100 characters max
@@ -485,13 +497,23 @@ public class EvernoteClient {
 	}
 
 	/**
+	 * Deletes a notebook on the Evernote servers
+	 *
+	 * @param notebook Notebook to delete
+	 * @throws Exception All exceptions are thrown to the calling program
+	 */
+	public synchronized void deleteNotebook(final Notebook notebook) throws Exception {
+		noteStore.expungeNotebook(notebook.getGuid());
+	}
+
+	/**
 	 * Creates a tag on the Evernote servers with a given title
 	 *
 	 * @param desiredName The name to title the tag
 	 * @return The tag created on the server
 	 * @throws Exception All exceptions are thrown to the calling program
 	 */
-	public Tag createTag(final String desiredName) throws Exception {
+	public synchronized Tag createTag(final String desiredName) throws Exception {
 		// Create a local tag
 		final Tag tag = new Tag();
 
@@ -543,6 +565,22 @@ public class EvernoteClient {
 	}
 
 	/**
+	 * Deletes a tag on the Evernote servers. Deletes any notes marked with given tag
+	 *
+	 * @param tag Tag to delete
+	 * @throws Exception All exceptions are thrown to the calling program
+	 */
+	public synchronized void deleteTag(final Tag tag) throws Exception {
+		List<Note> notes;
+		while ((notes = getNotesByTag(tag, 100)).size() != 0) {
+			for (Note note : notes) {
+				deleteNote(note);
+			}
+		}
+		noteStore.expungeTag(tag.getGuid());
+	}
+
+	/**
 	 * Regulates how often the api is called
 	 *
 	 * @throws InterruptedException Interrupted whilst sleeping
@@ -553,6 +591,7 @@ public class EvernoteClient {
 		}
 		rateTimer = Calendar.getInstance().getTimeInMillis();
 	}
+
 
 }
 
