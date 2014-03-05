@@ -141,7 +141,6 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		menuBar.setContentsEnabled(true);
 		topicPanel.setContentsEnabled(true);
 		topicPanel.getAddTopicPanel().requestFocusInWindow();
-		invalidate();
 		validate();
 		repaint();
 		for (String topic : topics) {
