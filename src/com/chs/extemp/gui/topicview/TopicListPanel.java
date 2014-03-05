@@ -32,7 +32,7 @@ public class TopicListPanel extends JPanel {
 
 		topicList.addSelectionListener(new TopicSelectionListener(deleteButton));
 		deleteButton.addActionListener(new DeleteButtonListener(gui));
-		
+
 		setLayout(new BorderLayout());
 
 		topicListScroll = new JScrollPane(topicList);
@@ -57,8 +57,7 @@ public class TopicListPanel extends JPanel {
 	}
 
 	public TopicListItem getSelectedTopic() {
-		TopicListItem topicItem = (TopicListItem) topicList.getSelectedValue();
-		return topicItem;
+		return (TopicListItem) topicList.getSelectedValue();
 	}
 
 	public void removeTopic(String topic) {
@@ -79,7 +78,7 @@ public class TopicListPanel extends JPanel {
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
 			TopicListItem topicItem = getSelectedTopic();
-			if(topicItem == null) {
+			if (topicItem == null) {
 				deleteButton.setEnabled(false);
 				return;
 			}
