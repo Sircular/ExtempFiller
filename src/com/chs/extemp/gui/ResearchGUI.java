@@ -95,15 +95,25 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		researchWorker.enqueueTopic(topic);
 	}
 
-	public void removeSelectedTopic() {
+	public void deleteSelectedTopic() {
 		// as yet unimplemented on the server side,
 		// so not implemented on the client side.
 		// Currently displays a message box saying
 		// as much.
 
-		JOptionPane.showMessageDialog(null, "Deletion of a topic through the client is not yet implemented.\n\n" +
+		displayError("Deletion of a topic through the client is not yet implemented.\n\n" +
 				"Please go to evernote.com, sign into the web interface, and delete " +
 				"the data manually.");
+	}
+	
+	public void removeSelectedTopicFromQueue() {
+		TopicListItem topic = topicPanel.getSelectedTopic();
+		if(topic.getState() != TopicListItem.State.NOT_RESEARCHED) {
+			displayError("This topic is already being researched and cannot be removed from the queue.");
+			return;
+		}
+		topicPanel.removeTopic(topic.getTopic());
+		researchWorker.removeTopicFromQueue(topic.getTopic());
 	}
 
 	public void loadTopicsFromFile() {
@@ -171,7 +181,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 			onTopicResearching((String) e.getData());
 		} else if (e.getType() == ResearchEvent.Type.TOPIC_RESEARCHED) {
 			onTopicResearched((String) e.getData());
-		} else if (e.getType() == ResearchEvent.Type.TOPIC_LIST) {
+		} else if (e.getType() == ResearchEvent.Type.TOPIC_LIST_LOADED) {
 			onRemoteTopicListLoaded((String[]) e.getData());
 		} else if (e.getType() == ResearchEvent.Type.RESEARCH_ERROR) {
 			onTopicError((String) e.getData());

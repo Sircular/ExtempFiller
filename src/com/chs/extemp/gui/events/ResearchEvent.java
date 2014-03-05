@@ -9,7 +9,7 @@ public class ResearchEvent extends EventObject {
 		// these types are used server-to-client
 		TOPIC_RESEARCHING,
 		TOPIC_RESEARCHED,
-		TOPIC_LIST,
+		TOPIC_LIST_LOADED,
 		RESEARCH_ERROR,
 		EVERNOTE_CONNECTION_ERROR,
 		// no client-to-server message types

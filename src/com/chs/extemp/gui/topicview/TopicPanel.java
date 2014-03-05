@@ -56,4 +56,12 @@ public class TopicPanel extends JPanel {
 	public AddTopicPanel getAddTopicPanel() {
 		return atp;
 	}
+
+	public TopicListItem getSelectedTopic() {
+		return topicListPanel.getSelectedTopic();
+	}
+	
+	public void removeTopic(String topic) {
+		topicListPanel.removeTopic(topic);
+	}
 }

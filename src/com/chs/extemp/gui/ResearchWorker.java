@@ -36,7 +36,7 @@ public class ResearchWorker implements Runnable {
 			for (int i = 0; i < tagList.size(); i++) {
 				tagNames[i] = tagList.get(i).getName();
 			}
-			dispatchEvent(ResearchEvent.Type.TOPIC_LIST, tagNames);
+			dispatchEvent(ResearchEvent.Type.TOPIC_LIST_LOADED, tagNames);
 		} catch (Exception e) {
 			dispatchEvent(ResearchEvent.Type.EVERNOTE_CONNECTION_ERROR, null);
 			return;
@@ -82,5 +82,10 @@ public class ResearchWorker implements Runnable {
 		for (ResearchListener listener : listeners) {
 			listener.handleMessageEvent(event);
 		}
+	}
+
+	public void removeTopicFromQueue(String topic) {
+		topicQueue.remove(topic);
+		
 	}
 }
