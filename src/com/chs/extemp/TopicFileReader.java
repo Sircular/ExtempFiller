@@ -1,8 +1,9 @@
 package com.chs.extemp;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -12,7 +13,7 @@ public class TopicFileReader {
 		Logger logger = ExtempLogger.getLogger();
 		logger.info("Attempting to read topic file...");
 		try {
-			BufferedReader reader = new BufferedReader(new FileReader(filePath));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF-8"));
 			List<String> lines = new ArrayList<String>();
 			String line;
 			while ((line = reader.readLine()) != null) {
