@@ -4,12 +4,12 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionListener;
 
 @SuppressWarnings("serial")
-public class TopicList extends JList<TopicListItem> {
+public class TopicList extends JList {
 
-	private DefaultListModel<TopicListItem> listModel;
+	private DefaultListModel listModel;
 
 	public TopicList() {
-		this.listModel = new DefaultListModel<TopicListItem>();
+		this.listModel = new DefaultListModel();
 		this.setModel(listModel);
 	}
 
@@ -24,7 +24,7 @@ public class TopicList extends JList<TopicListItem> {
 
 	public void removeTopic(String topic) {
 		for (int i = 0; i < listModel.getSize(); i++) {
-			TopicListItem currentTopic = listModel.get(i);
+			TopicListItem currentTopic = (TopicListItem) listModel.get(i);
 			if (currentTopic.getTopic().equals(topic)) {
 				listModel.remove(i);
 				refresh();
@@ -34,7 +34,7 @@ public class TopicList extends JList<TopicListItem> {
 
 	public void setTopicState(String topic, TopicListItem.State state) {
 		for (int i = 0; i < this.listModel.size(); i++) {
-			TopicListItem item = this.listModel.get(i);
+			TopicListItem item = (TopicListItem) this.listModel.get(i);
 			if (item.getTopic().equals(topic)) {
 				item.setState(state);
 				refresh();
@@ -44,7 +44,7 @@ public class TopicList extends JList<TopicListItem> {
 
 	public boolean hasTopic(String topic) {
 		for (int i = 0; i < this.listModel.size(); i++) {
-			TopicListItem item = this.listModel.get(i);
+			TopicListItem item = (TopicListItem) this.listModel.get(i);
 			if (item.getTopic().equals(topic)) {
 				return true;
 			}
