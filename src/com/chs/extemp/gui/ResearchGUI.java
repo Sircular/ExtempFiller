@@ -96,24 +96,28 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	}
 
 	public void deleteSelectedTopic() {
-		// as yet unimplemented on the server side,
-		// so not implemented on the client side.
-		// Currently displays a message box saying
-		// as much.
-
-		displayError("Deletion of a topic through the client is not yet implemented.\n\n" +
-				"Please go to evernote.com, sign into the web interface, and delete " +
-				"the data manually.");
-	}
-	
-	public void removeSelectedTopicFromQueue() {
+		
 		TopicListItem topic = topicPanel.getSelectedTopic();
-		if(topic.getState() != TopicListItem.State.NOT_RESEARCHED) {
-			displayError("This topic is already being researched and cannot be removed from the queue.");
+		
+		if(topic.getState() == TopicListItem.State.NOT_RESEARCHED) {
+			//simply removes the topic from the queue
+			
+			topicPanel.removeTopic(topic.getTopic());
+			researchWorker.removeTopicFromQueue(topic.getTopic());
 			return;
+		} else {
+			
+			// deletes the data from the server
+			// as yet unimplemented on the server side,
+			// so not implemented on the client side.
+			// Currently displays a message box saying
+			// as much.
+		
+	
+			displayError("Deletion of a topic through the client is not yet implemented.\n\n" +
+					"Please go to evernote.com, sign into the web interface, and delete " +
+					"the data manually.");
 		}
-		topicPanel.removeTopic(topic.getTopic());
-		researchWorker.removeTopicFromQueue(topic.getTopic());
 	}
 
 	public void loadTopicsFromFile() {

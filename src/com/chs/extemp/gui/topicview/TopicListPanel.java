@@ -17,7 +17,6 @@ public class TopicListPanel extends JPanel {
 	private TopicList topicList;
 	private JScrollPane topicListScroll;
 	private JButton deleteButton;
-	private JButton queueRemoveButton;
 
 	public TopicListPanel(ResearchGUI gui) {
 		this.gui = gui;
@@ -30,19 +29,9 @@ public class TopicListPanel extends JPanel {
 		topicList = new TopicList();
 		deleteButton = new JButton("Delete");
 		deleteButton.setEnabled(false);
-		queueRemoveButton = new JButton("Remove Topic From Queue");
-		queueRemoveButton.setEnabled(false);
 
-		topicList.addSelectionListener(new TopicSelectionListener(deleteButton, queueRemoveButton));
+		topicList.addSelectionListener(new TopicSelectionListener(deleteButton));
 		deleteButton.addActionListener(new DeleteButtonListener(gui));
-		queueRemoveButton.addActionListener(new QueueRemoveButtonListener(gui));
-		
-		JPanel buttonPanel = new JPanel();
-		
-		buttonPanel.setLayout(new GridLayout(1, 2, 10, 0));
-		
-		buttonPanel.add(deleteButton);
-		buttonPanel.add(queueRemoveButton);
 		
 		setLayout(new BorderLayout());
 
@@ -52,7 +41,7 @@ public class TopicListPanel extends JPanel {
 		topicListScroll.setBorder(BorderFactory.createCompoundBorder(new EmptyBorder(0, 0, 10, 0), new EtchedBorder()));
 
 		add(topicListScroll, BorderLayout.CENTER);
-		add(buttonPanel, BorderLayout.PAGE_END);
+		add(deleteButton, BorderLayout.PAGE_END);
 	}
 
 	public void addTopic(String topic) {
@@ -82,11 +71,9 @@ public class TopicListPanel extends JPanel {
 
 	private class TopicSelectionListener implements ListSelectionListener {
 		private JButton deleteButton;
-		private JButton queueRemoveButton;
 
-		public TopicSelectionListener(JButton deleteButton, JButton queueRemoveButton) {
+		public TopicSelectionListener(JButton deleteButton) {
 			this.deleteButton = deleteButton;
-			this.queueRemoveButton = queueRemoveButton;
 		}
 
 		@Override
@@ -94,11 +81,9 @@ public class TopicListPanel extends JPanel {
 			TopicListItem topicItem = getSelectedTopic();
 			if(topicItem == null) {
 				deleteButton.setEnabled(false);
-				queueRemoveButton.setEnabled(false);
 				return;
 			}
 			deleteButton.setEnabled(e.getFirstIndex() >= 0);
-			queueRemoveButton.setEnabled(topicItem.getState() == TopicListItem.State.NOT_RESEARCHED);
 		}
 	}
 
@@ -112,19 +97,6 @@ public class TopicListPanel extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			gui.deleteSelectedTopic();
-		}
-	}
-	
-	private class QueueRemoveButtonListener implements ActionListener {
-		private ResearchGUI gui;
-		
-		public QueueRemoveButtonListener(ResearchGUI gui) {
-			this.gui = gui;
-		}
-		
-		@Override
-		public void actionPerformed(ActionEvent e){
-			gui.removeSelectedTopicFromQueue();
 		}
 	}
 }
