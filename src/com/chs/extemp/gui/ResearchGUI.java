@@ -9,6 +9,8 @@ import com.chs.extemp.gui.topicview.TopicListItem;
 import com.chs.extemp.gui.topicview.TopicPanel;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
@@ -59,6 +61,14 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 
 		tabs.addTab("Topics", topicPanel);
 		tabs.addTab("Debug", debugPanel);
+		tabs.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				if(((JTabbedPane)(e.getSource())).getSelectedIndex() == 0) {
+					topicPanel.getAddTopicPanel().requestFocusInWindow();
+				}
+			}
+		});
 
 		add(tabs, BorderLayout.CENTER);
 		add(waitingBar, BorderLayout.PAGE_END);
