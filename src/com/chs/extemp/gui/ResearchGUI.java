@@ -64,7 +64,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		tabs.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				if(((JTabbedPane)(e.getSource())).getSelectedIndex() == 0) {
+				if (((JTabbedPane) (e.getSource())).getSelectedIndex() == 0) {
 					topicPanel.getAddTopicPanel().requestFocusInWindow();
 				}
 			}
@@ -141,7 +141,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		menuBar.setContentsEnabled(true);
 		topicPanel.setContentsEnabled(true);
 		topicPanel.getAddTopicPanel().requestFocusInWindow();
-		revalidate();
+		validate();
 		repaint();
 		for (String topic : topics) {
 			topicPanel.addTopic(topic, TopicListItem.State.RESEARCHED);
