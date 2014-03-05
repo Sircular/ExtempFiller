@@ -29,7 +29,9 @@ public class DebugLogHandler extends Handler {
 		Level level = arg0.getLevel();
 		String message = arg0.getMessage();
 		String old_log = debuglog.getText();
+		debuglog.setVisible(false);
 		debuglog.setText(old_log + "[" + level.getName() + "] " + message + "\n");
 		debuglog.setCaretPosition(debuglog.getText().length());
+		debuglog.setVisible(true);
 	}
 }
