@@ -1,65 +1,63 @@
 package com.chs.extemp.gui.topicview;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import javax.swing.event.ListSelectionListener;
 
 @SuppressWarnings("serial")
-public class TopicList extends JList {
-	
-	private DefaultListModel listModel;
-	private ListSelectionModel selectionModel;
-	
+public class TopicList extends JList<TopicListItem> {
+
+	private DefaultListModel<TopicListItem> listModel;
+
 	public TopicList() {
-		init();
-		
+		this.listModel = new DefaultListModel<TopicListItem>();
+		this.setModel(listModel);
 	}
 
-	private void init() {
-		this.listModel = new DefaultListModel();
-		this.selectionModel = getSelectionModel();
-	}
-	
 	public void addTopic(String topic) {
 		listModel.addElement(new TopicListItem(topic, TopicListItem.State.NOT_RESEARCHED));
-		this.setModel(listModel);
 	}
-	
+
 	public void addTopic(String topic, TopicListItem.State state) {
 		listModel.addElement(new TopicListItem(topic, state));
-		this.setModel(listModel);
+		refresh();
 	}
-	
+
 	public void removeTopic(String topic) {
-		for(int i = 0; i < listModel.getSize(); i++) {
-			TopicListItem currentTopic = (TopicListItem) listModel.get(i);
-			if(currentTopic.getTopic() == topic) {
+		for (int i = 0; i < listModel.getSize(); i++) {
+			TopicListItem currentTopic = listModel.get(i);
+			if (currentTopic.getTopic().equals(topic)) {
 				listModel.remove(i);
+				refresh();
 			}
 		}
 	}
-	
+
 	public void setTopicState(String topic, TopicListItem.State state) {
-		for(int i = 0; i < this.listModel.size(); i++) {
-			TopicListItem item = (TopicListItem)this.listModel.get(i);
-			if(item.getTopic() == topic) {
+		for (int i = 0; i < this.listModel.size(); i++) {
+			TopicListItem item = this.listModel.get(i);
+			if (item.getTopic().equals(topic)) {
 				item.setState(state);
+				refresh();
 			}
 		}
 	}
-	
+
 	public boolean hasTopic(String topic) {
-		for(int i = 0; i < this.listModel.size(); i++) {
-			TopicListItem item = (TopicListItem)this.listModel.get(i);
-			if(item.getTopic() == topic) {
+		for (int i = 0; i < this.listModel.size(); i++) {
+			TopicListItem item = this.listModel.get(i);
+			if (item.getTopic().equals(topic)) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
+	public void refresh() {
+		revalidate();
+		repaint();
+	}
+
 	public void addSelectionListener(ListSelectionListener listener) {
-		this.selectionModel.addListSelectionListener(listener);
+		getSelectionModel().addListSelectionListener(listener);
 	}
 }

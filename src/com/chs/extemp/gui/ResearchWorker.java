@@ -1,89 +1,86 @@
 package com.chs.extemp.gui;
 
+import com.chs.extemp.ExtempLogger;
+import com.chs.extemp.Researcher;
+import com.chs.extemp.gui.events.ResearchEvent;
+import com.evernote.edam.type.Tag;
+
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
-import com.chs.extemp.ExtempLogger;
-import com.chs.extemp.Researcher;
-import com.chs.extemp.gui.messaging.ResearchMessage;
-import com.evernote.edam.type.Tag;
+public class ResearchWorker implements Runnable {
 
-public class ResearchWorker implements Runnable{
-	
 	private LinkedBlockingQueue<String> topicQueue;
+	private LinkedBlockingQueue<ResearchListener> listeners;
 	private Logger logger;
 	private Researcher researcher;
-	
-	private ResearchGUI.GUIResearchListener researchListener;
-	
-	public ResearchWorker(ResearchGUI.GUIResearchListener researchListener) {
-		this.researchListener = researchListener;
+
+	public ResearchWorker() {
+		logger = ExtempLogger.getLogger();
+		topicQueue = new LinkedBlockingQueue<String>();
+		listeners = new LinkedBlockingQueue<ResearchListener>();
 	}
 
 	@Override
-	public void run(){
-		logger = ExtempLogger.getLogger();
+	public void run() {
 		logger.info("Starting research thread...");
-		
-		topicQueue = new LinkedBlockingQueue<String>();
-		researcher = new Researcher();
-		
-		// check to see if the initialization was
-		// successful; no need to do anything more
-		// if not.
-		
-		if(!researcher.isUsable()) {
-			dispatchEvent(ResearchMessage.Type.EVERNOTE_CONNECTION_ERROR, null);
+		try {
+			researcher = new Researcher();
+
+			// get the list of already researched tags
+			// and send them to the GUI so they can be
+			// added to the list.
+			List<Tag> tagList = researcher.getEvernoteClient().getTags();
+			String[] tagNames = new String[tagList.size()];
+			for (int i = 0; i < tagList.size(); i++) {
+				tagNames[i] = tagList.get(i).getName();
+			}
+			dispatchEvent(ResearchEvent.Type.TOPIC_LIST, tagNames);
+		} catch (Exception e) {
+			dispatchEvent(ResearchEvent.Type.EVERNOTE_CONNECTION_ERROR, null);
 			return;
 		}
-		
-		// get the list of already researched tags
-		// and send them to the GUI so they can be
-		// added to the list.
-		List<Tag> taglist = researcher.getCurrentTags();
-		String[] tagnames = new String[taglist.size()];
-		for(int i = 0; i < taglist.size(); i++) {
-			tagnames[i] = taglist.get(i).getName();
-		}
-		
-		dispatchEvent(ResearchMessage.Type.TOPIC_LIST, tagnames);
-		
-		if(!researcher.isUsable()) {
-			return;
-		}
-		while(true) {
+		while (true) {
 			try {
 				handleTopic();
+			} catch (InterruptedException ie) {
+				return;
 			} catch (Exception e) {
 				logger.severe("Error researching topic.");
 			}
 		}
 	}
-	
+
+	public void registerListener(ResearchListener listener) {
+		listeners.add(listener);
+	}
+
 	public void enqueueTopic(String topic) {
-		try { 
+		try {
 			topicQueue.add(topic);
 			logger.info("Added topic to research queue.");
 		} catch (Exception e) {
 			logger.severe("Error adding topic to research queue.");
 		}
 	}
-	
+
 	private void handleTopic() throws InterruptedException {
 		String topic = topicQueue.take();
 		try {
+			dispatchEvent(ResearchEvent.Type.TOPIC_RESEARCHING, topic);
 			researcher.researchTopic(topic);
-			dispatchEvent(ResearchMessage.Type.TOPIC_RESEARCHED, topic);
+			dispatchEvent(ResearchEvent.Type.TOPIC_RESEARCHED, topic);
 		} catch (Exception e) {
 			logger.severe("Error researching topic \"" + topic + "\": " + e);
-			dispatchEvent(ResearchMessage.Type.RESEARCH_ERROR, topic);
+			dispatchEvent(ResearchEvent.Type.RESEARCH_ERROR, topic);
 		}
 	}
-	
-	private void dispatchEvent(ResearchMessage.Type eventType, Object data) {
-		ResearchMessage event = new ResearchMessage(this, eventType, data);
-		researchListener.handleMessageEvent(event);
-	}
 
+	private void dispatchEvent(ResearchEvent.Type eventType, Object data) {
+		ResearchEvent event = new ResearchEvent(this, eventType, data);
+		for (ResearchListener listener : listeners) {
+			listener.handleMessageEvent(event);
+		}
+	}
 }

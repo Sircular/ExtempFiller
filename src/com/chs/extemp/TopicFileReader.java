@@ -14,8 +14,8 @@ public class TopicFileReader {
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(filePath));
 			List<String> lines = new ArrayList<String>();
-			String line = "";
-			while((line = reader.readLine()) != null) {
+			String line;
+			while ((line = reader.readLine()) != null) {
 				lines.add(line);
 			}
 			reader.close();
