@@ -2,6 +2,7 @@ package com.chs.extemp.gui.events;
 
 import java.util.EventObject;
 
+@SuppressWarnings("serial")
 public class ResearchCommand extends EventObject {
 	public enum Type {
 		RESEARCH_TOPIC,

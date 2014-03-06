@@ -132,7 +132,6 @@ public class ResearchWorker {
 		} catch (Exception e) {
 			dispatchEvent(ResearchEvent.Type.RESEARCH_ERROR, topic);
 			logger.log(Level.SEVERE, "Could not remove topic.", e);
-			e.printStackTrace();
 		}
 		return false;
 	}

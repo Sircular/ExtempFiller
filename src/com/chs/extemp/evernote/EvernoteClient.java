@@ -46,8 +46,6 @@ public class EvernoteClient {
 
 	private Logger logger = ExtempLogger.getLogger();
 
-	private Object evernoteLock = new Object();
-
 	/**
 	 * Creates a new instance of an Evernote client.
 	 *
