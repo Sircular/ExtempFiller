@@ -41,8 +41,10 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		// initialize GUI
 		init();
 		pack();
+		setGUIEnabled(false);
 		setVisible(true);
 		researchWorker.startWorkerThreads();
+		loadTopicsFromEvernote();
 	}
 
 	public void init() {
@@ -69,14 +71,8 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		});
 
 		add(tabs, BorderLayout.CENTER);
-		add(waitingBar, BorderLayout.PAGE_END);
-
-		waitingBar.setIndeterminate(true);
 
 		setJMenuBar(menuBar);
-
-		topicPanel.setContentsEnabled(false);
-		menuBar.setContentsEnabled(false);
 
 		setPreferredSize(new Dimension(GUI_WIDTH, GUI_HEIGHT));
 
@@ -113,6 +109,12 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 			displayError("Please wait until the topic finishes being researched.");
 		}
 	}
+	
+	public void refreshTopics() {
+		setGUIEnabled(false);
+		topicPanel.clearTopicList();
+		loadTopicsFromEvernote();
+	}
 
 	public void loadTopicsFromFile() {
 		JFileChooser fileChooser = new JFileChooser();
@@ -138,6 +140,10 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 			}
 		}
 	}
+	
+	private void loadTopicsFromEvernote() {
+		researchWorker.enqueueCommand(new ResearchCommand(this, ResearchCommand.Type.LOAD_TOPICS, null));
+	}
 
 	public void onTopicResearching(String topic) {
 		topicPanel.setTopicState(topic, TopicListItem.State.RESEARCHING);
@@ -158,12 +164,11 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	public void onRemoteTopicListLoaded(String[] topics) {
 		// used to populate the list of
 		// already-researched topics
-		remove(waitingBar);
-		menuBar.setContentsEnabled(true);
-		topicPanel.setContentsEnabled(true);
+		
+		topicPanel.clearTopicList();
 		topicPanel.getAddTopicPanel().requestFocusInWindow();
-		validate();
-		repaint();
+		setGUIEnabled(true);
+
 		for (String topic : topics) {
 			topicPanel.addTopic(topic, TopicListItem.State.RESEARCHED);
 		}
@@ -202,6 +207,27 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 			onTopicError((String) e.getData());
 		} else if (e.getType() == ResearchEvent.Type.EVERNOTE_CONNECTION_ERROR) {
 			onEvernoteError();
+		}
+	}
+	
+	private void setGUIEnabled(boolean state) {
+		if (state) {
+			remove(waitingBar);
+			
+			topicPanel.setContentsEnabled(true);
+			menuBar.setContentsEnabled(true);
+			pack();
+			validate();
+			repaint();
+		} else {
+			add(waitingBar, BorderLayout.PAGE_END);
+			waitingBar.setIndeterminate(true);
+			
+			topicPanel.setContentsEnabled(false);
+			menuBar.setContentsEnabled(false);
+			pack();
+			validate();
+			repaint();
 		}
 	}
 }

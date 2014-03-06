@@ -17,6 +17,7 @@ public class TopicListPanel extends JPanel {
 	private TopicList topicList;
 	private JScrollPane topicListScroll;
 	private JButton deleteButton;
+	private JButton refreshButton;
 
 	public TopicListPanel(ResearchGUI gui) {
 		this.gui = gui;
@@ -29,9 +30,18 @@ public class TopicListPanel extends JPanel {
 		topicList = new TopicList();
 		deleteButton = new JButton("Delete");
 		deleteButton.setEnabled(false);
+		refreshButton = new JButton("Refresh");
+		refreshButton.setEnabled(false);
 
 		topicList.addSelectionListener(new TopicSelectionListener(deleteButton));
 		deleteButton.addActionListener(new DeleteButtonListener(gui));
+		refreshButton.addActionListener(new RefreshButtonListener(gui));
+		
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new GridLayout(1, 2, 10, 0));
+		
+		buttonPanel.add(deleteButton);
+		buttonPanel.add(refreshButton);
 
 		setLayout(new BorderLayout());
 
@@ -41,7 +51,12 @@ public class TopicListPanel extends JPanel {
 		topicListScroll.setBorder(BorderFactory.createCompoundBorder(new EmptyBorder(0, 0, 10, 0), new EtchedBorder()));
 
 		add(topicListScroll, BorderLayout.CENTER);
-		add(deleteButton, BorderLayout.PAGE_END);
+		add(buttonPanel, BorderLayout.PAGE_END);
+	}
+	
+	public void setContentsEnabled(boolean state) {
+		deleteButton.setEnabled(state && (getSelectedTopic() != null));
+		refreshButton.setEnabled(state);
 	}
 
 	public void addTopic(String topic) {
@@ -66,6 +81,10 @@ public class TopicListPanel extends JPanel {
 
 	public boolean hasTopic(String topic) {
 		return topicList.hasTopic(topic);
+	}
+	
+	public void clearTopicList() {
+		topicList.clearTopicList();
 	}
 
 	private class TopicSelectionListener implements ListSelectionListener {
@@ -96,6 +115,19 @@ public class TopicListPanel extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			gui.deleteSelectedTopic();
+		}
+	}
+	
+	private class RefreshButtonListener implements ActionListener {
+		private ResearchGUI gui;
+
+		public RefreshButtonListener(ResearchGUI gui) {
+			this.gui = gui;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			gui.refreshTopics();
 		}
 	}
 }

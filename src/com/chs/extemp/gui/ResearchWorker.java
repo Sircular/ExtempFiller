@@ -37,16 +37,6 @@ public class ResearchWorker {
 		logger.info("Starting worker threads...");
 		try {
 			researcher = new Researcher();
-
-			// get the list of already researched tags
-			// and send them to the GUI so they can be
-			// added to the list.
-			List<Tag> tagList = researcher.getEvernoteClient().getTags();
-			String[] tagNames = new String[tagList.size()];
-			for (int i = 0; i < tagList.size(); i++) {
-				tagNames[i] = tagList.get(i).getName();
-			}
-			dispatchEvent(ResearchEvent.Type.TOPIC_LIST_LOADED, tagNames);
 		} catch (Exception e) {
 			dispatchEvent(ResearchEvent.Type.EVERNOTE_CONNECTION_ERROR, null);
 			return;
@@ -75,6 +65,17 @@ public class ResearchWorker {
 					dispatchEvent(ResearchEvent.Type.TOPIC_DELETING, command.getTopic());
 					deleteQueue.put(command.getTopic());
 					logger.info("Added topic to deletion queue.");
+					break;
+				case LOAD_TOPICS:
+					Thread topicLoaderThread = new Thread(
+						new Runnable() {
+							@Override
+							public void run() {
+								loadTopics();
+							}
+						}
+					);
+					topicLoaderThread.start();
 					break;
 			}
 		} catch (Exception e) {
@@ -145,6 +146,23 @@ public class ResearchWorker {
 		} catch (Exception e) {
 			logger.severe("Error researching topic \"" + topic + "\": " + e);
 			dispatchEvent(ResearchEvent.Type.RESEARCH_ERROR, topic);
+		}
+		return false;
+	}
+	
+	private boolean loadTopics() {
+		try {
+			logger.info("Attempting to load topic list...");
+			List<Tag> tagList = researcher.getEvernoteClient().getTags();
+			String[] tagNames = new String[tagList.size()];
+			for (int i = 0; i < tagList.size(); i++) {
+				tagNames[i] = tagList.get(i).getName();
+			}
+			logger.info("Loaded topic list from Evernote.");
+			dispatchEvent(ResearchEvent.Type.TOPIC_LIST_LOADED, tagNames);
+		} catch (Exception e) {
+			logger.severe("Error while loading topic list: " + e);
+			dispatchEvent(ResearchEvent.Type.EVERNOTE_CONNECTION_ERROR, null);
 		}
 		return false;
 	}

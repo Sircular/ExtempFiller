@@ -51,6 +51,12 @@ public class TopicList extends JList {
 		}
 		return false;
 	}
+	
+	public void clearTopicList() {
+		listModel = new DefaultListModel();
+		setModel(listModel);
+		refresh();
+	}
 
 	public void refresh() {
 		validate();

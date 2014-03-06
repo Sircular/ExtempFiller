@@ -33,7 +33,7 @@ public class TopicPanel extends JPanel {
 	}
 
 	public void setContentsEnabled(boolean state) {
-		topicListPanel.setEnabled(state);
+		topicListPanel.setContentsEnabled(state);
 		atp.setContentsEnabled(state);
 	}
 
@@ -63,5 +63,9 @@ public class TopicPanel extends JPanel {
 	
 	public void removeTopic(String topic) {
 		topicListPanel.removeTopic(topic);
+	}
+	
+	public void clearTopicList() {
+		topicListPanel.clearTopicList();
 	}
 }
