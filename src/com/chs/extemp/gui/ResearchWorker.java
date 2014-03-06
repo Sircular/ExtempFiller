@@ -67,15 +67,14 @@ public class ResearchWorker {
 					logger.info("Added topic to deletion queue.");
 					break;
 				case LOAD_TOPICS:
-					Thread topicLoaderThread = new Thread(
+					new Thread(
 						new Runnable() {
 							@Override
 							public void run() {
 								loadTopics();
 							}
 						}
-					);
-					topicLoaderThread.start();
+					).start();
 					break;
 			}
 		} catch (Exception e) {

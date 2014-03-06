@@ -1,23 +1,27 @@
 package com.chs.extemp.gui.topicview;
 
-import com.chs.extemp.gui.ResearchGUI;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
+import com.chs.extemp.gui.ActionButton;
+import com.chs.extemp.gui.ResearchGUI;
 
 @SuppressWarnings("serial")
 public class TopicListPanel extends JPanel {
 	private ResearchGUI gui;
 	private TopicList topicList;
 	private JScrollPane topicListScroll;
-	private JButton deleteButton;
-	private JButton refreshButton;
+	private ActionButton deleteButton;
+	private ActionButton refreshButton;
 
 	public TopicListPanel(ResearchGUI gui) {
 		this.gui = gui;
@@ -28,14 +32,22 @@ public class TopicListPanel extends JPanel {
 		setBorder(new EmptyBorder(0, 0, 10, 0));
 
 		topicList = new TopicList();
-		deleteButton = new JButton("Delete");
+		deleteButton = new ActionButton("Delete", new Runnable() {
+			public void run() {
+				gui.deleteSelectedTopic();				
+			}
+		});
+		refreshButton = new ActionButton("Refresh", new Runnable() {
+			public void run() {
+				gui.refreshTopics();
+			}
+		});
+		
+		
 		deleteButton.setEnabled(false);
-		refreshButton = new JButton("Refresh");
 		refreshButton.setEnabled(false);
 
 		topicList.addSelectionListener(new TopicSelectionListener(deleteButton));
-		deleteButton.addActionListener(new DeleteButtonListener(gui));
-		refreshButton.addActionListener(new RefreshButtonListener(gui));
 		
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new GridLayout(1, 2, 10, 0));
@@ -105,29 +117,4 @@ public class TopicListPanel extends JPanel {
 		}
 	}
 
-	private class DeleteButtonListener implements ActionListener {
-		private ResearchGUI gui;
-
-		public DeleteButtonListener(ResearchGUI gui) {
-			this.gui = gui;
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			gui.deleteSelectedTopic();
-		}
-	}
-	
-	private class RefreshButtonListener implements ActionListener {
-		private ResearchGUI gui;
-
-		public RefreshButtonListener(ResearchGUI gui) {
-			this.gui = gui;
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			gui.refreshTopics();
-		}
-	}
 }

@@ -53,8 +53,7 @@ public class TopicList extends JList {
 	}
 	
 	public void clearTopicList() {
-		listModel = new DefaultListModel();
-		setModel(listModel);
+		listModel.clear();
 		refresh();
 	}
 
