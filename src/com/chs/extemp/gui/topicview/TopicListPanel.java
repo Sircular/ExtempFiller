@@ -76,10 +76,6 @@ public class TopicListPanel extends JPanel {
 		topicListScroll.setEnabled(state);
 	}
 
-	public void addTopic(final String topic) {
-		addTopic(topic, TopicListItem.State.NOT_RESEARCHED);
-	}
-
 	public void addTopic(final String topic, final TopicListItem.State state) {
 		topicList.addTopic(topic, state);
 	}
@@ -98,10 +94,6 @@ public class TopicListPanel extends JPanel {
 
 	public boolean hasTopic(final String topic) {
 		return topicList.hasTopic(topic);
-	}
-
-	public void clearTopicList() {
-		topicList.clearTopicList();
 	}
 
 	private class TopicSelectionListener implements ListSelectionListener {

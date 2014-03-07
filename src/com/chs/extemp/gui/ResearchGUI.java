@@ -152,12 +152,10 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	}
 
 	public void onRemoteTopicListLoaded(final String[] topics) {
-
-		// used to populate the list of
-		// already-researched topics
-		topicPanel.clearTopicList();
 		for (String topic : topics) {
-			topicPanel.addTopic(topic, TopicListItem.State.RESEARCHED);
+			if (!topicPanel.hasTopic(topic)) {
+				topicPanel.addTopic(topic, TopicListItem.State.RESEARCHED);
+			}
 		}
 		setGUIEnabled(true);
 		topicPanel.getAddTopicPanel().requestFocusInWindow();

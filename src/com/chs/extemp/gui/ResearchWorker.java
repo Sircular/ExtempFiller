@@ -88,7 +88,9 @@ public class ResearchWorker {
 			while (true) {
 				try {
 					String topic = researchQueue.take();
-					researchTopic(topic);
+					if (!deleteQueue.contains(topic)) {
+						researchTopic(topic);
+					}
 				} catch (final InterruptedException ie) {
 					logger.severe("Thread stopped.");
 					return;

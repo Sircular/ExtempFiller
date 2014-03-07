@@ -12,10 +12,6 @@ public class TopicList extends JList {
 		this.setModel(listModel);
 	}
 
-	public void addTopic(final String topic) {
-		listModel.addElement(new TopicListItem(topic, TopicListItem.State.NOT_RESEARCHED));
-	}
-
 	public void addTopic(final String topic, final TopicListItem.State state) {
 		listModel.addElement(new TopicListItem(topic, state));
 		refresh();
@@ -49,11 +45,6 @@ public class TopicList extends JList {
 			}
 		}
 		return false;
-	}
-
-	public void clearTopicList() {
-		listModel.clear();
-		refresh();
 	}
 
 	public void refresh() {
