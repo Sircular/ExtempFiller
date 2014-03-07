@@ -3,8 +3,9 @@ package com.chs.extemp.gui.topicview;
 public class TopicListItem {
 	public static enum State {
 		DELETING,
-		RESEARCHING,
 		NOT_RESEARCHED,
+		QUEUED_FOR_RESEARCH,
+		RESEARCHING,
 		RESEARCHED,
 		RESEARCH_ERROR
 	}
@@ -37,6 +38,9 @@ public class TopicListItem {
 				break;
 			case NOT_RESEARCHED:
 				stateString = "Not Researched";
+				break;
+			case QUEUED_FOR_RESEARCH:
+				stateString = "Queued For Research";
 				break;
 			case RESEARCHING:
 				stateString = "Researching...";

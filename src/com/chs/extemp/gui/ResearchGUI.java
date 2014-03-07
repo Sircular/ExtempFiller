@@ -92,7 +92,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	public void deleteSelectedTopics() {
 		final List<TopicListItem> topics = topicPanel.getSelectedTopics();
 		for (TopicListItem topic : topics) {
-			if (topic.getState() != TopicListItem.State.RESEARCHING) {
+			if (topic.getState() != TopicListItem.State.RESEARCHING && topic.getState() != TopicListItem.State.DELETING) {
 				researchWorker.enqueueCommand(
 						new ResearchCommand(
 								this,
@@ -101,7 +101,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 						)
 				);
 			} else {
-				displayError("Please wait until the topic finishes being researched.");
+				displayError("Please wait until the topic finishes out the current operation.");
 			}
 		}
 	}
@@ -125,14 +125,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 			final String path = file.getAbsolutePath();
 			for (String currentTopic : TopicFileReader.readTopicFile(path)) {
 				if (!topicPanel.hasTopic(currentTopic)) {
-					topicPanel.addTopic(currentTopic);
-					researchWorker.enqueueCommand(
-							new ResearchCommand(
-									this,
-									ResearchCommand.Type.RESEARCH_TOPIC,
-									currentTopic
-							)
-					);
+					addTopic(currentTopic);
 				}
 			}
 		}
@@ -140,6 +133,10 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 
 	private void loadTopicsFromEvernote() {
 		researchWorker.enqueueCommand(new ResearchCommand(this, ResearchCommand.Type.LOAD_TOPICS, null));
+	}
+
+	public void onTopicQueuedForResearch(final String topic) {
+		topicPanel.setTopicState(topic, TopicListItem.State.QUEUED_FOR_RESEARCH);
 	}
 
 	public void onTopicResearching(final String topic) {
@@ -190,7 +187,9 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				if (e.getType() == ResearchEvent.Type.TOPIC_RESEARCHING) {
+				if (e.getType() == ResearchEvent.Type.TOPIC_QUEUED_FOR_RESEARCH) {
+					onTopicQueuedForResearch((String) e.getData());
+				} else if (e.getType() == ResearchEvent.Type.TOPIC_RESEARCHING) {
 					onTopicResearching((String) e.getData());
 				} else if (e.getType() == ResearchEvent.Type.TOPIC_RESEARCHED) {
 					onTopicResearched((String) e.getData());

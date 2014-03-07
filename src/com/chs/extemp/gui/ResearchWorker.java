@@ -59,6 +59,7 @@ public class ResearchWorker {
 			switch (command.getType()) {
 				case RESEARCH_TOPIC:
 					researchQueue.put(command.getTopic());
+					dispatchEvent(ResearchEvent.Type.TOPIC_QUEUED_FOR_RESEARCH, command.getTopic());
 					logger.info("Added topic to research queue.");
 					break;
 				case DELETE_TOPIC:
@@ -87,7 +88,7 @@ public class ResearchWorker {
 		public void run() {
 			while (true) {
 				try {
-					String topic = researchQueue.take();
+					final String topic = researchQueue.take();
 					if (!deleteQueue.contains(topic)) {
 						researchTopic(topic);
 					} else {
@@ -111,7 +112,7 @@ public class ResearchWorker {
 		public void run() {
 			while (true) {
 				try {
-					String topic = deleteQueue.take();
+					final String topic = deleteQueue.take();
 					deleteTopic(topic);
 				} catch (final InterruptedException ie) {
 					logger.severe("Thread stopped.");
@@ -159,18 +160,6 @@ public class ResearchWorker {
 		return false;
 	}
 
-	public void cancelResearch() {
-		try {
-			for (int iii = 0; iii < researchQueue.size(); iii++) {
-				final String topic = researchQueue.take();
-				deleteQueue.put(topic);
-				dispatchEvent(ResearchEvent.Type.TOPIC_DELETING, topic);
-			}
-		} catch (InterruptedException ie) {
-			logger.info("Thread Stopped.");
-		}
-	}
-
 	private boolean loadTopics() {
 		try {
 			logger.info("Attempting to load topic list...");
@@ -186,6 +175,13 @@ public class ResearchWorker {
 			dispatchEvent(ResearchEvent.Type.EVERNOTE_CONNECTION_ERROR, null);
 		}
 		return false;
+	}
+
+	public void cancelResearch() {
+		String topic;
+		while ((topic = researchQueue.poll()) != null) {
+			dispatchEvent(ResearchEvent.Type.TOPIC_DELETED, topic);
+		}
 	}
 
 	private void dispatchEvent(ResearchEvent.Type eventType, Object data) {
