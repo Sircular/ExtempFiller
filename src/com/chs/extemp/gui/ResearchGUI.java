@@ -126,7 +126,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	}
 
 	public void loadTopicsFromFile() {
-		final JFileChooser fileChooser = new JFileChooser();
+		final JFileChooser fileChooser = new JFileChooser(".");
 		fileChooser.setFileFilter(new FileNameExtensionFilter("Text Files (.txt)", "txt", "text"));
 
 		final int choice = fileChooser.showOpenDialog(null);
@@ -166,9 +166,31 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	}
 
 	public void onRemoteTopicListLoaded(final String[] topics) {
-		topicPanel.clearTopics();
+		final TopicListItem[] currentTopics = topicPanel.getTopics();
+
 		for (String topic : topics) {
-			topicPanel.addTopic(topic, TopicListItem.State.RESEARCHED);
+			boolean found = false;
+			for (TopicListItem topicListItem : currentTopics) {
+				if (topic.equals(topicListItem.getTopic())) {
+					found = true;
+				}
+			}
+			if (!found) {
+				topicPanel.addTopic(topic, TopicListItem.State.RESEARCHED);
+			}
+		}
+		for (TopicListItem topicListItem : currentTopics) {
+			boolean found = false;
+			for (String topic : topics) {
+				if (topicListItem.getTopic().equals(topic)) {
+					found = true;
+				}
+			}
+			if (!found
+					&& topicListItem.getState() != TopicListItem.State.QUEUED_FOR_RESEARCH
+					&& topicListItem.getState() != TopicListItem.State.RESEARCHING) {
+				topicPanel.removeTopic(topicListItem.getTopic());
+			}
 		}
 		setGUIEnabled(true);
 		topicPanel.getAddTopicPanel().requestFocusInWindow();

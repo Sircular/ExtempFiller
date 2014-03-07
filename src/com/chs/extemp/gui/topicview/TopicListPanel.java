@@ -97,8 +97,8 @@ public class TopicListPanel extends JPanel {
 		topicList.removeTopic(topic);
 	}
 
-	public void clearTopics() {
-		topicList.clearTopics();
+	public TopicListItem[] getTopics() {
+		return topicList.getTopics();
 	}
 
 	private class TopicSelectionListener implements ListSelectionListener {

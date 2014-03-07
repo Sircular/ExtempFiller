@@ -1,6 +1,7 @@
 package com.chs.extemp.gui.topicview;
 
 import javax.swing.*;
+import java.util.Arrays;
 
 @SuppressWarnings("serial")
 public class TopicList extends JList {
@@ -47,13 +48,12 @@ public class TopicList extends JList {
 		return false;
 	}
 
-	public void clearTopics() {
-		listModel.clear();
-		refresh();
-	}
-
 	public void refresh() {
 		validate();
 		repaint();
+	}
+
+	public TopicListItem[] getTopics() {
+		return Arrays.copyOf(listModel.toArray(), listModel.size(), TopicListItem[].class);
 	}
 }

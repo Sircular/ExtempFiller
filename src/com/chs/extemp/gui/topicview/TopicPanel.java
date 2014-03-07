@@ -66,7 +66,7 @@ public class TopicPanel extends JPanel {
 		topicListPanel.removeTopic(topic);
 	}
 
-	public void clearTopics() {
-		topicListPanel.clearTopics();
+	public TopicListItem[] getTopics() {
+		return topicListPanel.getTopics();
 	}
 }

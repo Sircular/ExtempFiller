@@ -177,11 +177,8 @@ public class EvernoteWorker {
 	private boolean loadTopics() {
 		try {
 			logger.info("Attempting to load topic list...");
-			final List<Tag> tagList = researcher.getEvernoteClient().getTags();
-			final String[] tagNames = new String[tagList.size()];
-			for (int i = 0; i < tagList.size(); i++) {
-				tagNames[i] = tagList.get(i).getName();
-			}
+			final List<String> tagList = researcher.getEvernoteClient().getFullyNamedTags();
+			final String[] tagNames = tagList.toArray(new String[tagList.size()]);
 			logger.info("Loaded topic list from Evernote.");
 			dispatchEvent(ResearchEvent.Type.TOPIC_LIST_LOADED, tagNames);
 		} catch (Exception e) {

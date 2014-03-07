@@ -73,6 +73,7 @@ public class EvernoteClient {
 
 		// Start api request timing
 		checkRateTimer();
+		validateTagsNotebook();
 	}
 
 	/**
@@ -87,7 +88,12 @@ public class EvernoteClient {
 		try {
 			// Always check the rate timer to make sure we do not overburden the server
 			checkRateTimer();
-			return noteStore.findNotes(filter, 0, amount).getNotes();
+			List<Note> noteList = noteStore.findNotes(filter, 0, amount).getNotes();
+			LinkedList<Note> downloadedNotes = new LinkedList<Note>();
+			for (Note note : noteList) {
+				downloadedNotes.add(noteStore.getNote(note.getGuid(), true, true, true, true));
+			}
+			return downloadedNotes;
 		} catch (EDAMSystemException edam) {
 			// We are being throttled by Evernote
 			if (edam.getErrorCode() == EDAMErrorCode.RATE_LIMIT_REACHED) {
@@ -227,6 +233,22 @@ public class EvernoteClient {
 				throw edam;
 			}
 		}
+	}
+
+	public List<String> getFullyNamedTags() throws Exception {
+		final LinkedList<String> tags = new LinkedList<String>();
+		Notebook tagNotebook = getNotebook("Tag Names");
+		final List<Note> notedTags = getNotesInNotebook(tagNotebook, 10000);
+		String content;
+		for (Note note : notedTags) {
+			content = note.getContent();
+			content = content.substring(
+					content.indexOf("<p>") + 3,
+					content.indexOf("</p>")
+			);
+			tags.add(content);
+		}
+		return tags;
 	}
 
 	/**
@@ -522,10 +544,7 @@ public class EvernoteClient {
 		} else {
 			realName = desiredName;
 		}
-		if (realName.contains(",")) {
-			realName = realName.replace(",", "");
-		}
-
+		realName = realName.replace(",", "");
 		tag.setName(realName);
 
 		// Create an uninitialized notebook to hold the server notebook
@@ -576,6 +595,19 @@ public class EvernoteClient {
 			}
 		}
 		noteStore.expungeTag(tag.getGuid());
+	}
+
+	/**
+	 * Creates the tag notebook, and checks the notebook against tags on the server
+	 *
+	 * @throws Exception All exceptions are thrown to the calling program
+	 */
+	private void validateTagsNotebook() throws Exception {
+		logger.info("Validating Tags Notebook");
+		if (getNotebook("Tag Names") == null) {
+			logger.info("Creating Tag Names Notebook");
+			createNotebook("Tag Names");
+		}
 	}
 
 	/**
