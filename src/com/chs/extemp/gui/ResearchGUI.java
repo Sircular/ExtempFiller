@@ -22,7 +22,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	public static final int GUI_WIDTH = 800;
 	public static final int GUI_HEIGHT = 600;
 
-	private ResearchWorker researchWorker;
+	private EvernoteWorker evernoteWorker;
 
 	private TopicPanel topicPanel;
 	private DebugPanel debugPanel;
@@ -30,15 +30,15 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	private JProgressBar waitingBar;
 
 	public ResearchGUI() {
-		researchWorker = new ResearchWorker();
-		researchWorker.registerListener(this);
+		evernoteWorker = new EvernoteWorker();
+		evernoteWorker.registerListener(this);
 
 		// initialize GUI
 		init();
 		pack();
 		setGUIEnabled(false);
 		setVisible(true);
-		researchWorker.startWorkerThreads();
+		evernoteWorker.startWorkerThreads();
 		loadTopicsFromEvernote();
 	}
 
@@ -74,13 +74,13 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 
 	@Override
 	public void dispose() {
-		researchWorker.interruptWorkerThreads();
+		evernoteWorker.interruptWorkerThreads();
 		System.exit(0);
 	}
 
 	public void addTopic(final String topic) {
 		topicPanel.addTopic(topic);
-		researchWorker.enqueueCommand(
+		evernoteWorker.enqueueCommand(
 				new ResearchCommand(
 						this,
 						ResearchCommand.Type.RESEARCH_TOPIC,
@@ -93,7 +93,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		final List<TopicListItem> topics = topicPanel.getSelectedTopics();
 		for (TopicListItem topic : topics) {
 			if (topic.getState() != TopicListItem.State.RESEARCHING && topic.getState() != TopicListItem.State.DELETING) {
-				researchWorker.enqueueCommand(
+				evernoteWorker.enqueueCommand(
 						new ResearchCommand(
 								this,
 								ResearchCommand.Type.DELETE_TOPIC,
@@ -107,7 +107,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	}
 
 	public void cancelResearch() {
-		researchWorker.cancelResearch();
+		evernoteWorker.cancelResearch();
 	}
 
 	public void refreshTopics() {
@@ -132,7 +132,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	}
 
 	private void loadTopicsFromEvernote() {
-		researchWorker.enqueueCommand(new ResearchCommand(this, ResearchCommand.Type.LOAD_TOPICS, null));
+		evernoteWorker.enqueueCommand(new ResearchCommand(this, ResearchCommand.Type.LOAD_TOPICS, null));
 	}
 
 	public void onTopicQueuedForResearch(final String topic) {

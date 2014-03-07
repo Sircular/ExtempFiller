@@ -11,7 +11,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ResearchWorker {
+public class EvernoteWorker {
 
 	private final LinkedBlockingQueue<String> researchQueue;
 	private final LinkedBlockingQueue<String> deleteQueue;
@@ -24,7 +24,7 @@ public class ResearchWorker {
 
 	private Researcher researcher;
 
-	public ResearchWorker() {
+	public EvernoteWorker() {
 		logger = ExtempLogger.getLogger();
 		researchQueue = new LinkedBlockingQueue<String>();
 		deleteQueue = new LinkedBlockingQueue<String>();
