@@ -6,6 +6,7 @@ import java.util.EventObject;
 public class ResearchCommand extends EventObject {
 	public enum Type {
 		RESEARCH_TOPIC,
+		UNQUEUE_TOPIC,
 		DELETE_TOPIC,
 		LOAD_TOPICS
 	}

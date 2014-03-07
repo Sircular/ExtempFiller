@@ -93,13 +93,23 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		final List<TopicListItem> topics = topicPanel.getSelectedTopics();
 		for (TopicListItem topic : topics) {
 			if (topic.getState() != TopicListItem.State.RESEARCHING && topic.getState() != TopicListItem.State.DELETING) {
-				evernoteWorker.enqueueCommand(
-						new ResearchCommand(
-								this,
-								ResearchCommand.Type.DELETE_TOPIC,
-								topic.getTopic()
-						)
-				);
+				if (topic.getState() == TopicListItem.State.QUEUED_FOR_RESEARCH) {
+					evernoteWorker.enqueueCommand(
+							new ResearchCommand(
+									this,
+									ResearchCommand.Type.UNQUEUE_TOPIC,
+									topic.getTopic()
+							)
+					);
+				} else {
+					evernoteWorker.enqueueCommand(
+							new ResearchCommand(
+									this,
+									ResearchCommand.Type.DELETE_TOPIC,
+									topic.getTopic()
+							)
+					);
+				}
 			} else {
 				displayError("Please wait until the topic finishes out the current operation.");
 			}
@@ -156,10 +166,9 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	}
 
 	public void onRemoteTopicListLoaded(final String[] topics) {
+		topicPanel.clearTopics();
 		for (String topic : topics) {
-			if (!topicPanel.hasTopic(topic)) {
-				topicPanel.addTopic(topic, TopicListItem.State.RESEARCHED);
-			}
+			topicPanel.addTopic(topic, TopicListItem.State.RESEARCHED);
 		}
 		setGUIEnabled(true);
 		topicPanel.getAddTopicPanel().requestFocusInWindow();

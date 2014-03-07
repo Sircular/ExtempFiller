@@ -89,12 +89,16 @@ public class TopicListPanel extends JPanel {
 		return (List<TopicListItem>) topicList.getSelectedValuesList();
 	}
 
+	public boolean hasTopic(final String topic) {
+		return topicList.hasTopic(topic);
+	}
+
 	public void removeTopic(final String topic) {
 		topicList.removeTopic(topic);
 	}
 
-	public boolean hasTopic(final String topic) {
-		return topicList.hasTopic(topic);
+	public void clearTopics() {
+		topicList.clearTopics();
 	}
 
 	private class TopicSelectionListener implements ListSelectionListener {

@@ -62,6 +62,16 @@ public class EvernoteWorker {
 					dispatchEvent(ResearchEvent.Type.TOPIC_QUEUED_FOR_RESEARCH, command.getTopic());
 					logger.info("Added topic to research queue.");
 					break;
+				case UNQUEUE_TOPIC:
+					new Thread(
+							new Runnable() {
+								@Override
+								public void run() {
+									unqueueTopic(command.getTopic());
+								}
+							}
+							, "Unqueue Thread").start();
+					break;
 				case DELETE_TOPIC:
 					dispatchEvent(ResearchEvent.Type.TOPIC_DELETING, command.getTopic());
 					deleteQueue.put(command.getTopic());
@@ -124,28 +134,6 @@ public class EvernoteWorker {
 		}
 	}
 
-	private boolean deleteTopic(final String topic) {
-		try {
-			Tag tag = researcher.getEvernoteClient().getTag(topic);
-			if (tag != null) {
-				logger.info("Deleting notes from Evernote for topic: " + topic);
-				researcher.getEvernoteClient().deleteTag(tag);
-				logger.info("Finished deleting notes from Evernote for topic: " + topic);
-				dispatchEvent(ResearchEvent.Type.TOPIC_DELETED, topic);
-				return true;
-			} else {
-				logger.info("Removing from research queue: " + topic);
-				if (researchQueue.remove(topic)) {
-					dispatchEvent(ResearchEvent.Type.TOPIC_DELETED, topic);
-					return true;
-				}
-			}
-		} catch (Exception e) {
-			dispatchEvent(ResearchEvent.Type.RESEARCH_ERROR, topic);
-			logger.log(Level.SEVERE, "Could not remove topic.", e);
-		}
-		return false;
-	}
 
 	private boolean researchTopic(final String topic) {
 		try {
@@ -156,6 +144,32 @@ public class EvernoteWorker {
 		} catch (Exception e) {
 			logger.severe("Error researching topic \"" + topic + "\": " + e);
 			dispatchEvent(ResearchEvent.Type.RESEARCH_ERROR, topic);
+		}
+		return false;
+	}
+
+	private boolean deleteTopic(final String topic) {
+		try {
+			Tag tag = researcher.getEvernoteClient().getTag(topic);
+			if (tag != null) {
+				logger.info("Deleting notes from Evernote for topic: " + topic);
+				researcher.getEvernoteClient().deleteTag(tag);
+				logger.info("Finished deleting notes from Evernote for topic: " + topic);
+				dispatchEvent(ResearchEvent.Type.TOPIC_DELETED, topic);
+				return true;
+			}
+		} catch (Exception e) {
+			dispatchEvent(ResearchEvent.Type.RESEARCH_ERROR, topic);
+			logger.log(Level.SEVERE, "Could not remove topic.", e);
+		}
+		return false;
+	}
+
+	private boolean unqueueTopic(final String topic) {
+		if (researchQueue.remove(topic)) {
+			logger.info("Removing from research queue: " + topic);
+			dispatchEvent(ResearchEvent.Type.TOPIC_DELETED, topic);
+			return true;
 		}
 		return false;
 	}

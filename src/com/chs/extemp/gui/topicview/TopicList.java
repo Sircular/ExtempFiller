@@ -47,6 +47,11 @@ public class TopicList extends JList {
 		return false;
 	}
 
+	public void clearTopics() {
+		listModel.clear();
+		refresh();
+	}
+
 	public void refresh() {
 		validate();
 		repaint();

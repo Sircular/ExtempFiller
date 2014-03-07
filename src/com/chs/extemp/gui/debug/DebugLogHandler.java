@@ -19,13 +19,13 @@ public class DebugLogHandler extends Handler {
 	}
 
 	@Override
-	public void flush() {
+	public synchronized void flush() {
 		debuglog.validate();
 		debuglog.repaint();
 	}
 
 	@Override
-	public void publish(LogRecord record) {
+	public synchronized void publish(LogRecord record) {
 		debuglog.setText(debuglog.getText() + "[" + record.getLevel().getName() + "] " + record.getMessage() + "\n");
 		debuglog.setCaretPosition(debuglog.getText().length());
 		if (record.getThrown() != null) {
