@@ -1,8 +1,10 @@
 package com.chs.extemp.gui.topicview;
 
-import javax.swing.*;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
 
 @SuppressWarnings("serial")
 public class TopicList extends JList {
