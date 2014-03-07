@@ -1,5 +1,6 @@
 package com.chs.extemp.gui;
 
+<<<<<<< HEAD
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -27,5 +28,14 @@ public class ActionButton extends JButton{
 		}
 		
 		
+=======
+import javax.swing.*;
+import java.awt.event.ActionListener;
+
+public class ActionButton extends JButton {
+	public ActionButton(final String title, final ActionListener action) {
+		super(title);
+		this.addActionListener(action);
+>>>>>>> a3a81ea0023f73a21c9d39a3ac672d145a71c925
 	}
 }

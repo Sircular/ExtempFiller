@@ -28,8 +28,8 @@ public class ResearchWorker {
 		logger = ExtempLogger.getLogger();
 		researchQueue = new LinkedBlockingQueue<String>();
 		deleteQueue = new LinkedBlockingQueue<String>();
-		researchThread = new Thread(new ResearchRunnable());
-		deletionThread = new Thread(new DeletionRunnable());
+		researchThread = new Thread(new ResearchRunnable(), "Research Thread");
+		deletionThread = new Thread(new DeletionRunnable(), "Deletion Thread");
 		listeners = new LinkedBlockingQueue<ResearchListener>();
 	}
 
@@ -68,13 +68,13 @@ public class ResearchWorker {
 					break;
 				case LOAD_TOPICS:
 					new Thread(
-						new Runnable() {
-							@Override
-							public void run() {
-								loadTopics();
+							new Runnable() {
+								@Override
+								public void run() {
+									loadTopics();
+								}
 							}
-						}
-					).start();
+							, "Topic Download Thread").start();
 					break;
 			}
 		} catch (Exception e) {
@@ -148,7 +148,7 @@ public class ResearchWorker {
 		}
 		return false;
 	}
-	
+
 	private boolean loadTopics() {
 		try {
 			logger.info("Attempting to load topic list...");
