@@ -165,12 +165,11 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		// already-researched topics
 
 		topicPanel.clearTopicList();
-		setGUIEnabled(true);
-		topicPanel.getAddTopicPanel().requestFocusInWindow();
-
 		for (String topic : topics) {
 			topicPanel.addTopic(topic, TopicListItem.State.RESEARCHED);
 		}
+		setGUIEnabled(true);
+		topicPanel.getAddTopicPanel().requestFocusInWindow();
 	}
 
 	public void onTopicError(String topic) {
@@ -191,22 +190,27 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		JOptionPane.showMessageDialog(this, error);
 	}
 
-	public void handleMessageEvent(ResearchEvent e) {
-		if (e.getType() == ResearchEvent.Type.TOPIC_RESEARCHING) {
-			onTopicResearching((String) e.getData());
-		} else if (e.getType() == ResearchEvent.Type.TOPIC_RESEARCHED) {
-			onTopicResearched((String) e.getData());
-		} else if (e.getType() == ResearchEvent.Type.TOPIC_DELETING) {
-			onTopicDeleting((String) e.getData());
-		} else if (e.getType() == ResearchEvent.Type.TOPIC_DELETED) {
-			onTopicDeleted((String) e.getData());
-		} else if (e.getType() == ResearchEvent.Type.TOPIC_LIST_LOADED) {
-			onRemoteTopicListLoaded((String[]) e.getData());
-		} else if (e.getType() == ResearchEvent.Type.RESEARCH_ERROR) {
-			onTopicError((String) e.getData());
-		} else if (e.getType() == ResearchEvent.Type.EVERNOTE_CONNECTION_ERROR) {
-			onEvernoteError();
-		}
+	public void handleMessageEvent(final ResearchEvent e) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				if (e.getType() == ResearchEvent.Type.TOPIC_RESEARCHING) {
+					onTopicResearching((String) e.getData());
+				} else if (e.getType() == ResearchEvent.Type.TOPIC_RESEARCHED) {
+					onTopicResearched((String) e.getData());
+				} else if (e.getType() == ResearchEvent.Type.TOPIC_DELETING) {
+					onTopicDeleting((String) e.getData());
+				} else if (e.getType() == ResearchEvent.Type.TOPIC_DELETED) {
+					onTopicDeleted((String) e.getData());
+				} else if (e.getType() == ResearchEvent.Type.TOPIC_LIST_LOADED) {
+					onRemoteTopicListLoaded((String[]) e.getData());
+				} else if (e.getType() == ResearchEvent.Type.RESEARCH_ERROR) {
+					onTopicError((String) e.getData());
+				} else if (e.getType() == ResearchEvent.Type.EVERNOTE_CONNECTION_ERROR) {
+					onEvernoteError();
+				}
+			}
+		});
 	}
 
 	private void setGUIEnabled(boolean state) {
@@ -215,7 +219,6 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 			remove(waitingBar);
 			topicPanel.setContentsEnabled(true);
 			menuBar.setContentsEnabled(true);
-			//NPE HAPPENS HERE....
 			validate();
 			repaint();
 		} else {
