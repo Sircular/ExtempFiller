@@ -86,7 +86,7 @@ public class TopicListPanel extends JPanel {
 	}
 
 	public List<TopicListItem> getSelectedTopics() {
-		return (List<TopicListItem>) topicList.getSelectedValuesList();
+		return (List<TopicListItem>) topicList.getSelectedTopicsList();
 	}
 
 	public boolean hasTopic(final String topic) {
@@ -115,7 +115,6 @@ public class TopicListPanel extends JPanel {
 				deleteButton.setEnabled(false);
 				return;
 			}
-			deleteButton.setEnabled(e.getFirstIndex() >= 0);
 		}
 	}
 

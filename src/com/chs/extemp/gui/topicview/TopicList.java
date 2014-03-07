@@ -2,6 +2,7 @@ package com.chs.extemp.gui.topicview;
 
 import javax.swing.*;
 import java.util.Arrays;
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class TopicList extends JList {
@@ -55,5 +56,10 @@ public class TopicList extends JList {
 
 	public TopicListItem[] getTopics() {
 		return Arrays.copyOf(listModel.toArray(), listModel.size(), TopicListItem[].class);
+	}
+	
+	public List<TopicListItem> getSelectedTopicsList() {
+		Object[] values = getSelectedValues();
+		return Arrays.asList(Arrays.copyOf(values, values.length, TopicListItem[].class));
 	}
 }
