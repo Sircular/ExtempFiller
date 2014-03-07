@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class TopicListPanel extends JPanel {
@@ -35,7 +36,7 @@ public class TopicListPanel extends JPanel {
 		deleteButton = new ActionButton("Delete", new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				gui.deleteSelectedTopic();
+				gui.deleteSelectedTopics();
 			}
 		});
 
@@ -84,8 +85,8 @@ public class TopicListPanel extends JPanel {
 		topicList.setTopicState(topic, state);
 	}
 
-	public TopicListItem getSelectedTopic() {
-		return (TopicListItem) topicList.getSelectedValue();
+	public List<TopicListItem> getSelectedTopics() {
+		return (List<TopicListItem>) topicList.getSelectedValuesList();
 	}
 
 	public void removeTopic(final String topic) {
@@ -105,8 +106,8 @@ public class TopicListPanel extends JPanel {
 
 		@Override
 		public void valueChanged(final ListSelectionEvent e) {
-			final TopicListItem topicItem = getSelectedTopic();
-			if (topicItem == null) {
+			final List<TopicListItem> topicItems = getSelectedTopics();
+			if (topicItems == null) {
 				deleteButton.setEnabled(false);
 				return;
 			}
@@ -126,9 +127,9 @@ public class TopicListPanel extends JPanel {
 		@Override
 		public void keyReleased(KeyEvent e) {
 			if (e.getKeyCode() == KeyEvent.VK_DELETE) {
-				final TopicListItem topicItem = getSelectedTopic();
-				if (topicItem != null) {
-					gui.deleteSelectedTopic();
+				final List<TopicListItem> topicItems = getSelectedTopics();
+				if (topicItems != null) {
+					gui.deleteSelectedTopics();
 				}
 			}
 		}

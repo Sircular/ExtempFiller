@@ -26,6 +26,13 @@ public class ResearchMenuBar extends JMenuBar {
 				}
 		);
 
+		ResearchMenuItem cancel = new ResearchMenuItem("Cancel Research", new Runnable() {
+			@Override
+			public void run() {
+				gui.cancelResearch();
+			}
+		});
+
 		ResearchMenuItem exit = new ResearchMenuItem("Exit",
 				new Runnable() {
 					public void run() {
@@ -35,6 +42,7 @@ public class ResearchMenuBar extends JMenuBar {
 		);
 
 		fileMenu.add(chooseFile);
+		fileMenu.add(cancel);
 		fileMenu.add(exit);
 		add(fileMenu);
 	}

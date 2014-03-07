@@ -45,7 +45,7 @@ public class TopicListItem {
 				stateString = "Researched";
 				break;
 			case RESEARCH_ERROR:
-				stateString = "Error while researching";
+				stateString = "Error";
 				break;
 		}
 		return "(" + stateString + ") " + this.topic;

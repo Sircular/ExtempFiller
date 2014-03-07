@@ -5,6 +5,7 @@ import com.chs.extemp.gui.ResearchGUI;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class TopicPanel extends JPanel {
@@ -57,8 +58,8 @@ public class TopicPanel extends JPanel {
 		return addTopicPanel;
 	}
 
-	public TopicListItem getSelectedTopic() {
-		return topicListPanel.getSelectedTopic();
+	public List<TopicListItem> getSelectedTopics() {
+		return topicListPanel.getSelectedTopics();
 	}
 
 	public void removeTopic(final String topic) {

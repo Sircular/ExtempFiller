@@ -14,6 +14,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
+import java.util.List;
 
 @SuppressWarnings("serial")
 
@@ -88,19 +89,25 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		);
 	}
 
-	public void deleteSelectedTopic() {
-		final TopicListItem topic = topicPanel.getSelectedTopic();
-		if (topic.getState() != TopicListItem.State.RESEARCHING) {
-			researchWorker.enqueueCommand(
-					new ResearchCommand(
-							this,
-							ResearchCommand.Type.DELETE_TOPIC,
-							topicPanel.getSelectedTopic().getTopic()
-					)
-			);
-		} else {
-			displayError("Please wait until the topic finishes being researched.");
+	public void deleteSelectedTopics() {
+		final List<TopicListItem> topics = topicPanel.getSelectedTopics();
+		for (TopicListItem topic : topics) {
+			if (topic.getState() != TopicListItem.State.RESEARCHING) {
+				researchWorker.enqueueCommand(
+						new ResearchCommand(
+								this,
+								ResearchCommand.Type.DELETE_TOPIC,
+								topic.getTopic()
+						)
+				);
+			} else {
+				displayError("Please wait until the topic finishes being researched.");
+			}
 		}
+	}
+
+	public void cancelResearch() {
+		researchWorker.cancelResearch();
 	}
 
 	public void refreshTopics() {
@@ -163,7 +170,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 
 	public void onTopicError(String topic) {
 		topicPanel.setTopicState(topic, TopicListItem.State.RESEARCH_ERROR);
-		displayError("Error while researching topic: " + topic +
+		displayError("Error while editing topic: " + topic +
 				". Please see debug log for details.");
 	}
 

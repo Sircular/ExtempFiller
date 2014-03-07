@@ -82,6 +82,16 @@ public class ResearchWorker {
 		}
 	}
 
+	public void cancelResearch() {
+		try {
+			for (int iii = 0; iii < researchQueue.size(); iii++) {
+				deleteQueue.put(researchQueue.take());
+			}
+		} catch (InterruptedException ie) {
+			logger.info("Thread Stopped.");
+		}
+	}
+
 	private class ResearchRunnable implements Runnable {
 		@Override
 		public void run() {
@@ -122,10 +132,13 @@ public class ResearchWorker {
 		try {
 			Tag tag = researcher.getEvernoteClient().getTag(topic);
 			if (tag != null) {
+				logger.info("Deleting notes from Evernote for topic: " + topic);
 				researcher.getEvernoteClient().deleteTag(tag);
+				logger.info("Finisheddeleting notes from Evernote for topic: " + topic);
 				dispatchEvent(ResearchEvent.Type.TOPIC_DELETED, topic);
 				return true;
 			} else {
+				logger.info("Removing from research queue: " + topic);
 				if (researchQueue.remove(topic)) {
 					dispatchEvent(ResearchEvent.Type.TOPIC_DELETED, topic);
 					return true;

@@ -25,12 +25,15 @@ public class DebugLogHandler extends Handler {
 	}
 
 	@Override
-	public void publish(LogRecord arg0) {
-		final Level level = arg0.getLevel();
-		final String message = arg0.getMessage();
-		final String old_log = debuglog.getText();
-		debuglog.setText(old_log + "[" + level.getName() + "] " + message + "\n");
+	public void publish(LogRecord record) {
+		debuglog.setText(debuglog.getText() + "[" + record.getLevel().getName() + "] " + record.getMessage() + "\n");
 		debuglog.setCaretPosition(debuglog.getText().length());
+		if (record.getThrown() != null) {
+			final StackTraceElement[] stackTrace = record.getThrown().getStackTrace();
+			for (StackTraceElement element : stackTrace) {
+				publish(new LogRecord(Level.SEVERE, element.toString()));
+			}
+		}
 		flush();
 	}
 }
