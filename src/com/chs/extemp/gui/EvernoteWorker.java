@@ -11,20 +11,20 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ResearchWorker {
+public class EvernoteWorker {
 
-	private LinkedBlockingQueue<String> researchQueue;
-	private LinkedBlockingQueue<String> deleteQueue;
-	private LinkedBlockingQueue<ResearchListener> listeners;
+	private final LinkedBlockingQueue<String> researchQueue;
+	private final LinkedBlockingQueue<String> deleteQueue;
+	private final LinkedBlockingQueue<ResearchListener> listeners;
 
-	private Thread researchThread;
-	private Thread deletionThread;
+	private final Thread researchThread;
+	private final Thread deletionThread;
 
-	private Logger logger;
+	private final Logger logger;
 
 	private Researcher researcher;
 
-	public ResearchWorker() {
+	public EvernoteWorker() {
 		logger = ExtempLogger.getLogger();
 		researchQueue = new LinkedBlockingQueue<String>();
 		deleteQueue = new LinkedBlockingQueue<String>();
@@ -37,7 +37,7 @@ public class ResearchWorker {
 		logger.info("Starting worker threads...");
 		try {
 			researcher = new Researcher();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			dispatchEvent(ResearchEvent.Type.EVERNOTE_CONNECTION_ERROR, null);
 			return;
 		}
@@ -50,15 +50,16 @@ public class ResearchWorker {
 		deletionThread.interrupt();
 	}
 
-	public void registerListener(ResearchListener listener) {
+	public void registerListener(final ResearchListener listener) {
 		listeners.add(listener);
 	}
 
-	public void enqueueCommand(ResearchCommand command) {
+	public void enqueueCommand(final ResearchCommand command) {
 		try {
 			switch (command.getType()) {
 				case RESEARCH_TOPIC:
 					researchQueue.put(command.getTopic());
+					dispatchEvent(ResearchEvent.Type.TOPIC_QUEUED_FOR_RESEARCH, command.getTopic());
 					logger.info("Added topic to research queue.");
 					break;
 				case DELETE_TOPIC:
@@ -77,7 +78,7 @@ public class ResearchWorker {
 							, "Topic Download Thread").start();
 					break;
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			logger.severe("Error adding topic to queue.");
 		}
 	}
@@ -87,12 +88,19 @@ public class ResearchWorker {
 		public void run() {
 			while (true) {
 				try {
-					String topic = researchQueue.take();
-					researchTopic(topic);
-				} catch (InterruptedException ie) {
+					final String topic = researchQueue.take();
+					if (!deleteQueue.contains(topic)) {
+						researchTopic(topic);
+					} else {
+
+						// This should never happen, but just in case...
+						logger.info("Removing from research queue: " + topic);
+						dispatchEvent(ResearchEvent.Type.TOPIC_DELETED, topic);
+					}
+				} catch (final InterruptedException ie) {
 					logger.severe("Thread stopped.");
 					return;
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					logger.severe("Error researching topic.");
 				}
 			}
@@ -104,26 +112,29 @@ public class ResearchWorker {
 		public void run() {
 			while (true) {
 				try {
-					String topic = deleteQueue.take();
+					final String topic = deleteQueue.take();
 					deleteTopic(topic);
-				} catch (InterruptedException ie) {
+				} catch (final InterruptedException ie) {
 					logger.severe("Thread stopped.");
 					return;
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					logger.severe("Error researching topic.");
 				}
 			}
 		}
 	}
 
-	private boolean deleteTopic(String topic) {
+	private boolean deleteTopic(final String topic) {
 		try {
 			Tag tag = researcher.getEvernoteClient().getTag(topic);
 			if (tag != null) {
+				logger.info("Deleting notes from Evernote for topic: " + topic);
 				researcher.getEvernoteClient().deleteTag(tag);
+				logger.info("Finished deleting notes from Evernote for topic: " + topic);
 				dispatchEvent(ResearchEvent.Type.TOPIC_DELETED, topic);
 				return true;
 			} else {
+				logger.info("Removing from research queue: " + topic);
 				if (researchQueue.remove(topic)) {
 					dispatchEvent(ResearchEvent.Type.TOPIC_DELETED, topic);
 					return true;
@@ -136,7 +147,7 @@ public class ResearchWorker {
 		return false;
 	}
 
-	private boolean researchTopic(String topic) {
+	private boolean researchTopic(final String topic) {
 		try {
 			dispatchEvent(ResearchEvent.Type.TOPIC_RESEARCHING, topic);
 			researcher.researchTopic(topic);
@@ -152,8 +163,8 @@ public class ResearchWorker {
 	private boolean loadTopics() {
 		try {
 			logger.info("Attempting to load topic list...");
-			List<Tag> tagList = researcher.getEvernoteClient().getTags();
-			String[] tagNames = new String[tagList.size()];
+			final List<Tag> tagList = researcher.getEvernoteClient().getTags();
+			final String[] tagNames = new String[tagList.size()];
 			for (int i = 0; i < tagList.size(); i++) {
 				tagNames[i] = tagList.get(i).getName();
 			}
@@ -166,8 +177,15 @@ public class ResearchWorker {
 		return false;
 	}
 
+	public void cancelResearch() {
+		String topic;
+		while ((topic = researchQueue.poll()) != null) {
+			dispatchEvent(ResearchEvent.Type.TOPIC_DELETED, topic);
+		}
+	}
+
 	private void dispatchEvent(ResearchEvent.Type eventType, Object data) {
-		ResearchEvent event = new ResearchEvent(this, eventType, data);
+		final ResearchEvent event = new ResearchEvent(this, eventType, data);
 		for (ResearchListener listener : listeners) {
 			listener.handleMessageEvent(event);
 		}

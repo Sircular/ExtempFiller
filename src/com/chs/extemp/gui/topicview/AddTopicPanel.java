@@ -14,7 +14,7 @@ public class AddTopicPanel extends JPanel {
 	private JTextField textbox;
 	private JButton addButton;
 
-	private ResearchGUI gui;
+	private final ResearchGUI gui;
 
 	public AddTopicPanel(ResearchGUI gui) {
 		this.gui = gui;
@@ -26,11 +26,9 @@ public class AddTopicPanel extends JPanel {
 		addButton = new JButton("Add Topic");
 		addButton.setEnabled(false);
 
-		KeyTypeListener keyListener = new KeyTypeListener(addButton, this);
-		textbox.addKeyListener(keyListener);
+		textbox.addKeyListener(new KeyTypeListener(addButton, this));
 
-		AddButtonListener addListener = new AddButtonListener(this);
-		addButton.addActionListener(addListener);
+		addButton.addActionListener(new AddButtonListener(this));
 
 		setLayout(new BorderLayout());
 		add(textbox, BorderLayout.CENTER);
@@ -50,20 +48,20 @@ public class AddTopicPanel extends JPanel {
 
 	private class KeyTypeListener implements KeyListener {
 
-		private JButton addButton;
-		private AddTopicPanel addPanel;
+		private final JButton addButton;
+		private final AddTopicPanel addPanel;
 
-		public KeyTypeListener(JButton addButton, AddTopicPanel addPanel) {
+		public KeyTypeListener(final JButton addButton, final AddTopicPanel addPanel) {
 			this.addButton = addButton;
 			this.addPanel = addPanel;
 		}
 
 		@Override
-		public void keyPressed(KeyEvent e) {
+		public void keyPressed(final KeyEvent e) {
 		}
 
 		@Override
-		public void keyReleased(KeyEvent e) {
+		public void keyReleased(final KeyEvent e) {
 			String currentText = ((JTextField) e.getSource()).getText();
 			// check to see if they pressed enter
 			if (e.getKeyChar() == KeyEvent.VK_ENTER) {
@@ -82,14 +80,14 @@ public class AddTopicPanel extends JPanel {
 
 	private class AddButtonListener implements ActionListener {
 
-		private AddTopicPanel addPanel;
+		private final AddTopicPanel addPanel;
 
-		public AddButtonListener(AddTopicPanel addPanel) {
+		public AddButtonListener(final AddTopicPanel addPanel) {
 			this.addPanel = addPanel;
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			addPanel.addTypedTopic();
 		}
 	}

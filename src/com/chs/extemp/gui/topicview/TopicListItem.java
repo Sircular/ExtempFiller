@@ -3,16 +3,17 @@ package com.chs.extemp.gui.topicview;
 public class TopicListItem {
 	public static enum State {
 		DELETING,
-		RESEARCHING,
 		NOT_RESEARCHED,
+		QUEUED_FOR_RESEARCH,
+		RESEARCHING,
 		RESEARCHED,
 		RESEARCH_ERROR
 	}
 
 	private State currentState;
-	private String topic;
+	private final String topic;
 
-	public TopicListItem(String topic, State state) {
+	public TopicListItem(final String topic, final State state) {
 		this.topic = topic;
 		this.currentState = state;
 	}
@@ -25,7 +26,7 @@ public class TopicListItem {
 		return this.topic;
 	}
 
-	public void setState(State state) {
+	public void setState(final State state) {
 		this.currentState = state;
 	}
 
@@ -38,6 +39,9 @@ public class TopicListItem {
 			case NOT_RESEARCHED:
 				stateString = "Not Researched";
 				break;
+			case QUEUED_FOR_RESEARCH:
+				stateString = "Queued For Research";
+				break;
 			case RESEARCHING:
 				stateString = "Researching...";
 				break;
@@ -45,7 +49,7 @@ public class TopicListItem {
 				stateString = "Researched";
 				break;
 			case RESEARCH_ERROR:
-				stateString = "Error while researching";
+				stateString = "Error";
 				break;
 		}
 		return "(" + stateString + ") " + this.topic;

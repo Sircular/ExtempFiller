@@ -44,7 +44,7 @@ public class EvernoteClient {
 	// How long to wait between each api request in milliseconds
 	private final int TIMER = 250;
 
-	private Logger logger = ExtempLogger.getLogger();
+	private final Logger logger = ExtempLogger.getLogger();
 
 	/**
 	 * Creates a new instance of an Evernote client.
@@ -589,8 +589,6 @@ public class EvernoteClient {
 		}
 		rateTimer = Calendar.getInstance().getTimeInMillis();
 	}
-
-
 }
 
 

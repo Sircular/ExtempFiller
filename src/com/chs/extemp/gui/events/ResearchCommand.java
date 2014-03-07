@@ -10,10 +10,10 @@ public class ResearchCommand extends EventObject {
 		LOAD_TOPICS
 	}
 
-	private Type type;
-	private String topic;
+	private final Type type;
+	private final String topic;
 
-	public ResearchCommand(Object source, Type t, String topic) {
+	public ResearchCommand(final Object source, final Type t, final String topic) {
 		super(source);
 		this.type = t;
 		this.topic = topic;

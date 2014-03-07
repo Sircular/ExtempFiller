@@ -4,6 +4,7 @@ import java.util.List;
 
 /**
  * A class to hold the Google AJAX api JSON results. Used by GSON.
+ *
  * @author Logan Lembke
  */
 public class GoogleResults {
@@ -13,7 +14,7 @@ public class GoogleResults {
 		return responseData;
 	}
 
-	public void setResponseData(ResponseData responseData) {
+	public void setResponseData(final ResponseData responseData) {
 		this.responseData = responseData;
 	}
 
@@ -23,12 +24,15 @@ public class GoogleResults {
 
 	public static class ResponseData {
 		private List<Result> results;
+
 		public List<Result> getResults() {
 			return results;
 		}
-		public void setResults(List<Result> results) {
+
+		public void setResults(final List<Result> results) {
 			this.results = results;
 		}
+
 		public String toString() {
 			return "Results[" + results + "]";
 		}
@@ -46,16 +50,16 @@ public class GoogleResults {
 			return title;
 		}
 
-		public void setUrl(String url) {
+		public void setUrl(final String url) {
 			this.url = url;
 		}
 
-		public void setTitle(String title) {
+		public void setTitle(final String title) {
 			this.title = title;
 		}
 
 		public String toString() {
-			return "Result[url:" + url +",title:" + title + "]";
+			return "Result[url:" + url + ",title:" + title + "]";
 		}
 	}
 }

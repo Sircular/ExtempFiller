@@ -18,7 +18,7 @@ public class ReadabilityClient {
 	private final static String AUTH = "a5513d7340850bdf4ed566bd8600e74ec9641067";
 
 	private static int retries = 1;
-	private static Logger logger = ExtempLogger.getLogger();
+	private final static Logger logger = ExtempLogger.getLogger();
 
 	/**
 	 * Retrieves the main content from any web page using the Readability Parser API

@@ -28,7 +28,7 @@ public class Main {
 	}
 
 	private static void initLogger() {
-		Logger logger = ExtempLogger.getLogger();
+		final Logger logger = ExtempLogger.getLogger();
 		logger.setUseParentHandlers(false);
 	}
 }

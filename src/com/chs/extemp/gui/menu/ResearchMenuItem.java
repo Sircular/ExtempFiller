@@ -8,34 +8,32 @@ import java.awt.event.ItemListener;
 
 @SuppressWarnings("serial")
 public class ResearchMenuItem extends JMenuItem {
-	private Runnable function;
-	private ResearchMenuItemListener listener;
+	private final Runnable function;
 
-	public ResearchMenuItem(String name, Runnable function) {
+	public ResearchMenuItem(final String name, final Runnable function) {
 		super(name);
 		this.function = function;
 		init();
 	}
 
 	private void init() {
-		listener = new ResearchMenuItemListener(function);
-		addActionListener(listener);
+		addActionListener(new ResearchMenuItemListener(function));
 	}
 
 	private class ResearchMenuItemListener implements ActionListener, ItemListener {
-		private Runnable function;
+		private final Runnable function;
 
-		public ResearchMenuItemListener(Runnable function) {
+		public ResearchMenuItemListener(final Runnable function) {
 			this.function = function;
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
 			function.run();
 		}
 
 		@Override
-		public void itemStateChanged(ItemEvent e) {
+		public void itemStateChanged(final ItemEvent e) {
 		}
 	}
 }

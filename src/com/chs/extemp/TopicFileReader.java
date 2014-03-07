@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public class TopicFileReader {
-	public static String[] readTopicFile(String filePath) {
-		Logger logger = ExtempLogger.getLogger();
+	public static String[] readTopicFile(final String filePath) {
+		final Logger logger = ExtempLogger.getLogger();
 		logger.info("Attempting to read topic file...");
 		try {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF-8"));
-			List<String> lines = new ArrayList<String>();
+			final BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF-8"));
+			final List<String> lines = new ArrayList<String>();
 			String line;
 			while ((line = reader.readLine()) != null) {
 				lines.add(line);
@@ -22,8 +22,8 @@ public class TopicFileReader {
 			reader.close();
 			logger.info("Topic file read successfully.");
 			return lines.toArray(new String[lines.size()]);
-		} catch (IOException e) {
-			logger.info("Error while reading topic file: " + e.getMessage());
+		} catch (IOException io) {
+			logger.info("Error while reading topic file: " + io.getMessage());
 			return null;
 		}
 	}
