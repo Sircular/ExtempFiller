@@ -39,7 +39,6 @@ public class TopicListPanel extends JPanel {
 
 		refreshButton = new ActionButton("Refresh", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println(gui != null);
 				gui.refreshTopics();
 			}
 		});
