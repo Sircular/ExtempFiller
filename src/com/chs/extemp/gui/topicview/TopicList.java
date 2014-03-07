@@ -1,5 +1,9 @@
 package com.chs.extemp.gui.topicview;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import javax.swing.*;
 
 @SuppressWarnings("serial")
@@ -50,5 +54,9 @@ public class TopicList extends JList {
 	public void refresh() {
 		validate();
 		repaint();
+	}
+	
+	public List<TopicListItem> getSelectedValuesList() {
+		return new ArrayList<TopicListItem>(Arrays.asList((TopicListItem[]) getSelectedValues()));
 	}
 }
