@@ -108,7 +108,7 @@ public class EvernoteClient {
 	 * @return A list of notes held on the server
 	 * @throws Exception All exceptions are thrown to the calling program
 	 */
-	public synchronized List<Note> getNotes(final int amount) throws Exception {
+	public List<Note> getNotes(final int amount) throws Exception {
 		final NoteFilter filter = new NoteFilter();
 		filter.setOrder(NoteSortOrder.CREATED.getValue());
 		filter.setAscending(true);
