@@ -11,16 +11,18 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 @SuppressWarnings("serial")
 public class TopicListPanel extends JPanel {
-	private ResearchGUI gui;
+	private final ResearchGUI gui;
 	private TopicList topicList;
 	private JScrollPane topicListScroll;
 	private ActionButton deleteButton;
 	private ActionButton refreshButton;
 
-	public TopicListPanel(ResearchGUI gui) {
+	public TopicListPanel(final ResearchGUI gui) {
 		this.gui = gui;
 		init();
 	}
@@ -47,13 +49,14 @@ public class TopicListPanel extends JPanel {
 		deleteButton.setEnabled(false);
 		refreshButton.setEnabled(false);
 
-		topicList.addSelectionListener(new TopicSelectionListener(deleteButton));
+		topicList.getSelectionModel().addListSelectionListener(new TopicSelectionListener(deleteButton));
+		topicList.addKeyListener(new DeleteKeyListener());
 
-		JPanel buttonPanel = new JPanel();
+		final JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new GridLayout(1, 2, 10, 0));
 
-		buttonPanel.add(deleteButton);
 		buttonPanel.add(refreshButton);
+		buttonPanel.add(deleteButton);
 
 		setLayout(new BorderLayout());
 
@@ -66,22 +69,22 @@ public class TopicListPanel extends JPanel {
 		add(buttonPanel, BorderLayout.PAGE_END);
 	}
 
-	public void setContentsEnabled(boolean state) {
+	public void setContentsEnabled(final boolean state) {
 		deleteButton.setEnabled(state);
 		refreshButton.setEnabled(state);
 		topicList.setEnabled(state);
 		topicListScroll.setEnabled(state);
 	}
 
-	public void addTopic(String topic) {
+	public void addTopic(final String topic) {
 		addTopic(topic, TopicListItem.State.NOT_RESEARCHED);
 	}
 
-	public void addTopic(String topic, TopicListItem.State state) {
+	public void addTopic(final String topic, final TopicListItem.State state) {
 		topicList.addTopic(topic, state);
 	}
 
-	public void setTopicState(String topic, TopicListItem.State state) {
+	public void setTopicState(final String topic, final TopicListItem.State state) {
 		topicList.setTopicState(topic, state);
 	}
 
@@ -89,11 +92,11 @@ public class TopicListPanel extends JPanel {
 		return (TopicListItem) topicList.getSelectedValue();
 	}
 
-	public void removeTopic(String topic) {
+	public void removeTopic(final String topic) {
 		topicList.removeTopic(topic);
 	}
 
-	public boolean hasTopic(String topic) {
+	public boolean hasTopic(final String topic) {
 		return topicList.hasTopic(topic);
 	}
 
@@ -104,18 +107,38 @@ public class TopicListPanel extends JPanel {
 	private class TopicSelectionListener implements ListSelectionListener {
 		private JButton deleteButton;
 
-		public TopicSelectionListener(JButton deleteButton) {
+		public TopicSelectionListener(final JButton deleteButton) {
 			this.deleteButton = deleteButton;
 		}
 
 		@Override
-		public void valueChanged(ListSelectionEvent e) {
-			TopicListItem topicItem = getSelectedTopic();
+		public void valueChanged(final ListSelectionEvent e) {
+			final TopicListItem topicItem = getSelectedTopic();
 			if (topicItem == null) {
 				deleteButton.setEnabled(false);
 				return;
 			}
 			deleteButton.setEnabled(e.getFirstIndex() >= 0);
+		}
+	}
+
+	private class DeleteKeyListener implements KeyListener {
+		@Override
+		public void keyTyped(KeyEvent e) {
+		}
+
+		@Override
+		public void keyPressed(KeyEvent e) {
+		}
+
+		@Override
+		public void keyReleased(KeyEvent e) {
+			if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+				final TopicListItem topicItem = getSelectedTopic();
+				if (topicItem != null) {
+					gui.deleteSelectedTopic();
+				}
+			}
 		}
 	}
 }

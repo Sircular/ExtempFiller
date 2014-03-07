@@ -1,6 +1,5 @@
 package com.chs.extemp.gui;
 
-import com.chs.extemp.ExtempLogger;
 import com.chs.extemp.TopicFileReader;
 import com.chs.extemp.gui.debug.DebugPanel;
 import com.chs.extemp.gui.events.ResearchCommand;
@@ -15,7 +14,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
-import java.util.logging.Logger;
 
 @SuppressWarnings("serial")
 
@@ -24,7 +22,6 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	public static final int GUI_HEIGHT = 600;
 
 	private ResearchWorker researchWorker;
-	private Logger logger;
 
 	private TopicPanel topicPanel;
 	private DebugPanel debugPanel;
@@ -32,9 +29,6 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	private JProgressBar waitingBar;
 
 	public ResearchGUI() {
-		logger = ExtempLogger.getLogger();
-		logger.info("Initialized GUI.");
-
 		researchWorker = new ResearchWorker();
 		researchWorker.registerListener(this);
 
@@ -53,7 +47,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		setLayout(new BorderLayout());
 
 		// set up some tabs
-		JTabbedPane tabs = new JTabbedPane();
+		final JTabbedPane tabs = new JTabbedPane();
 		topicPanel = new TopicPanel(this);
 		debugPanel = new DebugPanel();
 		menuBar = new ResearchMenuBar(this);
@@ -75,7 +69,6 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		setJMenuBar(menuBar);
 
 		setPreferredSize(new Dimension(GUI_WIDTH, GUI_HEIGHT));
-
 	}
 
 	@Override
@@ -84,7 +77,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		System.exit(0);
 	}
 
-	public void addTopic(String topic) {
+	public void addTopic(final String topic) {
 		topicPanel.addTopic(topic);
 		researchWorker.enqueueCommand(
 				new ResearchCommand(
@@ -96,7 +89,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	}
 
 	public void deleteSelectedTopic() {
-		TopicListItem topic = topicPanel.getSelectedTopic();
+		final TopicListItem topic = topicPanel.getSelectedTopic();
 		if (topic.getState() != TopicListItem.State.RESEARCHING) {
 			researchWorker.enqueueCommand(
 					new ResearchCommand(
@@ -116,15 +109,13 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	}
 
 	public void loadTopicsFromFile() {
-		JFileChooser fileChooser = new JFileChooser();
+		final JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setFileFilter(new FileNameExtensionFilter("Text Files (.txt)", "txt", "text"));
 
-		FileNameExtensionFilter fileFilter = new FileNameExtensionFilter("Text Files (.txt)", "txt", "text");
-		fileChooser.setFileFilter(fileFilter);
-
-		int choice = fileChooser.showOpenDialog(null);
+		final int choice = fileChooser.showOpenDialog(null);
 		if (choice == JFileChooser.APPROVE_OPTION) {
-			File file = fileChooser.getSelectedFile();
-			String path = file.getAbsolutePath();
+			final File file = fileChooser.getSelectedFile();
+			final String path = file.getAbsolutePath();
 			for (String currentTopic : TopicFileReader.readTopicFile(path)) {
 				if (!topicPanel.hasTopic(currentTopic)) {
 					topicPanel.addTopic(currentTopic);
@@ -144,26 +135,26 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		researchWorker.enqueueCommand(new ResearchCommand(this, ResearchCommand.Type.LOAD_TOPICS, null));
 	}
 
-	public void onTopicResearching(String topic) {
+	public void onTopicResearching(final String topic) {
 		topicPanel.setTopicState(topic, TopicListItem.State.RESEARCHING);
 	}
 
-	public void onTopicResearched(String topic) {
+	public void onTopicResearched(final String topic) {
 		topicPanel.setTopicState(topic, TopicListItem.State.RESEARCHED);
 	}
 
-	public void onTopicDeleting(String topic) {
+	public void onTopicDeleting(final String topic) {
 		topicPanel.setTopicState(topic, TopicListItem.State.DELETING);
 	}
 
-	public void onTopicDeleted(String topic) {
+	public void onTopicDeleted(final String topic) {
 		topicPanel.removeTopic(topic);
 	}
 
-	public void onRemoteTopicListLoaded(String[] topics) {
+	public void onRemoteTopicListLoaded(final String[] topics) {
+
 		// used to populate the list of
 		// already-researched topics
-
 		topicPanel.clearTopicList();
 		for (String topic : topics) {
 			topicPanel.addTopic(topic, TopicListItem.State.RESEARCHED);
@@ -184,7 +175,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 				"and try again.");
 	}
 
-	public void displayError(String error) {
+	public void displayError(final String error) {
 		// displays an error message in
 		// a message box
 		JOptionPane.showMessageDialog(this, error);
@@ -213,7 +204,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		});
 	}
 
-	private void setGUIEnabled(boolean state) {
+	private void setGUIEnabled(final boolean state) {
 		if (state) {
 			waitingBar.setIndeterminate(false);
 			remove(waitingBar);

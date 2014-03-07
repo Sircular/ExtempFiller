@@ -10,9 +10,9 @@ public class TopicListItem {
 	}
 
 	private State currentState;
-	private String topic;
+	private final String topic;
 
-	public TopicListItem(String topic, State state) {
+	public TopicListItem(final String topic, final State state) {
 		this.topic = topic;
 		this.currentState = state;
 	}
@@ -25,7 +25,7 @@ public class TopicListItem {
 		return this.topic;
 	}
 
-	public void setState(State state) {
+	public void setState(final State state) {
 		this.currentState = state;
 	}
 

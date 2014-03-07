@@ -2,6 +2,7 @@ package com.chs.extemp.readability;
 
 /**
  * A class to hold the Readability Parser api JSON results. Used by GSON.
+ *
  * @author Logan Lembke
  */
 public class ReadabilityResults {
@@ -14,7 +15,7 @@ public class ReadabilityResults {
 		return content;
 	}
 
-	public void setContent(String content) {
+	public void setContent(final String content) {
 		this.content = content;
 	}
 
@@ -22,7 +23,7 @@ public class ReadabilityResults {
 		return url;
 	}
 
-	public void setUrl(String url) {
+	public void setUrl(final String url) {
 		this.url = url;
 	}
 
@@ -30,7 +31,7 @@ public class ReadabilityResults {
 		return title;
 	}
 
-	public void setTitle(String title) {
+	public void setTitle(final String title) {
 		this.title = title;
 	}
 
@@ -38,7 +39,7 @@ public class ReadabilityResults {
 		return date_published;
 	}
 
-	public void setDate_published(String date_published) {
+	public void setDate_published(final String date_published) {
 		this.date_published = date_published;
 	}
 }

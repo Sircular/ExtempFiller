@@ -7,7 +7,7 @@ import javax.swing.*;
 @SuppressWarnings("serial")
 public class ResearchMenuBar extends JMenuBar {
 
-	private ResearchGUI gui;
+	private final ResearchGUI gui;
 	private JMenu fileMenu;
 
 	public ResearchMenuBar(ResearchGUI gui) {
@@ -42,5 +42,4 @@ public class ResearchMenuBar extends JMenuBar {
 	public void setContentsEnabled(boolean state) {
 		fileMenu.setEnabled(state);
 	}
-
 }

@@ -15,8 +15,8 @@ import java.util.logging.Logger;
 public class Researcher {
 	private static final int MINIMUM_DOCUMENTS_PER_TOPIC = 8; // used to determine how many topics to retrieve
 
-	private EvernoteClient evernoteClient;
-	private Logger logger;
+	private final EvernoteClient evernoteClient;
+	private final Logger logger;
 
 	// Used for timing API requests
 	private long rateTimer = 0;
@@ -33,33 +33,34 @@ public class Researcher {
 		try {
 			evernoteClient = new EvernoteClient();
 			logger.info("Evernote Client initialized successfully.");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			logger.severe("Could not initialize Evernote Client: " + e);
 			throw e;
 		}
-		initialChecks();
+		initHTMLNotebook();
 	}
 
-	private void initialChecks() throws Exception {
+	private void initHTMLNotebook() throws Exception {
 		try {
 			HTMLNotebook = evernoteClient.getNotebook("Web Notes");
 			if (HTMLNotebook == null) {
 				logger.info("Creating Web Notes Notebook");
 				HTMLNotebook = evernoteClient.createNotebook("Web Notes");
 			}
-		} catch (Exception e) {
-			logger.severe("Error while doing initial checks: " + e.getMessage());
+		} catch (final Exception e) {
+			logger.severe("Error while creating the Web Notes Notebook: " + e.getMessage());
 			throw e;
 		}
 	}
 
-	public void researchTopic(String topic) throws Exception {
+	public void researchTopic(final String topic) throws Exception {
 		// Check if the question has already been researched
 		logger.info("Searching for tag: " + topic);
 		Tag tag = evernoteClient.getTag(topic);
 
 		// If it hasn't, research it
 		if (tag == null) {
+
 			// Create the tag for the topic
 			logger.info("Topic tag not found.");
 			logger.info("Creating tag: " + topic);
@@ -67,8 +68,9 @@ public class Researcher {
 			int topicCount = 0;
 			int currentSearchIndex = 0;
 			while (topicCount < MINIMUM_DOCUMENTS_PER_TOPIC) {
+
 				// Create a list to hold web pages to upload
-				LinkedList<GoogleResults.Result> totalSearchResults = new LinkedList<GoogleResults.Result>();
+				final LinkedList<GoogleResults.Result> totalSearchResults = new LinkedList<GoogleResults.Result>();
 				logger.info("Googling topic: " + topic);
 				checkRateTimer();
 				totalSearchResults.addAll(googleTopic(topic, currentSearchIndex));
@@ -78,12 +80,13 @@ public class Researcher {
 				try {
 					for (GoogleResults.Result result : totalSearchResults) {
 						logger.info("Uploading page: " + result.getUrl());
+
 						// Always check the rate timer to make sure we do not overburden the server
 						checkRateTimer();
 						evernoteClient.createHTMLNote(result.getUrl(), HTMLNotebook, Arrays.asList(tag));
 						topicCount++;
 					}
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					logger.log(Level.SEVERE, "Skipping source", e);
 				}
 			}
@@ -94,11 +97,11 @@ public class Researcher {
 		}
 	}
 
-	private LinkedList<GoogleResults.Result> googleTopic(String topic, int startIndex) throws Exception {
-		LinkedList<GoogleResults.Result> results = new LinkedList<GoogleResults.Result>();
+	private LinkedList<GoogleResults.Result> googleTopic(final String topic, final int startIndex) throws Exception {
+		final LinkedList<GoogleResults.Result> results = new LinkedList<GoogleResults.Result>();
 
 		// Search google for web pages
-		GoogleResults googleResults = GoogleClient.search(topic, startIndex);
+		final GoogleResults googleResults = GoogleClient.search(topic, startIndex);
 
 		// Check if we are being throttled by google
 		if (googleResults == null || googleResults.getResponseData() == null || googleResults.getResponseData().getResults() == null) {

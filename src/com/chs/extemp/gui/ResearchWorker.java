@@ -13,14 +13,14 @@ import java.util.logging.Logger;
 
 public class ResearchWorker {
 
-	private LinkedBlockingQueue<String> researchQueue;
-	private LinkedBlockingQueue<String> deleteQueue;
-	private LinkedBlockingQueue<ResearchListener> listeners;
+	private final LinkedBlockingQueue<String> researchQueue;
+	private final LinkedBlockingQueue<String> deleteQueue;
+	private final LinkedBlockingQueue<ResearchListener> listeners;
 
-	private Thread researchThread;
-	private Thread deletionThread;
+	private final Thread researchThread;
+	private final Thread deletionThread;
 
-	private Logger logger;
+	private final Logger logger;
 
 	private Researcher researcher;
 
@@ -37,7 +37,7 @@ public class ResearchWorker {
 		logger.info("Starting worker threads...");
 		try {
 			researcher = new Researcher();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			dispatchEvent(ResearchEvent.Type.EVERNOTE_CONNECTION_ERROR, null);
 			return;
 		}
@@ -50,11 +50,11 @@ public class ResearchWorker {
 		deletionThread.interrupt();
 	}
 
-	public void registerListener(ResearchListener listener) {
+	public void registerListener(final ResearchListener listener) {
 		listeners.add(listener);
 	}
 
-	public void enqueueCommand(ResearchCommand command) {
+	public void enqueueCommand(final ResearchCommand command) {
 		try {
 			switch (command.getType()) {
 				case RESEARCH_TOPIC:
@@ -77,7 +77,7 @@ public class ResearchWorker {
 							, "Topic Download Thread").start();
 					break;
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			logger.severe("Error adding topic to queue.");
 		}
 	}
@@ -89,10 +89,10 @@ public class ResearchWorker {
 				try {
 					String topic = researchQueue.take();
 					researchTopic(topic);
-				} catch (InterruptedException ie) {
+				} catch (final InterruptedException ie) {
 					logger.severe("Thread stopped.");
 					return;
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					logger.severe("Error researching topic.");
 				}
 			}
@@ -106,17 +106,17 @@ public class ResearchWorker {
 				try {
 					String topic = deleteQueue.take();
 					deleteTopic(topic);
-				} catch (InterruptedException ie) {
+				} catch (final InterruptedException ie) {
 					logger.severe("Thread stopped.");
 					return;
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					logger.severe("Error researching topic.");
 				}
 			}
 		}
 	}
 
-	private boolean deleteTopic(String topic) {
+	private boolean deleteTopic(final String topic) {
 		try {
 			Tag tag = researcher.getEvernoteClient().getTag(topic);
 			if (tag != null) {
@@ -136,7 +136,7 @@ public class ResearchWorker {
 		return false;
 	}
 
-	private boolean researchTopic(String topic) {
+	private boolean researchTopic(final String topic) {
 		try {
 			dispatchEvent(ResearchEvent.Type.TOPIC_RESEARCHING, topic);
 			researcher.researchTopic(topic);
@@ -152,8 +152,8 @@ public class ResearchWorker {
 	private boolean loadTopics() {
 		try {
 			logger.info("Attempting to load topic list...");
-			List<Tag> tagList = researcher.getEvernoteClient().getTags();
-			String[] tagNames = new String[tagList.size()];
+			final List<Tag> tagList = researcher.getEvernoteClient().getTags();
+			final String[] tagNames = new String[tagList.size()];
 			for (int i = 0; i < tagList.size(); i++) {
 				tagNames[i] = tagList.get(i).getName();
 			}
@@ -167,7 +167,7 @@ public class ResearchWorker {
 	}
 
 	private void dispatchEvent(ResearchEvent.Type eventType, Object data) {
-		ResearchEvent event = new ResearchEvent(this, eventType, data);
+		final ResearchEvent event = new ResearchEvent(this, eventType, data);
 		for (ResearchListener listener : listeners) {
 			listener.handleMessageEvent(event);
 		}

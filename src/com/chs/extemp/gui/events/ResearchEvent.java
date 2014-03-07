@@ -14,10 +14,10 @@ public class ResearchEvent extends EventObject {
 		EVERNOTE_CONNECTION_ERROR,
 	}
 
-	private Type type;
-	private Object data;
+	private final Type type;
+	private final Object data;
 
-	public ResearchEvent(Object source, Type t, Object d) {
+	public ResearchEvent(final Object source, final Type t, final Object d) {
 		super(source);
 
 		this.type = t;

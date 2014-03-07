@@ -12,7 +12,7 @@ public class TopicPanel extends JPanel {
 	private ResearchGUI gui;
 
 	private TopicListPanel topicListPanel;
-	private AddTopicPanel atp;
+	private AddTopicPanel addTopicPanel;
 
 	public TopicPanel(ResearchGUI gui) {
 		this.gui = gui;
@@ -28,43 +28,43 @@ public class TopicPanel extends JPanel {
 
 		topicListPanel = new TopicListPanel(gui);
 		add(topicListPanel, BorderLayout.CENTER);
-		atp = new AddTopicPanel(this.gui);
-		add(atp, BorderLayout.PAGE_END);
+		addTopicPanel = new AddTopicPanel(this.gui);
+		add(addTopicPanel, BorderLayout.PAGE_END);
 	}
 
-	public void setContentsEnabled(boolean state) {
+	public void setContentsEnabled(final boolean state) {
 		topicListPanel.setContentsEnabled(state);
-		atp.setContentsEnabled(state);
+		addTopicPanel.setContentsEnabled(state);
 	}
 
-	public void addTopic(String topic) {
+	public void addTopic(final String topic) {
 		addTopic(topic, TopicListItem.State.NOT_RESEARCHED);
 	}
 
-	public void addTopic(String topic, TopicListItem.State state) {
+	public void addTopic(final String topic, final TopicListItem.State state) {
 		topicListPanel.addTopic(topic, state);
 	}
 
-	public void setTopicState(String topic, TopicListItem.State state) {
+	public void setTopicState(final String topic, final TopicListItem.State state) {
 		topicListPanel.setTopicState(topic, state);
 	}
 
-	public boolean hasTopic(String topic) {
+	public boolean hasTopic(final String topic) {
 		return topicListPanel.hasTopic(topic);
 	}
 
 	public AddTopicPanel getAddTopicPanel() {
-		return atp;
+		return addTopicPanel;
 	}
 
 	public TopicListItem getSelectedTopic() {
 		return topicListPanel.getSelectedTopic();
 	}
-	
-	public void removeTopic(String topic) {
+
+	public void removeTopic(final String topic) {
 		topicListPanel.removeTopic(topic);
 	}
-	
+
 	public void clearTopicList() {
 		topicListPanel.clearTopicList();
 	}

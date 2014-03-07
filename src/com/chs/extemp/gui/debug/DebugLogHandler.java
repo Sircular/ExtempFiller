@@ -8,7 +8,7 @@ import java.util.logging.LogRecord;
 // Class used to connect the debug output with the logger
 
 public class DebugLogHandler extends Handler {
-	private JTextPane debuglog;
+	private final JTextPane debuglog;
 
 	public DebugLogHandler(JTextPane debuglog) {
 		this.debuglog = debuglog;
@@ -26,9 +26,9 @@ public class DebugLogHandler extends Handler {
 
 	@Override
 	public void publish(LogRecord arg0) {
-		Level level = arg0.getLevel();
-		String message = arg0.getMessage();
-		String old_log = debuglog.getText();
+		final Level level = arg0.getLevel();
+		final String message = arg0.getMessage();
+		final String old_log = debuglog.getText();
 		debuglog.setVisible(false);
 		debuglog.setText(old_log + "[" + level.getName() + "] " + message + "\n");
 		debuglog.setCaretPosition(debuglog.getText().length());
