@@ -109,10 +109,9 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 			displayError("Please wait until the topic finishes being researched.");
 		}
 	}
-	
+
 	public void refreshTopics() {
 		setGUIEnabled(false);
-		topicPanel.clearTopicList();
 		loadTopicsFromEvernote();
 	}
 
@@ -140,7 +139,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 			}
 		}
 	}
-	
+
 	private void loadTopicsFromEvernote() {
 		researchWorker.enqueueCommand(new ResearchCommand(this, ResearchCommand.Type.LOAD_TOPICS, null));
 	}
@@ -164,10 +163,10 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	public void onRemoteTopicListLoaded(String[] topics) {
 		// used to populate the list of
 		// already-researched topics
-		
+
 		topicPanel.clearTopicList();
-		topicPanel.getAddTopicPanel().requestFocusInWindow();
 		setGUIEnabled(true);
+		topicPanel.getAddTopicPanel().requestFocusInWindow();
 
 		for (String topic : topics) {
 			topicPanel.addTopic(topic, TopicListItem.State.RESEARCHED);
@@ -209,23 +208,21 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 			onEvernoteError();
 		}
 	}
-	
+
 	private void setGUIEnabled(boolean state) {
 		if (state) {
+			waitingBar.setIndeterminate(false);
 			remove(waitingBar);
-			
 			topicPanel.setContentsEnabled(true);
 			menuBar.setContentsEnabled(true);
-			pack();
+			//NPE HAPPENS HERE....
 			validate();
 			repaint();
 		} else {
 			add(waitingBar, BorderLayout.PAGE_END);
 			waitingBar.setIndeterminate(true);
-			
 			topicPanel.setContentsEnabled(false);
 			menuBar.setContentsEnabled(false);
-			pack();
 			validate();
 			repaint();
 		}
