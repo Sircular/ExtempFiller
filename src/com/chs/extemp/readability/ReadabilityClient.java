@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class ReadabilityClient {
 	private final static String API = "https://readability.com/api/content/v1/";
-	private final static String AUTH = "a5513d7340850bdf4ed566bd8600e74ec9641067";
+	private final static String AUTH = "";
 
 	private static int retries = 1;
 	private final static Logger logger = ExtempLogger.getLogger();

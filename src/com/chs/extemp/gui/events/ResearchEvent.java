@@ -11,6 +11,7 @@ public class ResearchEvent extends EventObject {
 		TOPIC_DELETING,
 		TOPIC_DELETED,
 		TOPIC_LIST_LOADED,
+		USERNAME,
 		RESEARCH_ERROR,
 		EVERNOTE_CONNECTION_ERROR
 	}

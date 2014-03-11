@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  */
 public class EvernoteClient {
 
-	private static final String AUTH_TOKEN = "S=s1:U=8d68f:E=14a374824b4:C=142df96f8b7:P=1cd:A=en-devtoken:V=2:H=519ee13f68920aa525e0c8348eb54fdb";
+	private static final String AUTH_TOKEN = "";
 
 	// Used for Authentication
 	private UserStoreClient userStore;
@@ -55,7 +55,7 @@ public class EvernoteClient {
 
 		// Set up the UserStore client and check that we can speak to the server
 		// Make sure to change the EvernoteService argument to either SANDBOX or PRODUCTION
-		final EvernoteAuth evernoteAuth = new EvernoteAuth(EvernoteService.SANDBOX, AUTH_TOKEN);
+		final EvernoteAuth evernoteAuth = new EvernoteAuth(EvernoteService.PRODUCTION, AUTH_TOKEN);
 		final ClientFactory factory = new ClientFactory(evernoteAuth);
 
 		userStore = factory.createUserStoreClient();
@@ -235,6 +235,12 @@ public class EvernoteClient {
 		}
 	}
 
+	/**
+	 * Consults the Tag Names notebook for tag names
+	 *
+	 * @return A List of the desired names of created tags based on the tags notebook
+	 * @throws Exception
+	 */
 	public List<String> getFullyNamedTags() throws Exception {
 		final LinkedList<String> tags = new LinkedList<String>();
 		Notebook tagNotebook = getNotebook("Tag Names");
@@ -595,6 +601,28 @@ public class EvernoteClient {
 			}
 		}
 		noteStore.expungeTag(tag.getGuid());
+	}
+
+	/**
+	 * Returns the current users' username
+	 *
+	 * @return String: Username
+	 * @throws Exception All exceptions are thrown to the calling program
+	 */
+	public synchronized String getUsername() throws Exception {
+		checkRateTimer();
+		return userStore.getUser().getUsername();
+	}
+
+	/**
+	 * Returns the current users' email
+	 *
+	 * @return String: Email
+	 * @throws Exception All exceptions are thrown to the calling program
+	 */
+	public synchronized String getEmail() throws Exception {
+		checkRateTimer();
+		return userStore.getUser().getEmail();
 	}
 
 	/**

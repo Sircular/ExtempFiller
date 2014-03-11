@@ -37,6 +37,7 @@ public class EvernoteWorker {
 		logger.info("Starting worker threads...");
 		try {
 			researcher = new Researcher();
+			dispatchEvent(ResearchEvent.Type.USERNAME, researcher.getEvernoteClient().getUsername());
 		} catch (final Exception e) {
 			dispatchEvent(ResearchEvent.Type.EVERNOTE_CONNECTION_ERROR, null);
 			return;
@@ -133,7 +134,6 @@ public class EvernoteWorker {
 			}
 		}
 	}
-
 
 	private boolean researchTopic(final String topic) {
 		try {

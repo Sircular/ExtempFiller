@@ -196,6 +196,10 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		topicPanel.getAddTopicPanel().requestFocusInWindow();
 	}
 
+	public void onUsernameLoaded(final String username) {
+		setTitle(getTitle() + " @ " + username);
+	}
+
 	public void onTopicError(String topic) {
 		topicPanel.setTopicState(topic, TopicListItem.State.RESEARCH_ERROR);
 		displayError("Error while editing topic: " + topic +
@@ -230,6 +234,8 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 					onTopicDeleted((String) e.getData());
 				} else if (e.getType() == ResearchEvent.Type.TOPIC_LIST_LOADED) {
 					onRemoteTopicListLoaded((String[]) e.getData());
+				} else if (e.getType() == ResearchEvent.Type.USERNAME) {
+					onUsernameLoaded((String) e.getData());
 				} else if (e.getType() == ResearchEvent.Type.RESEARCH_ERROR) {
 					onTopicError((String) e.getData());
 				} else if (e.getType() == ResearchEvent.Type.EVERNOTE_CONNECTION_ERROR) {
