@@ -71,7 +71,6 @@ public class TopicListPanel extends JPanel {
 	}
 
 	public void setContentsEnabled(final boolean state) {
-		deleteButton.setEnabled(state);
 		refreshButton.setEnabled(state);
 		topicList.setEnabled(state);
 		topicListScroll.setEnabled(state);
@@ -86,7 +85,7 @@ public class TopicListPanel extends JPanel {
 	}
 
 	public List<TopicListItem> getSelectedTopics() {
-		return (List<TopicListItem>) topicList.getSelectedTopicsList();
+		return topicList.getSelectedTopicsList();
 	}
 
 	public boolean hasTopic(final String topic) {
@@ -111,10 +110,8 @@ public class TopicListPanel extends JPanel {
 		@Override
 		public void valueChanged(final ListSelectionEvent e) {
 			final List<TopicListItem> topicItems = getSelectedTopics();
-			if (topicItems == null) {
-				deleteButton.setEnabled(false);
-				return;
-			}
+			System.out.println(topicItems.size());
+			deleteButton.setEnabled(topicItems.size() > 0);
 		}
 	}
 
