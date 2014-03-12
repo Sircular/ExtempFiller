@@ -71,7 +71,7 @@ public class TopicListPanel extends JPanel {
 	}
 
 	public void setContentsEnabled(final boolean state) {
-		deleteButton.setEnabled(state);
+		deleteButton.setEnabled(state && (getSelectedTopics().size() != 0));
 		refreshButton.setEnabled(state);
 		topicList.setEnabled(state);
 		topicListScroll.setEnabled(state);
