@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  */
 public class EvernoteClient {
 
-	private static final String AUTH_TOKEN = "";
+	private static final String AUTH_TOKEN = "S=s1:U=8d68b:E=14c0b6e9ce6:C=144b3bd70e8:P=1cd:A=en-devtoken:V=2:H=dda9608fbcf113c1385b791b30958e43";
 
 	// Used for Authentication
 	private UserStoreClient userStore;
@@ -55,7 +55,7 @@ public class EvernoteClient {
 
 		// Set up the UserStore client and check that we can speak to the server
 		// Make sure to change the EvernoteService argument to either SANDBOX or PRODUCTION
-		final EvernoteAuth evernoteAuth = new EvernoteAuth(EvernoteService.PRODUCTION, AUTH_TOKEN);
+		final EvernoteAuth evernoteAuth = new EvernoteAuth(EvernoteService.SANDBOX, AUTH_TOKEN);
 		final ClientFactory factory = new ClientFactory(evernoteAuth);
 
 		userStore = factory.createUserStoreClient();

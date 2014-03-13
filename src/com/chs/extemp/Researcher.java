@@ -1,7 +1,7 @@
 package com.chs.extemp;
 
 import com.chs.extemp.evernote.EvernoteClient;
-import com.chs.extemp.google.GoogleClient;
+import com.chs.extemp.google.GoogleWebClient;
 import com.chs.extemp.google.GoogleResults;
 import com.evernote.edam.type.Notebook;
 import com.evernote.edam.type.Tag;
@@ -101,7 +101,7 @@ public class Researcher {
 		final LinkedList<GoogleResults.Result> results = new LinkedList<GoogleResults.Result>();
 
 		// Search google for web pages
-		final GoogleResults googleResults = GoogleClient.search(topic, startIndex);
+		final GoogleResults googleResults = GoogleWebClient.search(topic, startIndex);
 
 		// Check if we are being throttled by google
 		if (googleResults == null || googleResults.getResponseData() == null || googleResults.getResponseData().getResults() == null) {
