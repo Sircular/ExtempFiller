@@ -14,6 +14,9 @@ import java.util.logging.Logger;
 
 public class Researcher {
 	
+	// DuckDuckGo supplies 28 results; we don't need all of these
+	private final int MAXIMUM_ARTICLE_COUNT = 12;
+	
 	private final EvernoteClient evernoteClient;
 	private final Logger logger;
 
@@ -84,6 +87,8 @@ public class Researcher {
 				} catch (final Exception e) {
 					logger.log(Level.SEVERE, "Skipping source", e);
 				}
+				if(topicCount >= MAXIMUM_ARTICLE_COUNT)
+					break;
 			}
 			
 			logger.info("Found "+String.valueOf(topicCount)+" sources.");
