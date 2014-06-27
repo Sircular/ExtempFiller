@@ -1,4 +1,4 @@
-package com.chs.extemp.google;
+package com.chs.extemp.ddg;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -14,15 +14,15 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.chs.extemp.google.GoogleResults.GoogleResponseData;
-import com.chs.extemp.google.GoogleResults;
-import com.chs.extemp.google.GoogleResults.GoogleResult;
+import com.chs.extemp.ddg.DDGResults.DDGResponseData;
+import com.chs.extemp.ddg.DDGResults;
+import com.chs.extemp.ddg.DDGResults.DDGResult;
 
-public class GoogleWebClient {
+public class DDGWebClient {
 	private static final String USER_AGENT = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:30.0) Gecko/20100101 Firefox/30.0";
 	private static final String SEARCH_URL = "http://duckduckgo.com/html/?kh=-1&kp=1&q=%s";
 	
-	public static GoogleResults search(String topic) {
+	public static DDGResults search(String topic) {
 		try {
 			URL searchURL = new URL(String.format(SEARCH_URL, URLEncoder.encode(topic, "UTF-8")));
 			URLConnection connection = searchURL.openConnection();
@@ -34,7 +34,7 @@ public class GoogleWebClient {
 			String rawData = scanner.useDelimiter("\\A").next();
 			scanner.close();
 			
-			List<GoogleResult> results = new LinkedList<GoogleResult>();
+			List<DDGResult> results = new LinkedList<DDGResult>();
 			
 			Document tree = Jsoup.parse(rawData);
 			Elements contentNodes = tree.select("div.links_main.links_deep");
@@ -46,15 +46,15 @@ public class GoogleWebClient {
 				String linkURL = linkNode.attr("href");
 				String linkTitle = linkNode.text();
 				
-				GoogleResults.GoogleResult newResult = new GoogleResults.GoogleResult();
+				DDGResults.DDGResult newResult = new DDGResults.DDGResult();
 				newResult.setTitle(linkTitle);
 				newResult.setUrl(linkURL);
 				
 				results.add(newResult);
 			}
 			
-			GoogleResults googleResults = new GoogleResults();
-			GoogleResponseData responseData = new GoogleResponseData();
+			DDGResults googleResults = new DDGResults();
+			DDGResponseData responseData = new DDGResponseData();
 			responseData.setResults(results);
 			googleResults.setResponseData(responseData);
 			

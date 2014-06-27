@@ -1,4 +1,4 @@
-package com.chs.extemp.google;
+package com.chs.extemp.ddg;
 
 import java.util.List;
 
@@ -7,14 +7,14 @@ import java.util.List;
  *
  * @author Logan Lembke
  */
-public class GoogleResults {
-	private GoogleResponseData responseData;
+public class DDGResults {
+	private DDGResponseData responseData;
 
-	public GoogleResponseData getResponseData() {
+	public DDGResponseData getResponseData() {
 		return responseData;
 	}
 
-	public void setResponseData(final GoogleResponseData responseData) {
+	public void setResponseData(final DDGResponseData responseData) {
 		this.responseData = responseData;
 	}
 
@@ -22,14 +22,14 @@ public class GoogleResults {
 		return "ResponseData[" + responseData + "]";
 	}
 
-	public static class GoogleResponseData {
-		private List<GoogleResult> results;
+	public static class DDGResponseData {
+		private List<DDGResult> results;
 
-		public List<GoogleResult> getResults() {
+		public List<DDGResult> getResults() {
 			return results;
 		}
 
-		public void setResults(final List<GoogleResult> results) {
+		public void setResults(final List<DDGResult> results) {
 			this.results = results;
 		}
 
@@ -38,7 +38,7 @@ public class GoogleResults {
 		}
 	}
 
-	public static class GoogleResult {
+	public static class DDGResult {
 		private String url;
 		private String title;
 

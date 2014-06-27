@@ -1,8 +1,9 @@
 package com.chs.extemp;
 
 import com.chs.extemp.evernote.EvernoteClient;
-import com.chs.extemp.google.GoogleWebClient;
-import com.chs.extemp.google.GoogleResults;
+import com.chs.extemp.ddg.DDGResults.DDGResult;
+import com.chs.extemp.ddg.DDGWebClient;
+import com.chs.extemp.ddg.DDGResults;
 import com.evernote.edam.type.Notebook;
 import com.evernote.edam.type.Tag;
 
@@ -70,13 +71,13 @@ public class Researcher {
 			int topicCount = 0;
 			
 			// Create a list to hold web pages to upload
-			LinkedList<GoogleResults.GoogleResult> totalSearchResults;
+			LinkedList<DDGResult> totalSearchResults;
 			logger.info("Googling topic: " + topic);
 			checkRateTimer();
 			totalSearchResults = googleTopic(topic);
 
 			// Get a new set of data on next search
-			for (GoogleResults.GoogleResult result : totalSearchResults) {
+			for (DDGResult result : totalSearchResults) {
 				try {
 					logger.info("Uploading page: " + result.getUrl());
 	
@@ -99,44 +100,44 @@ public class Researcher {
 		}
 	}
 
-	private LinkedList<GoogleResults.GoogleResult> googleTopic(final String topic) throws Exception {
-		final LinkedList<GoogleResults.GoogleResult> results = new LinkedList<GoogleResults.GoogleResult>();
+	private LinkedList<DDGResult> googleTopic(final String topic) throws Exception {
+		final LinkedList<DDGResult> results = new LinkedList<DDGResult>();
 
 		// Search google for web pages
-		final GoogleResults googleResults = GoogleWebClient.search(topic);
+		final DDGResults ddgResults = DDGWebClient.search(topic);
 
 		// Check if we are being throttled by google
-		if (googleResults == null || googleResults.getResponseData() == null || googleResults.getResponseData().getResults() == null) {
+		if (ddgResults == null || ddgResults.getResponseData() == null || ddgResults.getResponseData().getResults() == null) {
 			logger.severe("Google connection has been throttled. Waiting 10 minutes.");
 			Thread.sleep(1000 * 60 * 10);
 			return results;
 		}
 
 		// Add results
-		for (GoogleResults.GoogleResult gResult : googleResults.getResponseData().getResults()) {
+		for (DDGResult dResult : ddgResults.getResponseData().getResults()) {
 			// Ignore the topic listing
-			if (gResult.getUrl().contains("http://www.nfhs.org/")) {
+			if (dResult.getUrl().contains("http://www.nfhs.org/")) {
 				continue;
 			}
-			logger.info("Found page: " + gResult.getUrl());
+			logger.info("Found page: " + dResult.getUrl());
 			// Ignore non-html files
-			if (gResult.getUrl().endsWith(".pdf")) {
+			if (dResult.getUrl().endsWith(".pdf")) {
 				logger.info("Filetype is PDF. Excluding page.");
 				continue;
-			} else if (gResult.getUrl().endsWith(".ppt")) {
+			} else if (dResult.getUrl().endsWith(".ppt")) {
 				logger.info("Filetype is PPT. Excluding page.");
 				continue;
-			} else if (gResult.getUrl().endsWith(".docx")) {
+			} else if (dResult.getUrl().endsWith(".docx")) {
 				logger.info("Filetype is DOCX. Excluding page.");
 				continue;
-			} else if (gResult.getUrl().endsWith(".doc")) {
+			} else if (dResult.getUrl().endsWith(".doc")) {
 				logger.info("Filetype is DOC. Excluding page.");
 				continue;
-			} else if (gResult.getUrl().endsWith(".rtf")) {
+			} else if (dResult.getUrl().endsWith(".rtf")) {
 				logger.info("Filetype is RTF. Excluding page.");
 				continue;
 			}
-			results.add(gResult);
+			results.add(dResult);
 		}
 		return results;
 	}
