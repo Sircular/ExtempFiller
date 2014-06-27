@@ -7,12 +7,13 @@ import javax.swing.DefaultListModel;
 import javax.swing.JList;
 
 @SuppressWarnings("serial")
-public class TopicList extends JList {
+public class TopicList extends JList<TopicListItem> {
 
-	private final DefaultListModel listModel;
+	private final DefaultListModel<TopicListItem> listModel;
 
 	public TopicList() {
-		this.listModel = new DefaultListModel();
+		this.listModel = new DefaultListModel<TopicListItem>();
+		
 		this.setModel(listModel);
 	}
 
@@ -61,7 +62,6 @@ public class TopicList extends JList {
 	}
 	
 	public List<TopicListItem> getSelectedTopicsList() {
-		Object[] values = getSelectedValues();
-		return Arrays.asList(Arrays.copyOf(values, values.length, TopicListItem[].class));
+		return this.getSelectedValuesList();
 	}
 }
