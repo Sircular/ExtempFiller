@@ -1,6 +1,7 @@
 package com.chs.extemp.gui;
 
 import com.chs.extemp.CacheFileHandler;
+import com.chs.extemp.ExtempLogger;
 import com.chs.extemp.TopicFileReader;
 import com.chs.extemp.gui.debug.DebugPanel;
 import com.chs.extemp.gui.events.ResearchCommand;
@@ -18,6 +19,7 @@ import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 @SuppressWarnings("serial")
 
@@ -31,8 +33,14 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	private DebugPanel debugPanel;
 	private ResearchMenuBar menuBar;
 	private JProgressBar waitingBar;
+	
+	private Logger log;
 
 	public ResearchGUI() {
+		// load the logger
+		log = ExtempLogger.getLogger();
+		
+		// load the evernote client
 		evernoteWorker = new EvernoteWorker();
 		evernoteWorker.registerListener(this);
 
@@ -43,15 +51,17 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		setVisible(true);
 		evernoteWorker.startWorkerThreads();
 		if(CacheFileHandler.cacheFileExists(CacheFileHandler.DEFAULT_CACHE_PATH)) {
-			supplyTopicList(CacheFileHandler.loadCacheFile(CacheFileHandler.DEFAULT_CACHE_PATH));
+			log.info("Loading topic list from cache file...");
+			onTopicListSupplied(CacheFileHandler.loadCacheFile(CacheFileHandler.DEFAULT_CACHE_PATH));
 		}else{
+			log.info("No cache file found, requesting topics from Evernote...");
 			loadTopicsFromEvernote();
 		}
 	}
 
 	public void init() {
 		setTitle("CHS Extemp Filler");
-		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setLayout(new BorderLayout());
 
 		// set up some tabs
@@ -186,7 +196,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		topicPanel.removeTopic(topic);
 	}
 
-	public void supplyTopicList(final String[] topics) {
+	public void onTopicListSupplied(final String[] topics) {
 		final TopicListItem[] currentTopics = topicPanel.getTopics();
 
 		for (String topic : topics) {
@@ -215,6 +225,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		}
 		setGUIEnabled(true);
 		topicPanel.getAddTopicPanel().requestFocusInWindow();
+		log.info("Successfully loaded topic list.");
 	}
 
 	public void onUsernameLoaded(final String username) {
@@ -254,7 +265,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 				} else if (e.getType() == ResearchEvent.Type.TOPIC_DELETED) {
 					onTopicDeleted((String) e.getData());
 				} else if (e.getType() == ResearchEvent.Type.TOPIC_LIST_LOADED) {
-					supplyTopicList((String[]) e.getData());
+					onTopicListSupplied((String[]) e.getData());
 				} else if (e.getType() == ResearchEvent.Type.USERNAME) {
 					onUsernameLoaded((String) e.getData());
 				} else if (e.getType() == ResearchEvent.Type.RESEARCH_ERROR) {

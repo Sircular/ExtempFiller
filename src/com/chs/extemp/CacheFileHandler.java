@@ -1,25 +1,23 @@
 package com.chs.extemp;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class CacheFileHandler {
 	
-	public final static String DEFAULT_CACHE_PATH = ".extempcache";
+	public final static String DEFAULT_CACHE_PATH = "./.extempcache";
 	
 	public static String[] loadCacheFile(String path) {
 		ArrayList<String> topics = new ArrayList<String>();
 
 		try {
-			InputStream fileStream = new FileInputStream(new File(path));
-			Scanner fileScanner = new Scanner(fileStream);
+			Scanner fileScanner = new Scanner(new File(path));
+			fileScanner.useDelimiter("\n");
 			while(fileScanner.hasNext()) {
 				topics.add(fileScanner.next());
 			}
@@ -41,6 +39,8 @@ public class CacheFileHandler {
 				byte[] byteStream = currentTopic.getBytes();
 				fileStream.write(byteStream);
 			}
+			
+			fileStream.flush();
 			
 			fileStream.close();
 		} catch (FileNotFoundException e) {

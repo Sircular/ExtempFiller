@@ -39,7 +39,8 @@ public class DDGWebClient {
 			Document tree = Jsoup.parse(rawData);
 			Elements contentNodes = tree.select("div.links_main.links_deep");
 			
-			for(int i = 0; i < contentNodes.size(); i++) {
+			// we want to skip the first result; it is invariably duckduckgo.com
+			for(int i = 1; i < contentNodes.size(); i++) {
 				Element currentNode = contentNodes.get(i);
 				
 				Element linkNode = currentNode.select("a.large").get(0);
