@@ -160,7 +160,7 @@ public class HtmlToENMLifier {
 	 */
 	public void fixEdam(EDAMUserException edam) {
 		String parameter = edam.getParameter();
-		if(parameter.startsWith("Element")) {
+		if(parameter.startsWith("Element")) { // remove an invalid element
 			String identifier = parameter.substring(parameter.indexOf("\"") + 1, parameter.indexOf("\"", parameter.indexOf("\"") + 1));
 			final Elements troubleElements = document.select(identifier);
 			for(Element troubleElement : troubleElements) {
@@ -178,12 +178,23 @@ public class HtmlToENMLifier {
 					}
 				}
 			}
-		} else if (parameter.startsWith("Attribute")) {
+		} else if (parameter.startsWith("Attribute")) { // remove an invalid attribute
 			String identifier = parameter.substring(parameter.indexOf("\"") + 1, parameter.indexOf("\"", parameter.indexOf("\"") + 1));
 			final Elements troubleElements = document.select("[" + identifier + "]");
 			for(Element troubleElement : troubleElements) {
 				troubleElement.removeAttr(identifier);
 			}
+		} else if (parameter.startsWith("The reference")) { // fix invalid entity reference (caused by & symbol)
+			// instead of assuming an invalid entity reference, we will assume an unescaped &
+			// we have to use basic text search
+			String identifier = parameter.substring(parameter.indexOf("\"") + 1, parameter.indexOf("\"", parameter.indexOf("\"") + 1));
+			String rawHtml = document.html();
+			
+			String searchPattern = "& ?"+identifier;
+			String newRawHtml = rawHtml.replaceFirst(searchPattern, "&amp;"+identifier);
+			System.out.println(newRawHtml.equals(rawHtml));
+			System.out.println(identifier);
+			document.html(newRawHtml);
 		}
 	}
 

@@ -29,6 +29,8 @@ import java.util.logging.Logger;
  * @author Logan Lembke
  */
 public class EvernoteClient {
+	
+	private static final int MAX_RETRIES = 15;
 
 	private static final String AUTH_TOKEN = "S=s1:U=8d68b:E=14c0b6e9ce6:C=144b3bd70e8:P=1cd:A=en-devtoken:V=2:H=dda9608fbcf113c1385b791b30958e43";
 
@@ -313,7 +315,7 @@ public class EvernoteClient {
 			if (edam.getErrorCode() == EDAMErrorCode.ENML_VALIDATION) {
 				logger.severe("ENML_VALIDATION ERROR: " + edam.getParameter());
 				logger.severe("TRYING TO FIX!");
-				return createTroubledHTMLNote(translator, edam, notebook, tags);
+				return createTroubledHTMLNote(translator, edam, notebook, tags, 0);
 			}
 			// The title of the note is bad
 			else if (edam.getErrorCode() == EDAMErrorCode.BAD_DATA_FORMAT && edam.getParameter().equals("Note.title")) {
@@ -354,7 +356,11 @@ public class EvernoteClient {
 	 * @throws Exception All exceptions are thrown ot hte calling program
 	 */
 	private synchronized Note createTroubledHTMLNote(final HtmlToENMLifier translator, final EDAMUserException edam,
-	                                                 final Notebook notebook, final List<Tag> tags) throws Exception {
+	                                                 final Notebook notebook, final List<Tag> tags, int depth) throws Exception {
+		// we don't want to keep trying endlessly until a stack overflow
+		if (depth >= MAX_RETRIES)
+			throw new RuntimeException("Exceeds retry amount");
+		
 		// Try to fix the html to enml error
 		translator.fixEdam(edam);
 		// Finish the translation
@@ -380,7 +386,7 @@ public class EvernoteClient {
 				logger.severe("ENML_VALIDATION ERROR: " + edam.getParameter());
 				logger.severe("TRYING TO FIX!");
 				//Recursively call this function to fix other translation errors
-				return createTroubledHTMLNote(translator, edam2, notebook, tags);
+				return createTroubledHTMLNote(translator, edam2, notebook, tags, depth+1);
 			}
 			// The title of the note is bad
 			else if (edam2.getErrorCode() == EDAMErrorCode.BAD_DATA_FORMAT && edam2.getParameter().equals("Note.title")) {
