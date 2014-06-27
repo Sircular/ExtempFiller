@@ -155,6 +155,11 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		setGUIEnabled(false);
 		loadTopicsFromEvernote();
 	}
+	
+	public void deleteCache() {
+		CacheFileHandler.deleteCacheFile(CacheFileHandler.DEFAULT_CACHE_PATH);
+		log.info("Cleared topic cache.");
+	}
 
 	public void loadTopicsFromFile() {
 		final JFileChooser fileChooser = new JFileChooser(".");

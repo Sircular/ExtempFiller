@@ -31,6 +31,11 @@ public class CacheFileHandler {
 	}
 	
 	public static void saveCacheFile(String path, String[] topics) {
+		// we don't want to save an empty file
+		if (topics.length == 0) {
+			deleteCacheFile(path);
+			return;
+		}
 		try {
 			OutputStream fileStream = new FileOutputStream(new File(path));
 			
@@ -50,6 +55,11 @@ public class CacheFileHandler {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public static void deleteCacheFile(String path) {
+		if (cacheFileExists(path))
+			new File(path).delete();
 	}
 	
 	public static boolean cacheFileExists(String path) {
