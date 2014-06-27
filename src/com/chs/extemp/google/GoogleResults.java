@@ -8,13 +8,13 @@ import java.util.List;
  * @author Logan Lembke
  */
 public class GoogleResults {
-	private ResponseData responseData;
+	private GoogleResponseData responseData;
 
-	public ResponseData getResponseData() {
+	public GoogleResponseData getResponseData() {
 		return responseData;
 	}
 
-	public void setResponseData(final ResponseData responseData) {
+	public void setResponseData(final GoogleResponseData responseData) {
 		this.responseData = responseData;
 	}
 
@@ -22,14 +22,14 @@ public class GoogleResults {
 		return "ResponseData[" + responseData + "]";
 	}
 
-	public static class ResponseData {
-		private List<Result> results;
+	public static class GoogleResponseData {
+		private List<GoogleResult> results;
 
-		public List<Result> getResults() {
+		public List<GoogleResult> getResults() {
 			return results;
 		}
 
-		public void setResults(final List<Result> results) {
+		public void setResults(final List<GoogleResult> results) {
 			this.results = results;
 		}
 
@@ -38,7 +38,7 @@ public class GoogleResults {
 		}
 	}
 
-	public static class Result {
+	public static class GoogleResult {
 		private String url;
 		private String title;
 

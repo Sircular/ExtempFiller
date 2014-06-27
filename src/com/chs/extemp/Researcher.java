@@ -13,8 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Researcher {
-	private static final int MINIMUM_DOCUMENTS_PER_TOPIC = 8; // used to determine how many topics to retrieve
-
+	
 	private final EvernoteClient evernoteClient;
 	private final Logger logger;
 
@@ -66,30 +65,28 @@ public class Researcher {
 			logger.info("Creating tag: " + topic);
 			tag = evernoteClient.createTag(topic);
 			int topicCount = 0;
-			int currentSearchIndex = 0;
-			while (topicCount < MINIMUM_DOCUMENTS_PER_TOPIC) {
+			
+			// Create a list to hold web pages to upload
+			LinkedList<GoogleResults.GoogleResult> totalSearchResults;
+			logger.info("Googling topic: " + topic);
+			checkRateTimer();
+			totalSearchResults = googleTopic(topic);
 
-				// Create a list to hold web pages to upload
-				final LinkedList<GoogleResults.Result> totalSearchResults = new LinkedList<GoogleResults.Result>();
-				logger.info("Googling topic: " + topic);
-				checkRateTimer();
-				totalSearchResults.addAll(googleTopic(topic, currentSearchIndex));
-
-				// Get a new set of data on next search
-				currentSearchIndex += 7;
+			// Get a new set of data on next search
+			for (GoogleResults.GoogleResult result : totalSearchResults) {
 				try {
-					for (GoogleResults.Result result : totalSearchResults) {
-						logger.info("Uploading page: " + result.getUrl());
-
-						// Always check the rate timer to make sure we do not overburden the server
-						checkRateTimer();
-						evernoteClient.createHTMLNote(result.getUrl(), HTMLNotebook, Arrays.asList(tag));
-						topicCount++;
-					}
+					logger.info("Uploading page: " + result.getUrl());
+	
+					// Always check the rate timer to make sure we do not overburden the server
+					checkRateTimer();
+					evernoteClient.createHTMLNote(result.getUrl(), HTMLNotebook, Arrays.asList(tag));
+					topicCount++;
 				} catch (final Exception e) {
 					logger.log(Level.SEVERE, "Skipping source", e);
 				}
 			}
+			
+			logger.info("Found "+String.valueOf(topicCount)+" sources.");
 			logger.info("Finished researching topic: " + topic);
 
 		} else {
@@ -97,11 +94,11 @@ public class Researcher {
 		}
 	}
 
-	private LinkedList<GoogleResults.Result> googleTopic(final String topic, final int startIndex) throws Exception {
-		final LinkedList<GoogleResults.Result> results = new LinkedList<GoogleResults.Result>();
+	private LinkedList<GoogleResults.GoogleResult> googleTopic(final String topic) throws Exception {
+		final LinkedList<GoogleResults.GoogleResult> results = new LinkedList<GoogleResults.GoogleResult>();
 
 		// Search google for web pages
-		final GoogleResults googleResults = GoogleWebClient.search(topic, startIndex);
+		final GoogleResults googleResults = GoogleWebClient.search(topic);
 
 		// Check if we are being throttled by google
 		if (googleResults == null || googleResults.getResponseData() == null || googleResults.getResponseData().getResults() == null) {
@@ -111,7 +108,7 @@ public class Researcher {
 		}
 
 		// Add results
-		for (GoogleResults.Result gResult : googleResults.getResponseData().getResults()) {
+		for (GoogleResults.GoogleResult gResult : googleResults.getResponseData().getResults()) {
 			// Ignore the topic listing
 			if (gResult.getUrl().contains("http://www.nfhs.org/")) {
 				continue;
