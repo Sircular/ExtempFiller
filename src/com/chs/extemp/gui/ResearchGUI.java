@@ -1,11 +1,13 @@
 package com.chs.extemp.gui;
 
+import com.chs.extemp.CacheFileHandler;
 import com.chs.extemp.TopicFileReader;
 import com.chs.extemp.gui.debug.DebugPanel;
 import com.chs.extemp.gui.events.ResearchCommand;
 import com.chs.extemp.gui.events.ResearchEvent;
 import com.chs.extemp.gui.menu.ResearchMenuBar;
 import com.chs.extemp.gui.topicview.TopicListItem;
+import com.chs.extemp.gui.topicview.TopicListItem.State;
 import com.chs.extemp.gui.topicview.TopicPanel;
 
 import javax.swing.*;
@@ -14,6 +16,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("serial")
@@ -39,7 +42,11 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		setGUIEnabled(false);
 		setVisible(true);
 		evernoteWorker.startWorkerThreads();
-		loadTopicsFromEvernote();
+		if(CacheFileHandler.cacheFileExists(CacheFileHandler.DEFAULT_CACHE_PATH)) {
+			supplyTopicList(CacheFileHandler.loadCacheFile(CacheFileHandler.DEFAULT_CACHE_PATH));
+		}else{
+			loadTopicsFromEvernote();
+		}
 	}
 
 	public void init() {
@@ -75,6 +82,20 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	@Override
 	public void dispose() {
 		evernoteWorker.interruptWorkerThreads();
+		
+		// save the cache
+		TopicListItem[] topicItems = topicPanel.getTopics();
+		ArrayList<String> topicStrings = new ArrayList<String>();
+		
+		for(int i = 0; i < topicItems.length; i++) {
+			String topicString = topicItems[i].getTopic();
+			State topicState = topicItems[i].getState();
+			
+			if(topicState == State.RESEARCHED)
+				topicStrings.add(topicString);
+		}
+		CacheFileHandler.saveCacheFile(CacheFileHandler.DEFAULT_CACHE_PATH, topicStrings.toArray(new String[]{}));
+		
 		System.exit(0);
 	}
 
@@ -165,7 +186,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		topicPanel.removeTopic(topic);
 	}
 
-	public void onRemoteTopicListLoaded(final String[] topics) {
+	public void supplyTopicList(final String[] topics) {
 		final TopicListItem[] currentTopics = topicPanel.getTopics();
 
 		for (String topic : topics) {
@@ -233,7 +254,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 				} else if (e.getType() == ResearchEvent.Type.TOPIC_DELETED) {
 					onTopicDeleted((String) e.getData());
 				} else if (e.getType() == ResearchEvent.Type.TOPIC_LIST_LOADED) {
-					onRemoteTopicListLoaded((String[]) e.getData());
+					supplyTopicList((String[]) e.getData());
 				} else if (e.getType() == ResearchEvent.Type.USERNAME) {
 					onUsernameLoaded((String) e.getData());
 				} else if (e.getType() == ResearchEvent.Type.RESEARCH_ERROR) {
