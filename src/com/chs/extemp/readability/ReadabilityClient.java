@@ -14,6 +14,8 @@ import java.util.logging.Logger;
  * @author Logan Lembke
  */
 public class ReadabilityClient {
+	private final static int MAX_RETRIES = 5;
+	
 	private final static String API = "https://readability.com/api/content/v1/";
 	private final static String AUTH = "7dfac7d927e842450e174100a83a65039ad52bcb";
 
@@ -36,7 +38,7 @@ public class ReadabilityClient {
 			retries = 1;
 			return parserResults;
 		} catch (IOException io) {
-			if (retries <= 5) {
+			if (retries <= MAX_RETRIES) {
 				logger.info("Readability error. Retrying (" + retries + " of 5): " + io.getMessage());
 				retries++;
 				Thread.sleep(1000);
