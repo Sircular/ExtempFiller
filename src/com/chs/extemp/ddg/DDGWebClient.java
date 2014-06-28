@@ -40,7 +40,7 @@ public class DDGWebClient {
 			Elements contentNodes = tree.select("div.links_main.links_deep");
 			
 			// we want to skip the first result; it is invariably duckduckgo.com
-			for(int i = 1; i < contentNodes.size(); i++) {
+			for (int i = 1; i < contentNodes.size(); i++) {
 				Element currentNode = contentNodes.get(i);
 				
 				Element linkNode = currentNode.select("a.large").get(0);

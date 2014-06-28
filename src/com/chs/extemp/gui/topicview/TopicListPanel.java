@@ -128,9 +128,8 @@ public class TopicListPanel extends JPanel {
 		public void keyReleased(KeyEvent e) {
 			if (e.getKeyCode() == KeyEvent.VK_DELETE) {
 				final List<TopicListItem> topicItems = getSelectedTopics();
-				if (topicItems != null) {
+				if (topicItems != null)
 					gui.deleteSelectedTopics();
-				}
 			}
 		}
 	}

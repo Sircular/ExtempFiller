@@ -54,41 +54,41 @@ public class HtmlToENMLifier {
 	 */
 	private void cleanDocument() {
 		final Elements idElements = document.select("[id]");
-		for(Element idElement : idElements) {
+		for (Element idElement : idElements) {
 			idElement.removeAttr("id");
 		}
 		final Elements classElements = document.select("[class]");
-		for(Element classElement : classElements) {
+		for (Element classElement : classElements) {
 			classElement.removeAttr("class");
 		}
 		final Elements altElements = document.select("[alt]");
-		for(Element altElement : altElements) {
+		for (Element altElement : altElements) {
 			altElement.removeAttr("alt");
 		}
 		final Elements relElements = document.select("[rel]");
-		for(Element relElement : relElements) {
+		for (Element relElement : relElements) {
 			relElement.removeAttr("rel");
 		}
 		final Elements scoreElements = document.select("[score]");
-		for(Element scoreElement : scoreElements) {
+		for (Element scoreElement : scoreElements) {
 			scoreElement.removeAttr("score");
 		}
 		final Elements tableColumns = document.select("table[cols]");
-		for(Element tableColumn : tableColumns) {
+		for (Element tableColumn : tableColumns) {
 			tableColumn.removeAttr("cols");
 		}
 		final Elements tableHeights = document.select("table[height]");
-		for(Element tableHeight : tableHeights) {
+		for (Element tableHeight : tableHeights) {
 			tableHeight.removeAttr("height");
 		}
 		final Elements linkElements = document.select("a[href]");
-		for(Element linkElement : linkElements) {
+		for (Element linkElement : linkElements) {
 			linkElement.removeAttr("href");
 		}
 		final Elements sectionElements = document.select(
 				"figcaption, hgroup, noscript, header, footer, section, nav, article, " +
 						"figure, aside, attr, more, fieldset, content, recommendations-bar");
-		for(Element sectionElement : sectionElements) {
+		for (Element sectionElement : sectionElements) {
 			Attributes attributes = sectionElement.attributes();
 			sectionElement.replaceWith(new Element(Tag.valueOf("div"), "", attributes));
 		}
@@ -97,22 +97,22 @@ public class HtmlToENMLifier {
 				"nyt_byline, nyt_text, nyt_correction_top, " +
 						"nyt_correction_bottom, nyt_update_top," +
 						" nyt_update_bottom, nyt_author_id");
-		for(Element nytElement : nytElements) {
+		for (Element nytElement : nytElements) {
 			nytElement.replaceWith(new Element(Tag.valueOf("div"), ""));
 		}
 		final Elements divElements = document.select("div");
-		for(Element divElement : divElements) {
+		for (Element divElement : divElements) {
 			Attributes attributes = divElement.attributes();
-			for(Attribute attribute : attributes) {
+			for (Attribute attribute : attributes) {
 				divElement.removeAttr(attribute.getKey());
 			}
 		}
 		final Elements removeElements = document.select("iframe, noframe, meta, plusone");
-		for(Element removeElement : removeElements) {
+		for (Element removeElement : removeElements) {
 			removeElement.remove();
 		}
 		final Elements h3Elements = document.select("time, label");
-		for(Element h3Element : h3Elements) {
+		for (Element h3Element : h3Elements) {
 			h3Element.replaceWith(new Element(Tag.valueOf("h3"), "").text(h3Element.text()));
 		}
 	}
@@ -123,7 +123,7 @@ public class HtmlToENMLifier {
 	 * @throws Exception All exceptions are thrown to the calling program
 	 */
 	public Note toNote() throws Exception {
-		if(document == null) {
+		if (document == null) {
 			getReadabilityResults();
 			initializeDocument();
 			cleanDocument();
@@ -143,7 +143,7 @@ public class HtmlToENMLifier {
 				.replace("<nobr>", "")
 				.replace("</nobr>", ""));
 		noteBody.append("<h3>").append(URL);
-		if(readabilityResults.getDate_published() != null) {
+		if (readabilityResults.getDate_published() != null) {
 			noteBody.append(" @ ").append(readabilityResults.getDate_published());
 		}
 		noteBody.append("</h3>");
@@ -160,12 +160,12 @@ public class HtmlToENMLifier {
 	 */
 	public void fixEdam(EDAMUserException edam) {
 		String parameter = edam.getParameter();
-		if(parameter.startsWith("Element")) { // remove an invalid element
+		if (parameter.startsWith("Element")) { // remove an invalid element
 			String identifier = parameter.substring(parameter.indexOf("\"") + 1, parameter.indexOf("\"", parameter.indexOf("\"") + 1));
 			final Elements troubleElements = document.select(identifier);
-			for(Element troubleElement : troubleElements) {
-				if(troubleElement.children().size() == 0) {
-					if(troubleElement.hasText()) {
+			for (Element troubleElement : troubleElements) {
+				if (troubleElement.children().size() == 0) {
+					if (troubleElement.hasText()) {
 						troubleElement.replaceWith(new Element(Tag.valueOf("p"), ""));
 					} else {
 						troubleElement.remove();
@@ -173,7 +173,7 @@ public class HtmlToENMLifier {
 				} else {
 					troubleElement.replaceWith(new Element(Tag.valueOf("div"), ""));
 					Attributes attributes = troubleElement.attributes();
-					for(Attribute attribute : attributes) {
+					for (Attribute attribute : attributes) {
 						troubleElement.removeAttr(attribute.getKey());
 					}
 				}
@@ -181,7 +181,7 @@ public class HtmlToENMLifier {
 		} else if (parameter.startsWith("Attribute")) { // remove an invalid attribute
 			String identifier = parameter.substring(parameter.indexOf("\"") + 1, parameter.indexOf("\"", parameter.indexOf("\"") + 1));
 			final Elements troubleElements = document.select("[" + identifier + "]");
-			for(Element troubleElement : troubleElements) {
+			for (Element troubleElement : troubleElements) {
 				troubleElement.removeAttr(identifier);
 			}
 		} else if (parameter.startsWith("The reference")) { // fix invalid entity reference (caused by & symbol)

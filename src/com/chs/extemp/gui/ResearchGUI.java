@@ -50,7 +50,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		setGUIEnabled(false);
 		setVisible(true);
 		evernoteWorker.startWorkerThreads();
-		if(CacheFileHandler.cacheFileExists(CacheFileHandler.DEFAULT_CACHE_PATH)) {
+		if (CacheFileHandler.cacheFileExists(CacheFileHandler.DEFAULT_CACHE_PATH)) {
 			log.info("Loading topic list from cache file...");
 			onTopicListSupplied(CacheFileHandler.loadCacheFile(CacheFileHandler.DEFAULT_CACHE_PATH));
 		}else{
@@ -97,11 +97,11 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		TopicListItem[] topicItems = topicPanel.getTopics();
 		ArrayList<String> topicStrings = new ArrayList<String>();
 		
-		for(int i = 0; i < topicItems.length; i++) {
+		for (int i = 0; i < topicItems.length; i++) {
 			String topicString = topicItems[i].getTopic();
 			State topicState = topicItems[i].getState();
 			
-			if(topicState == State.RESEARCHED)
+			if (topicState == State.RESEARCHED)
 				topicStrings.add(topicString);
 		}
 		CacheFileHandler.saveCacheFile(CacheFileHandler.DEFAULT_CACHE_PATH, topicStrings.toArray(new String[]{}));
