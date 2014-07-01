@@ -1,4 +1,4 @@
-package com.chs.extemp.gui.menu;
+package com.chs.extemp.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,12 +10,12 @@ import com.chs.extemp.gui.ResearchGUI;
 import javax.swing.*;
 
 @SuppressWarnings("serial")
-public class ResearchMenuBar extends JMenuBar {
+public class ResearchMenu extends JMenuBar {
 
 	private final ResearchGUI gui;
 	private JMenu fileMenu;
 
-	public ResearchMenuBar(ResearchGUI gui) {
+	public ResearchMenu(ResearchGUI gui) {
 		this.gui = gui;
 		init();
 	}
