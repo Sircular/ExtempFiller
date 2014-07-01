@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 import com.chs.extemp.ExtempLogger;
 import com.chs.extemp.Researcher;
 import com.chs.extemp.TopicFileReader;
-import com.chs.extemp.evernote.EvernoteClient;
+import com.chs.extemp.evernote.util.AuthTokens;
 
 public class CLI {
 	private final Logger logger;
@@ -24,7 +24,7 @@ public class CLI {
 		//Start research
 		try {
 			// will soon implement option for custom auth token
-			researcher = new Researcher(EvernoteClient.DEFAULT_AUTH_TOKEN);
+			researcher = new Researcher(AuthTokens.DEFAULT_EVERNOTE_AUTH_TOKEN);
 			doResearch(topicsFilePath);
 		} catch (final Exception e) {
 			logger.log(Level.SEVERE, "", e);

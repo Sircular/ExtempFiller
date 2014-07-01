@@ -21,7 +21,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import com.chs.extemp.CacheFileHandler;
 import com.chs.extemp.ExtempLogger;
 import com.chs.extemp.TopicFileReader;
-import com.chs.extemp.evernote.EvernoteClient;
+import com.chs.extemp.evernote.util.AuthTokens;
 import com.chs.extemp.gui.debug.DebugPanel;
 import com.chs.extemp.gui.events.ResearchCommand;
 import com.chs.extemp.gui.events.ResearchEvent;
@@ -55,7 +55,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		setVisible(true);
 
 		// choose with auth token to use
-		String auth_token = EvernoteClient.DEFAULT_AUTH_TOKEN;
+		String auth_token = AuthTokens.DEFAULT_EVERNOTE_AUTH_TOKEN;
 
 		final int useDefaultToken = JOptionPane.showConfirmDialog(this, "Use the default Evernote account?", "Extemp Filler",
 				JOptionPane.YES_NO_OPTION);

@@ -32,8 +32,6 @@ public class EvernoteClient {
 
 	private static final int MAX_RETRIES = 15;
 
-	public static final String DEFAULT_AUTH_TOKEN = "S=s1:U=8d68b:E=14c0b6e9ce6:C=144b3bd70e8:P=1cd:A=en-devtoken:V=2:H=dda9608fbcf113c1385b791b30958e43";
-
 	// Used for Authentication
 	private final UserStoreClient userStore;
 

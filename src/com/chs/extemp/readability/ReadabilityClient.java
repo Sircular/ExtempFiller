@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.logging.Logger;
 
 import com.chs.extemp.ExtempLogger;
+import com.chs.extemp.evernote.util.AuthTokens;
 import com.google.gson.Gson;
 
 /**
@@ -17,7 +18,6 @@ public class ReadabilityClient {
 	private final static int MAX_RETRIES = 5;
 
 	private final static String API = "https://readability.com/api/content/v1/";
-	private final static String AUTH = "7dfac7d927e842450e174100a83a65039ad52bcb";
 
 	private static int retries = 1;
 	private final static Logger logger = ExtempLogger.getLogger();
@@ -31,7 +31,7 @@ public class ReadabilityClient {
 	 */
 	public static ReadabilityResults getReadableContent(final String address) throws Exception {
 		try {
-			final URL parserURL = new URL(API + "parser?url=" + address + "&token=" + AUTH);
+			final URL parserURL = new URL(API + "parser?url=" + address + "&token=" + AuthTokens.READABILITY_AUTH_TOKEN);
 			final InputStreamReader parserReader = new InputStreamReader(parserURL.openConnection().getInputStream(), "UTF-8");
 			final ReadabilityResults parserResults = new Gson().fromJson(parserReader, ReadabilityResults.class);
 			parserReader.close();
