@@ -8,34 +8,18 @@ import java.util.List;
  * @author Logan Lembke
  */
 public class DDGResults {
-	private DDGResponseData responseData;
+	private List<DDGResult> results;
 
-	public DDGResponseData getResponseData() {
-		return responseData;
+	public List<DDGResult> getResults() {
+		return results;
 	}
 
-	public void setResponseData(final DDGResponseData responseData) {
-		this.responseData = responseData;
+	public void setResults(final List<DDGResult> results) {
+		this.results = results;
 	}
 
 	public String toString() {
-		return "ResponseData[" + responseData + "]";
-	}
-
-	public static class DDGResponseData {
-		private List<DDGResult> results;
-
-		public List<DDGResult> getResults() {
-			return results;
-		}
-
-		public void setResults(final List<DDGResult> results) {
-			this.results = results;
-		}
-
-		public String toString() {
-			return "Results[" + results + "]";
-		}
+		return "ResponseData[" + results.toString() + "]";
 	}
 
 	public static class DDGResult {

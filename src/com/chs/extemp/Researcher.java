@@ -107,14 +107,14 @@ public class Researcher {
 		final DDGResults ddgResults = DDGWebClient.search(topic);
 
 		// Check if we are being throttled by google
-		if (ddgResults == null || ddgResults.getResponseData() == null || ddgResults.getResponseData().getResults() == null) {
+		if (ddgResults == null || ddgResults.getResults() == null) {
 			logger.severe("Google connection has been throttled. Waiting 10 minutes.");
 			Thread.sleep(1000 * 60 * 10);
 			return results;
 		}
 
 		// Add results
-		for (DDGResult dResult : ddgResults.getResponseData().getResults()) {
+		for (DDGResult dResult : ddgResults.getResults()) {
 			// Ignore the topic listing
 			if (dResult.getUrl().contains("http://www.nfhs.org/")) {
 				continue;

@@ -14,7 +14,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.chs.extemp.ddg.DDGResults.DDGResponseData;
 import com.chs.extemp.ddg.DDGResults;
 import com.chs.extemp.ddg.DDGResults.DDGResult;
 
@@ -55,9 +54,7 @@ public class DDGWebClient {
 			}
 			
 			DDGResults googleResults = new DDGResults();
-			DDGResponseData responseData = new DDGResponseData();
-			responseData.setResults(results);
-			googleResults.setResponseData(responseData);
+			googleResults.setResults(results);
 			
 			return googleResults;
 			
