@@ -1,16 +1,17 @@
 package com.chs.extemp.gui.topicview;
 
-import com.chs.extemp.gui.ResearchGUI;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.util.List;
+
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import com.chs.extemp.gui.ResearchGUI;
 
 @SuppressWarnings("serial")
 public class TopicPanel extends JPanel {
 
-	private ResearchGUI gui;
+	private final ResearchGUI gui;
 
 	private TopicListPanel topicListPanel;
 	private AddTopicPanel addTopicPanel;

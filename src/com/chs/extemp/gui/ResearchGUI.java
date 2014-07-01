@@ -1,5 +1,23 @@
 package com.chs.extemp.gui;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
+
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import com.chs.extemp.CacheFileHandler;
 import com.chs.extemp.ExtempLogger;
 import com.chs.extemp.TopicFileReader;
@@ -11,30 +29,20 @@ import com.chs.extemp.gui.topicview.TopicListItem;
 import com.chs.extemp.gui.topicview.TopicListItem.State;
 import com.chs.extemp.gui.topicview.TopicPanel;
 
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import java.awt.*;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
-
 @SuppressWarnings("serial")
 
 public class ResearchGUI extends JFrame implements ResearchListener {
 	public static final int GUI_WIDTH = 800;
 	public static final int GUI_HEIGHT = 600;
 
-	private EvernoteWorker evernoteWorker;
+	private final EvernoteWorker evernoteWorker;
 
 	private TopicPanel topicPanel;
 	private DebugPanel debugPanel;
 	private ResearchMenu menuBar;
 	private JProgressBar waitingBar;
-	
-	private Logger log;
+
+	private final Logger log;
 
 	public ResearchGUI() {
 		// load the logger
@@ -45,21 +53,21 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		pack();
 		setGUIEnabled(false);
 		setVisible(true);
-		
+
 		// choose with auth token to use
 		String auth_token = EvernoteClient.DEFAULT_AUTH_TOKEN;
-		
-		final int useDefaultToken = JOptionPane.showConfirmDialog(this, "Use the default Evernote account?", "Extemp Filler", 
+
+		final int useDefaultToken = JOptionPane.showConfirmDialog(this, "Use the default Evernote account?", "Extemp Filler",
 				JOptionPane.YES_NO_OPTION);
-		
+
 		if (useDefaultToken == JOptionPane.NO_OPTION)
 			auth_token = JOptionPane.showInputDialog(this, "Please enter your custom auth token.", auth_token);
-		
+
 		// load the evernote client
 		evernoteWorker = new EvernoteWorker(auth_token);
 		evernoteWorker.registerListener(this);
 		evernoteWorker.startWorkerThreads();
-		
+
 		if (CacheFileHandler.cacheFileExists(CacheFileHandler.DEFAULT_CACHE_PATH)) {
 			log.info("Loading topic list from cache file...");
 			onTopicListSupplied(CacheFileHandler.loadCacheFile(CacheFileHandler.DEFAULT_CACHE_PATH));
@@ -86,9 +94,8 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		tabs.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				if (((JTabbedPane) (e.getSource())).getSelectedIndex() == 0) {
+				if (((JTabbedPane) (e.getSource())).getSelectedIndex() == 0)
 					topicPanel.getAddTopicPanel().requestFocusInWindow();
-				}
 			}
 		});
 
@@ -102,20 +109,20 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	@Override
 	public void dispose() {
 		evernoteWorker.interruptWorkerThreads();
-		
+
 		// save the cache
-		TopicListItem[] topicItems = topicPanel.getTopics();
-		ArrayList<String> topicStrings = new ArrayList<String>();
-		
-		for (int i = 0; i < topicItems.length; i++) {
-			String topicString = topicItems[i].getTopic();
-			State topicState = topicItems[i].getState();
-			
+		final TopicListItem[] topicItems = topicPanel.getTopics();
+		final ArrayList<String> topicStrings = new ArrayList<String>();
+
+		for (final TopicListItem topicItem : topicItems) {
+			final String topicString = topicItem.getTopic();
+			final State topicState = topicItem.getState();
+
 			if (topicState == State.RESEARCHED || topicState == State.RESEARCHING)
 				topicStrings.add(topicString);
 		}
 		CacheFileHandler.saveCacheFile(CacheFileHandler.DEFAULT_CACHE_PATH, topicStrings.toArray(new String[]{}));
-		
+
 		System.exit(0);
 	}
 
@@ -126,35 +133,32 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 						this,
 						ResearchCommand.Type.RESEARCH_TOPIC,
 						topic
-				)
-		);
+						)
+				);
 	}
 
 	public void deleteSelectedTopics() {
 		final List<TopicListItem> topics = topicPanel.getSelectedTopics();
-		for (TopicListItem topic : topics) {
+		for (final TopicListItem topic : topics)
 			if (topic.getState() != TopicListItem.State.RESEARCHING && topic.getState() != TopicListItem.State.DELETING) {
-				if (topic.getState() == TopicListItem.State.QUEUED_FOR_RESEARCH) {
+				if (topic.getState() == TopicListItem.State.QUEUED_FOR_RESEARCH)
 					evernoteWorker.enqueueCommand(
 							new ResearchCommand(
 									this,
 									ResearchCommand.Type.UNQUEUE_TOPIC,
 									topic.getTopic()
-							)
-					);
-				} else {
+									)
+							);
+				else
 					evernoteWorker.enqueueCommand(
 							new ResearchCommand(
 									this,
 									ResearchCommand.Type.DELETE_TOPIC,
 									topic.getTopic()
-							)
-					);
-				}
-			} else {
+									)
+							);
+			} else
 				displayError("Please wait until the topic finishes out the current operation.");
-			}
-		}
 	}
 
 	public void cancelResearch() {
@@ -165,7 +169,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		setGUIEnabled(false);
 		loadTopicsFromEvernote();
 	}
-	
+
 	public void deleteCache() {
 		CacheFileHandler.deleteCacheFile(CacheFileHandler.DEFAULT_CACHE_PATH);
 		log.info("Cleared topic cache.");
@@ -179,11 +183,9 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		if (choice == JFileChooser.APPROVE_OPTION) {
 			final File file = fileChooser.getSelectedFile();
 			final String path = file.getAbsolutePath();
-			for (String currentTopic : TopicFileReader.readTopicFile(path)) {
-				if (!topicPanel.hasTopic(currentTopic)) {
+			for (final String currentTopic : TopicFileReader.readTopicFile(path))
+				if (!topicPanel.hasTopic(currentTopic))
 					addTopic(currentTopic);
-				}
-			}
 		}
 	}
 
@@ -214,29 +216,23 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	public void onTopicListSupplied(final String[] topics) {
 		final TopicListItem[] currentTopics = topicPanel.getTopics();
 
-		for (String topic : topics) {
+		for (final String topic : topics) {
 			boolean found = false;
-			for (TopicListItem topicListItem : currentTopics) {
-				if (topic.equals(topicListItem.getTopic())) {
+			for (final TopicListItem topicListItem : currentTopics)
+				if (topic.equals(topicListItem.getTopic()))
 					found = true;
-				}
-			}
-			if (!found) {
+			if (!found)
 				topicPanel.addTopic(topic, TopicListItem.State.RESEARCHED);
-			}
 		}
-		for (TopicListItem topicListItem : currentTopics) {
+		for (final TopicListItem topicListItem : currentTopics) {
 			boolean found = false;
-			for (String topic : topics) {
-				if (topicListItem.getTopic().equals(topic)) {
+			for (final String topic : topics)
+				if (topicListItem.getTopic().equals(topic))
 					found = true;
-				}
-			}
 			if (!found
 					&& topicListItem.getState() != TopicListItem.State.QUEUED_FOR_RESEARCH
-					&& topicListItem.getState() != TopicListItem.State.RESEARCHING) {
+					&& topicListItem.getState() != TopicListItem.State.RESEARCHING)
 				topicPanel.removeTopic(topicListItem.getTopic());
-			}
 		}
 		setGUIEnabled(true);
 		topicPanel.getAddTopicPanel().requestFocusInWindow();
@@ -269,25 +265,24 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				if (e.getType() == ResearchEvent.Type.TOPIC_QUEUED_FOR_RESEARCH) {
+				if (e.getType() == ResearchEvent.Type.TOPIC_QUEUED_FOR_RESEARCH)
 					onTopicQueuedForResearch((String) e.getData());
-				} else if (e.getType() == ResearchEvent.Type.TOPIC_RESEARCHING) {
+				else if (e.getType() == ResearchEvent.Type.TOPIC_RESEARCHING)
 					onTopicResearching((String) e.getData());
-				} else if (e.getType() == ResearchEvent.Type.TOPIC_RESEARCHED) {
+				else if (e.getType() == ResearchEvent.Type.TOPIC_RESEARCHED)
 					onTopicResearched((String) e.getData());
-				} else if (e.getType() == ResearchEvent.Type.TOPIC_DELETING) {
+				else if (e.getType() == ResearchEvent.Type.TOPIC_DELETING)
 					onTopicDeleting((String) e.getData());
-				} else if (e.getType() == ResearchEvent.Type.TOPIC_DELETED) {
+				else if (e.getType() == ResearchEvent.Type.TOPIC_DELETED)
 					onTopicDeleted((String) e.getData());
-				} else if (e.getType() == ResearchEvent.Type.TOPIC_LIST_LOADED) {
+				else if (e.getType() == ResearchEvent.Type.TOPIC_LIST_LOADED)
 					onTopicListSupplied((String[]) e.getData());
-				} else if (e.getType() == ResearchEvent.Type.USERNAME) {
+				else if (e.getType() == ResearchEvent.Type.USERNAME)
 					onUsernameLoaded((String) e.getData());
-				} else if (e.getType() == ResearchEvent.Type.RESEARCH_ERROR) {
+				else if (e.getType() == ResearchEvent.Type.RESEARCH_ERROR)
 					onTopicError((String) e.getData());
-				} else if (e.getType() == ResearchEvent.Type.EVERNOTE_CONNECTION_ERROR) {
+				else if (e.getType() == ResearchEvent.Type.EVERNOTE_CONNECTION_ERROR)
 					onEvernoteError();
-				}
 			}
 		});
 	}

@@ -1,9 +1,10 @@
 package com.chs.extemp.gui.debug;
 
-import javax.swing.*;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
+
+import javax.swing.JTextPane;
 
 // Class used to connect the debug output with the logger
 
@@ -30,9 +31,8 @@ public class DebugLogHandler extends Handler {
 		debuglog.setCaretPosition(debuglog.getText().length());
 		if (record.getThrown() != null) {
 			final StackTraceElement[] stackTrace = record.getThrown().getStackTrace();
-			for (StackTraceElement element : stackTrace) {
+			for (final StackTraceElement element : stackTrace)
 				publish(new LogRecord(Level.SEVERE, element.toString()));
-			}
 		}
 		flush();
 	}

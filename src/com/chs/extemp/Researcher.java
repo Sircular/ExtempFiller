@@ -1,23 +1,23 @@
 package com.chs.extemp;
 
-import com.chs.extemp.evernote.EvernoteClient;
-import com.chs.extemp.ddg.DDGResults.DDGResult;
-import com.chs.extemp.ddg.DDGWebClient;
-import com.chs.extemp.ddg.DDGResults;
-import com.evernote.edam.type.Notebook;
-import com.evernote.edam.type.Tag;
-
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.chs.extemp.ddg.DDGResults;
+import com.chs.extemp.ddg.DDGResults.DDGResult;
+import com.chs.extemp.ddg.DDGWebClient;
+import com.chs.extemp.evernote.EvernoteClient;
+import com.evernote.edam.type.Notebook;
+import com.evernote.edam.type.Tag;
+
 public class Researcher {
-	
+
 	// DuckDuckGo supplies 28 results; we don't need all of these
 	private final int MAXIMUM_ARTICLE_COUNT = 12;
-	
+
 	private final EvernoteClient evernoteClient;
 	private final Logger logger;
 
@@ -69,7 +69,7 @@ public class Researcher {
 			logger.info("Creating tag: " + topic);
 			tag = evernoteClient.createTag(topic);
 			int topicCount = 0;
-			
+
 			// Create a list to hold web pages to upload
 			LinkedList<DDGResult> totalSearchResults;
 			logger.info("Googling topic: " + topic);
@@ -77,10 +77,10 @@ public class Researcher {
 			totalSearchResults = googleTopic(topic);
 
 			// Get a new set of data on next search
-			for (DDGResult result : totalSearchResults) {
+			for (final DDGResult result : totalSearchResults) {
 				try {
 					logger.info("Uploading page: " + result.getUrl());
-	
+
 					// Always check the rate timer to make sure we do not overburden the server
 					checkRateTimer();
 					evernoteClient.createHTMLNote(result.getUrl(), HTMLNotebook, Arrays.asList(tag));
@@ -91,13 +91,12 @@ public class Researcher {
 				if(topicCount >= MAXIMUM_ARTICLE_COUNT)
 					break;
 			}
-			
+
 			logger.info("Found "+String.valueOf(topicCount)+" sources.");
 			logger.info("Finished researching topic: " + topic);
 
-		} else {
+		} else
 			logger.info("Tag found. Continuing...");
-		}
 	}
 
 	private LinkedList<DDGResult> googleTopic(final String topic) throws Exception {
@@ -114,11 +113,10 @@ public class Researcher {
 		}
 
 		// Add results
-		for (DDGResult dResult : ddgResults.getResults()) {
+		for (final DDGResult dResult : ddgResults.getResults()) {
 			// Ignore the topic listing
-			if (dResult.getUrl().contains("http://www.nfhs.org/")) {
+			if (dResult.getUrl().contains("http://www.nfhs.org/"))
 				continue;
-			}
 			logger.info("Found page: " + dResult.getUrl());
 			// Ignore non-html files
 			if (dResult.getUrl().endsWith(".pdf")) {
@@ -143,9 +141,8 @@ public class Researcher {
 	}
 
 	private void checkRateTimer() throws InterruptedException {
-		if (Calendar.getInstance().getTimeInMillis() < rateTimer + TIMER) {
+		if (Calendar.getInstance().getTimeInMillis() < rateTimer + TIMER)
 			Thread.sleep(rateTimer + TIMER - Calendar.getInstance().getTimeInMillis());
-		}
 		rateTimer = Calendar.getInstance().getTimeInMillis();
 	}
 

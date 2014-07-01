@@ -13,7 +13,7 @@ public class TopicList extends JList<TopicListItem> {
 
 	public TopicList() {
 		this.listModel = new DefaultListModel<TopicListItem>();
-		
+
 		this.setModel(listModel);
 	}
 
@@ -24,7 +24,7 @@ public class TopicList extends JList<TopicListItem> {
 
 	public void removeTopic(final String topic) {
 		for (int i = 0; i < listModel.getSize(); i++) {
-			final TopicListItem currentTopic = (TopicListItem) listModel.get(i);
+			final TopicListItem currentTopic = listModel.get(i);
 			if (currentTopic.getTopic().equals(topic)) {
 				listModel.remove(i);
 				refresh();
@@ -34,7 +34,7 @@ public class TopicList extends JList<TopicListItem> {
 
 	public void setTopicState(final String topic, final TopicListItem.State state) {
 		for (int i = 0; i < this.listModel.size(); i++) {
-			final TopicListItem item = (TopicListItem) this.listModel.get(i);
+			final TopicListItem item = this.listModel.get(i);
 			if (item.getTopic().equals(topic)) {
 				item.setState(state);
 				refresh();
@@ -44,10 +44,9 @@ public class TopicList extends JList<TopicListItem> {
 
 	public boolean hasTopic(final String topic) {
 		for (int i = 0; i < this.listModel.size(); i++) {
-			final TopicListItem item = (TopicListItem) this.listModel.get(i);
-			if (item.getTopic().equals(topic)) {
+			final TopicListItem item = this.listModel.get(i);
+			if (item.getTopic().equals(topic))
 				return true;
-			}
 		}
 		return false;
 	}
@@ -60,7 +59,7 @@ public class TopicList extends JList<TopicListItem> {
 	public TopicListItem[] getTopics() {
 		return Arrays.copyOf(listModel.toArray(), listModel.size(), TopicListItem[].class);
 	}
-	
+
 	public List<TopicListItem> getSelectedTopicsList() {
 		return this.getSelectedValuesList();
 	}

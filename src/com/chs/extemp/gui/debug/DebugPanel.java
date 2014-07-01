@@ -1,10 +1,13 @@
 package com.chs.extemp.gui.debug;
 
-import com.chs.extemp.ExtempLogger;
+import java.awt.BorderLayout;
 
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
-import java.awt.*;
+
+import com.chs.extemp.ExtempLogger;
 
 @SuppressWarnings("serial")
 public class DebugPanel extends JPanel {
@@ -34,7 +37,7 @@ public class DebugPanel extends JPanel {
 		log.setEditable(false);
 
 		// set up the log handler
-		DebugLogHandler handler = new DebugLogHandler(log);
+		final DebugLogHandler handler = new DebugLogHandler(log);
 		ExtempLogger.getLogger().addHandler(handler);
 	}
 }

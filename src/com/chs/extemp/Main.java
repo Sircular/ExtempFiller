@@ -1,9 +1,9 @@
 package com.chs.extemp;
 
+import java.util.logging.Logger;
+
 import com.chs.extemp.cli.CLI;
 import com.chs.extemp.gui.ResearchGUI;
-
-import java.util.logging.Logger;
 
 /**
  * ExtempFiller program
@@ -16,13 +16,13 @@ public class Main {
 		initLogger();
 		try {
 			System.out.println("CHS Extemporaneous Researcher");
-			if (args.length > 0) {
+			if (args.length > 0)
 				new CLI(args[0]);
-			} else {
+			else {
 				System.out.println("No questions list specified. Starting GUI interface...");
 				new ResearchGUI();
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}

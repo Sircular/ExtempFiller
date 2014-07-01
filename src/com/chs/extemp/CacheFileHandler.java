@@ -9,27 +9,26 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class CacheFileHandler {
-	
+
 	public final static String DEFAULT_CACHE_PATH = "./.extempcache";
-	
+
 	public static String[] loadCacheFile(String path) {
-		ArrayList<String> topics = new ArrayList<String>();
+		final ArrayList<String> topics = new ArrayList<String>();
 
 		try {
-			Scanner fileScanner = new Scanner(new File(path));
+			final Scanner fileScanner = new Scanner(new File(path));
 			fileScanner.useDelimiter("\n");
-			while(fileScanner.hasNext()) {
+			while(fileScanner.hasNext())
 				topics.add(fileScanner.next());
-			}
 			fileScanner.close();
-		} catch (FileNotFoundException e) {
+		} catch (final FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return topics.toArray(new String[]{});
 	}
-	
+
 	public static void saveCacheFile(String path, String[] topics) {
 		// we don't want to save an empty file
 		if (topics.length == 0) {
@@ -37,31 +36,31 @@ public class CacheFileHandler {
 			return;
 		}
 		try {
-			OutputStream fileStream = new FileOutputStream(new File(path));
-			
-			for(int i = 0; i < topics.length; i++) {
-				String currentTopic = topics[i]+'\n';
-				byte[] byteStream = currentTopic.getBytes();
+			final OutputStream fileStream = new FileOutputStream(new File(path));
+
+			for (final String topic : topics) {
+				final String currentTopic = topic+'\n';
+				final byte[] byteStream = currentTopic.getBytes();
 				fileStream.write(byteStream);
 			}
-			
+
 			fileStream.flush();
-			
+
 			fileStream.close();
-		} catch (FileNotFoundException e) {
+		} catch (final FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void deleteCacheFile(String path) {
 		if (cacheFileExists(path))
 			new File(path).delete();
 	}
-	
+
 	public static boolean cacheFileExists(String path) {
 		return new File(path).exists();
 	}

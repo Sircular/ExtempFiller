@@ -5,9 +5,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-import com.chs.extemp.gui.ResearchGUI;
-
-import javax.swing.*;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 
 @SuppressWarnings("serial")
 public class ResearchMenu extends JMenuBar {
@@ -23,35 +23,35 @@ public class ResearchMenu extends JMenuBar {
 	private void init() {
 		fileMenu = new JMenu("File");
 
-		ResearchMenuItem chooseFile = new ResearchMenuItem("Load Topics From File",
+		final ResearchMenuItem chooseFile = new ResearchMenuItem("Load Topics From File",
 				new Runnable() {
-					public void run() {
-						gui.loadTopicsFromFile();
-					}
-				}
-		);
+			public void run() {
+				gui.loadTopicsFromFile();
+			}
+		}
+				);
 
-		ResearchMenuItem cancelResearch = new ResearchMenuItem("Cancel Research", new Runnable() {
+		final ResearchMenuItem cancelResearch = new ResearchMenuItem("Cancel Research", new Runnable() {
 			@Override
 			public void run() {
 				gui.cancelResearch();
 			}
 		});
-		
-		ResearchMenuItem deleteCache = new ResearchMenuItem("Delete Topic Cache", new Runnable() {
+
+		final ResearchMenuItem deleteCache = new ResearchMenuItem("Delete Topic Cache", new Runnable() {
 			@Override
 			public void run() {
 				gui.deleteCache();
 			}
 		});
 
-		ResearchMenuItem exit = new ResearchMenuItem("Exit",
+		final ResearchMenuItem exit = new ResearchMenuItem("Exit",
 				new Runnable() {
-					public void run() {
-						gui.dispose();
-					}
-				}
-		);
+			public void run() {
+				gui.dispose();
+			}
+		}
+				);
 
 		fileMenu.add(chooseFile);
 		fileMenu.add(cancelResearch);

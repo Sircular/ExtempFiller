@@ -16,20 +16,18 @@ public class CLILogHandler extends Handler {
 
 	@Override
 	public void publish(LogRecord record) {
-		Level level = record.getLevel();
-		String message = record.getMessage();
+		final Level level = record.getLevel();
+		final String message = record.getMessage();
 
-		if (level == Level.WARNING || level == Level.SEVERE) {
+		if (level == Level.WARNING || level == Level.SEVERE)
 			System.err.println(message);
-		} else {
+		else
 			System.out.println(message);
-		}
 
 		if (record.getThrown() != null) {
 			final StackTraceElement[] stackTrace = record.getThrown().getStackTrace();
-			for (StackTraceElement element : stackTrace) {
+			for (final StackTraceElement element : stackTrace)
 				publish(new LogRecord(Level.SEVERE, element.toString()));
-			}
 		}
 	}
 }

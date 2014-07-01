@@ -1,13 +1,16 @@
 package com.chs.extemp.gui.topicview;
 
-import com.chs.extemp.gui.ResearchGUI;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import com.chs.extemp.gui.ResearchGUI;
 
 @SuppressWarnings("serial")
 public class AddTopicPanel extends JPanel {
@@ -40,7 +43,7 @@ public class AddTopicPanel extends JPanel {
 	}
 
 	public void addTypedTopic() {
-		String topic = this.textbox.getText();
+		final String topic = this.textbox.getText();
 		this.textbox.setText("");
 		this.addButton.setEnabled(false);
 		this.gui.addTopic(topic);
@@ -62,14 +65,13 @@ public class AddTopicPanel extends JPanel {
 
 		@Override
 		public void keyReleased(final KeyEvent e) {
-			String currentText = ((JTextField) e.getSource()).getText();
+			final String currentText = ((JTextField) e.getSource()).getText();
 			// check to see if they pressed enter
-			if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+			if (e.getKeyChar() == KeyEvent.VK_ENTER)
 				if (currentText.length() > 0) {
 					addPanel.addTypedTopic();
 					return;
 				}
-			}
 			this.addButton.setEnabled(currentText.length() > 0);
 		}
 

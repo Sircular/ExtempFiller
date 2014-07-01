@@ -33,24 +33,24 @@ public class TopicListItem {
 	public String toString() {
 		String stateString = "";
 		switch (this.currentState) {
-			case DELETING:
-				stateString = "Deleting...";
-				break;
-			case NOT_RESEARCHED:
-				stateString = "Not Researched";
-				break;
-			case QUEUED_FOR_RESEARCH:
-				stateString = "Queued For Research";
-				break;
-			case RESEARCHING:
-				stateString = "Researching...";
-				break;
-			case RESEARCHED:
-				stateString = "Researched";
-				break;
-			case RESEARCH_ERROR:
-				stateString = "Error";
-				break;
+		case DELETING:
+			stateString = "Deleting...";
+			break;
+		case NOT_RESEARCHED:
+			stateString = "Not Researched";
+			break;
+		case QUEUED_FOR_RESEARCH:
+			stateString = "Queued For Research";
+			break;
+		case RESEARCHING:
+			stateString = "Researching...";
+			break;
+		case RESEARCHED:
+			stateString = "Researched";
+			break;
+		case RESEARCH_ERROR:
+			stateString = "Error";
+			break;
 		}
 		return "(" + stateString + ") " + this.topic;
 	}

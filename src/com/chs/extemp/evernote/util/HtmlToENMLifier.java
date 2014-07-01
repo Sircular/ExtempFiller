@@ -1,16 +1,17 @@
 package com.chs.extemp.evernote.util;
 
-import com.chs.extemp.readability.ReadabilityClient;
-import com.chs.extemp.readability.ReadabilityResults;
-import com.evernote.edam.error.EDAMUserException;
-import com.evernote.edam.type.Note;
-import org.jsoup.*;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Attributes;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Tag;
 import org.jsoup.select.Elements;
+
+import com.chs.extemp.readability.ReadabilityClient;
+import com.chs.extemp.readability.ReadabilityResults;
+import com.evernote.edam.error.EDAMUserException;
+import com.evernote.edam.type.Note;
 
 /**
  * Parses HTML and transforms it to ENML
@@ -54,67 +55,55 @@ public class HtmlToENMLifier {
 	 */
 	private void cleanDocument() {
 		final Elements idElements = document.select("[id]");
-		for (Element idElement : idElements) {
+		for (final Element idElement : idElements)
 			idElement.removeAttr("id");
-		}
 		final Elements classElements = document.select("[class]");
-		for (Element classElement : classElements) {
+		for (final Element classElement : classElements)
 			classElement.removeAttr("class");
-		}
 		final Elements altElements = document.select("[alt]");
-		for (Element altElement : altElements) {
+		for (final Element altElement : altElements)
 			altElement.removeAttr("alt");
-		}
 		final Elements relElements = document.select("[rel]");
-		for (Element relElement : relElements) {
+		for (final Element relElement : relElements)
 			relElement.removeAttr("rel");
-		}
 		final Elements scoreElements = document.select("[score]");
-		for (Element scoreElement : scoreElements) {
+		for (final Element scoreElement : scoreElements)
 			scoreElement.removeAttr("score");
-		}
 		final Elements tableColumns = document.select("table[cols]");
-		for (Element tableColumn : tableColumns) {
+		for (final Element tableColumn : tableColumns)
 			tableColumn.removeAttr("cols");
-		}
 		final Elements tableHeights = document.select("table[height]");
-		for (Element tableHeight : tableHeights) {
+		for (final Element tableHeight : tableHeights)
 			tableHeight.removeAttr("height");
-		}
 		final Elements linkElements = document.select("a[href]");
-		for (Element linkElement : linkElements) {
+		for (final Element linkElement : linkElements)
 			linkElement.removeAttr("href");
-		}
 		final Elements sectionElements = document.select(
 				"figcaption, hgroup, noscript, header, footer, section, nav, article, " +
-						"figure, aside, attr, more, fieldset, content, recommendations-bar");
-		for (Element sectionElement : sectionElements) {
-			Attributes attributes = sectionElement.attributes();
+				"figure, aside, attr, more, fieldset, content, recommendations-bar");
+		for (final Element sectionElement : sectionElements) {
+			final Attributes attributes = sectionElement.attributes();
 			sectionElement.replaceWith(new Element(Tag.valueOf("div"), "", attributes));
 		}
 		//Just for the freaking new york times.... >.<
 		final Elements nytElements = document.select(
 				"nyt_byline, nyt_text, nyt_correction_top, " +
 						"nyt_correction_bottom, nyt_update_top," +
-						" nyt_update_bottom, nyt_author_id");
-		for (Element nytElement : nytElements) {
+				" nyt_update_bottom, nyt_author_id");
+		for (final Element nytElement : nytElements)
 			nytElement.replaceWith(new Element(Tag.valueOf("div"), ""));
-		}
 		final Elements divElements = document.select("div");
-		for (Element divElement : divElements) {
-			Attributes attributes = divElement.attributes();
-			for (Attribute attribute : attributes) {
+		for (final Element divElement : divElements) {
+			final Attributes attributes = divElement.attributes();
+			for (final Attribute attribute : attributes)
 				divElement.removeAttr(attribute.getKey());
-			}
 		}
 		final Elements removeElements = document.select("iframe, noframe, meta, plusone");
-		for (Element removeElement : removeElements) {
+		for (final Element removeElement : removeElements)
 			removeElement.remove();
-		}
 		final Elements h3Elements = document.select("time, label");
-		for (Element h3Element : h3Elements) {
+		for (final Element h3Element : h3Elements)
 			h3Element.replaceWith(new Element(Tag.valueOf("h3"), "").text(h3Element.text()));
-		}
 	}
 
 	/**
@@ -143,9 +132,8 @@ public class HtmlToENMLifier {
 				.replace("<nobr>", "")
 				.replace("</nobr>", ""));
 		noteBody.append("<h3>").append(URL);
-		if (readabilityResults.getDate_published() != null) {
+		if (readabilityResults.getDate_published() != null)
 			noteBody.append(" @ ").append(readabilityResults.getDate_published());
-		}
 		noteBody.append("</h3>");
 		noteBody.append("</en-note>");
 		final Note note = new Note();
@@ -159,39 +147,35 @@ public class HtmlToENMLifier {
 	 * @param edam the ENML_VALIDATION exception given by the Evernote server
 	 */
 	public void fixEdam(EDAMUserException edam) {
-		String parameter = edam.getParameter();
+		final String parameter = edam.getParameter();
 		if (parameter.startsWith("Element")) { // remove an invalid element
-			String identifier = parameter.substring(parameter.indexOf("\"") + 1, parameter.indexOf("\"", parameter.indexOf("\"") + 1));
+			final String identifier = parameter.substring(parameter.indexOf("\"") + 1, parameter.indexOf("\"", parameter.indexOf("\"") + 1));
 			final Elements troubleElements = document.select(identifier);
-			for (Element troubleElement : troubleElements) {
+			for (final Element troubleElement : troubleElements)
 				if (troubleElement.children().size() == 0) {
-					if (troubleElement.hasText()) {
+					if (troubleElement.hasText())
 						troubleElement.replaceWith(new Element(Tag.valueOf("p"), ""));
-					} else {
+					else
 						troubleElement.remove();
-					}
 				} else {
 					troubleElement.replaceWith(new Element(Tag.valueOf("div"), ""));
-					Attributes attributes = troubleElement.attributes();
-					for (Attribute attribute : attributes) {
+					final Attributes attributes = troubleElement.attributes();
+					for (final Attribute attribute : attributes)
 						troubleElement.removeAttr(attribute.getKey());
-					}
 				}
-			}
 		} else if (parameter.startsWith("Attribute")) { // remove an invalid attribute
-			String identifier = parameter.substring(parameter.indexOf("\"") + 1, parameter.indexOf("\"", parameter.indexOf("\"") + 1));
+			final String identifier = parameter.substring(parameter.indexOf("\"") + 1, parameter.indexOf("\"", parameter.indexOf("\"") + 1));
 			final Elements troubleElements = document.select("[" + identifier + "]");
-			for (Element troubleElement : troubleElements) {
+			for (final Element troubleElement : troubleElements)
 				troubleElement.removeAttr(identifier);
-			}
 		} else if (parameter.startsWith("The reference")) { // fix invalid entity reference (caused by & symbol)
 			// instead of assuming an invalid entity reference, we will assume an unescaped &
 			// we have to use basic text search
-			String identifier = parameter.substring(parameter.indexOf("\"") + 1, parameter.indexOf("\"", parameter.indexOf("\"") + 1));
-			String rawHtml = document.html();
-			
-			String searchPattern = "& ?"+identifier;
-			String newRawHtml = rawHtml.replaceFirst(searchPattern, "&amp;"+identifier);
+			final String identifier = parameter.substring(parameter.indexOf("\"") + 1, parameter.indexOf("\"", parameter.indexOf("\"") + 1));
+			final String rawHtml = document.html();
+
+			final String searchPattern = "& ?"+identifier;
+			final String newRawHtml = rawHtml.replaceFirst(searchPattern, "&amp;"+identifier);
 			System.out.println(newRawHtml.equals(rawHtml));
 			System.out.println(identifier);
 			document.html(newRawHtml);

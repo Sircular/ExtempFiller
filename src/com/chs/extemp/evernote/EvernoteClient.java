@@ -1,5 +1,11 @@
 package com.chs.extemp.evernote;
 
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Logger;
+
 import com.chs.extemp.ExtempLogger;
 import com.chs.extemp.evernote.util.HtmlToENMLifier;
 import com.evernote.auth.EvernoteAuth;
@@ -16,12 +22,6 @@ import com.evernote.edam.type.NoteSortOrder;
 import com.evernote.edam.type.Notebook;
 import com.evernote.edam.type.Tag;
 
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.Logger;
-
 /**
  * Bridges the gap between the Evernote API provided at
  * https://github.com/evernote/evernote-sdk-csharp and the main program.
@@ -29,16 +29,16 @@ import java.util.logging.Logger;
  * @author Logan Lembke
  */
 public class EvernoteClient {
-	
+
 	private static final int MAX_RETRIES = 15;
 
 	public static final String DEFAULT_AUTH_TOKEN = "S=s1:U=8d68b:E=14c0b6e9ce6:C=144b3bd70e8:P=1cd:A=en-devtoken:V=2:H=dda9608fbcf113c1385b791b30958e43";
 
 	// Used for Authentication
-	private UserStoreClient userStore;
+	private final UserStoreClient userStore;
 
 	// Used for interacting with user data
-	private NoteStoreClient noteStore;
+	private final NoteStoreClient noteStore;
 
 	// Used for timing api requests
 	private long rateTimer = 0;
@@ -66,9 +66,8 @@ public class EvernoteClient {
 		final boolean versionOk = userStore.checkVersion("CHS Extemp Filler (Java)",
 				com.evernote.edam.userstore.Constants.EDAM_VERSION_MAJOR,
 				com.evernote.edam.userstore.Constants.EDAM_VERSION_MINOR);
-		if (!versionOk) {
+		if (!versionOk)
 			throw new RuntimeException("Incompatible Evernote client protocol version");
-		}
 
 		// Set up the NoteStore client
 		noteStore = factory.createNoteStoreClient();
@@ -90,21 +89,19 @@ public class EvernoteClient {
 		try {
 			// Always check the rate timer to make sure we do not overburden the server
 			checkRateTimer();
-			List<Note> noteList = noteStore.findNotes(filter, 0, amount).getNotes();
-			LinkedList<Note> downloadedNotes = new LinkedList<Note>();
-			for (Note note : noteList) {
+			final List<Note> noteList = noteStore.findNotes(filter, 0, amount).getNotes();
+			final LinkedList<Note> downloadedNotes = new LinkedList<Note>();
+			for (final Note note : noteList)
 				downloadedNotes.add(noteStore.getNote(note.getGuid(), true, true, true, true));
-			}
 			return downloadedNotes;
-		} catch (EDAMSystemException edam) {
+		} catch (final EDAMSystemException edam) {
 			// We are being throttled by Evernote
 			if (edam.getErrorCode() == EDAMErrorCode.RATE_LIMIT_REACHED) {
 				logger.severe("Waiting " + edam.getRateLimitDuration() + " seconds to continue...");
 				Thread.sleep(edam.getRateLimitDuration() * 1000);
 				return getNotes(filter, amount);
-			} else {
+			} else
 				throw edam;
-			}
 		}
 	}
 
@@ -166,15 +163,14 @@ public class EvernoteClient {
 			// Always check the rate timer to make sure we do not overburden the server
 			checkRateTimer();
 			return noteStore.listNotebooks();
-		} catch (EDAMSystemException edam) {
+		} catch (final EDAMSystemException edam) {
 			// We are being throttled
 			if (edam.getErrorCode() == EDAMErrorCode.RATE_LIMIT_REACHED) {
 				logger.severe("Waiting " + edam.getRateLimitDuration() + " seconds to continue...");
 				Thread.sleep(edam.getRateLimitDuration() * 1000);
 				return getNotebooks();
-			} else {
+			} else
 				throw edam;
-			}
 		}
 	}
 
@@ -187,14 +183,11 @@ public class EvernoteClient {
 	 */
 	public Notebook getNotebook(String name) throws Exception {
 		//Notebooks are limited to titles of 100 characters or less
-		if (name.length() > 100) {
+		if (name.length() > 100)
 			name = name.substring(0, 99).trim();
-		}
-		for (Notebook notebook : getNotebooks()) {
-			if (notebook.getName().equalsIgnoreCase(name)) {
+		for (final Notebook notebook : getNotebooks())
+			if (notebook.getName().equalsIgnoreCase(name))
 				return notebook;
-			}
-		}
 		return null;
 	}
 
@@ -208,11 +201,9 @@ public class EvernoteClient {
 	public List<Notebook> getNotebooksInStack(final String stack) throws Exception {
 		final List<Notebook> notebooks = getNotebooks();
 		final List<Notebook> toReturn = new LinkedList<Notebook>();
-		for (Notebook notebook : notebooks) {
-			if (notebook.getStack().equalsIgnoreCase(stack)) {
+		for (final Notebook notebook : notebooks)
+			if (notebook.getStack().equalsIgnoreCase(stack))
 				toReturn.add(notebook);
-			}
-		}
 		return toReturn;
 	}
 
@@ -226,14 +217,13 @@ public class EvernoteClient {
 		try {
 			checkRateTimer();
 			return noteStore.listTags();
-		} catch (EDAMSystemException edam) {
+		} catch (final EDAMSystemException edam) {
 			if (edam.getErrorCode() == EDAMErrorCode.RATE_LIMIT_REACHED) {
 				logger.severe("Waiting " + edam.getRateLimitDuration() + " seconds to continue...");
 				Thread.sleep(edam.getRateLimitDuration() * 1000);
 				return getTags();
-			} else {
+			} else
 				throw edam;
-			}
 		}
 	}
 
@@ -245,15 +235,15 @@ public class EvernoteClient {
 	 */
 	public List<String> getFullyNamedTags() throws Exception {
 		final LinkedList<String> tags = new LinkedList<String>();
-		Notebook tagNotebook = getNotebook("Tag Names");
+		final Notebook tagNotebook = getNotebook("Tag Names");
 		final List<Note> notedTags = getNotesInNotebook(tagNotebook, 10000);
 		String content;
-		for (Note note : notedTags) {
+		for (final Note note : notedTags) {
 			content = note.getContent();
 			content = content.substring(
 					content.indexOf("<p>") + 3,
 					content.indexOf("</p>")
-			);
+					);
 			tags.add(content);
 		}
 		return tags;
@@ -267,16 +257,13 @@ public class EvernoteClient {
 	 * @throws Exception All exceptions are thrown to the calling program
 	 */
 	public Tag getTag(String name) throws Exception {
-		if (name.length() > 100) {
+		if (name.length() > 100)
 			name = name.substring(0, 99).trim();
-		}
-		if (name.contains(",")) {
+		if (name.contains(","))
 			name = name.replace(",", "");
-		}
-		for (Tag tag : getTags()) {
+		for (final Tag tag : getTags())
 			if (tag.getName().equalsIgnoreCase(name))
 				return tag;
-		}
 		return null;
 	}
 
@@ -291,17 +278,16 @@ public class EvernoteClient {
 	 */
 	public synchronized Note createHTMLNote(final String link, final Notebook notebook, final List<Tag> tags) throws Exception {
 		// Translate HTML to ENML
-		HtmlToENMLifier translator = new HtmlToENMLifier(link);
+		final HtmlToENMLifier translator = new HtmlToENMLifier(link);
 
 		// Create a local note
-		Note note = translator.toNote();
+		final Note note = translator.toNote();
 
 		// Set the notebook and tags
 		note.setNotebookGuid(notebook.getGuid());
 		final List<String> tagGuids = new LinkedList<String>();
-		for (Tag tag : tags) {
+		for (final Tag tag : tags)
 			tagGuids.add(tag.getGuid());
-		}
 		note.setTagGuids(tagGuids);
 
 		// Create an uninitialized note to hold the server note
@@ -310,7 +296,7 @@ public class EvernoteClient {
 			// Always check the rate timer to make sure we do not overburden the server
 			checkRateTimer();
 			newNote = noteStore.createNote(note);
-		} catch (EDAMUserException edam) {
+		} catch (final EDAMUserException edam) {
 			// The translator failed to remove an error causing html tag
 			if (edam.getErrorCode() == EDAMErrorCode.ENML_VALIDATION) {
 				logger.severe("ENML_VALIDATION ERROR: " + edam.getParameter());
@@ -326,19 +312,17 @@ public class EvernoteClient {
 				// Always check the rate timer to make sure we do not overburden the server
 				checkRateTimer();
 				newNote = noteStore.createNote(note);
-			} else {
+			} else
 				throw edam;
-			}
-		} catch (EDAMSystemException edam) {
+		} catch (final EDAMSystemException edam) {
 			// We are being throttled by Evernote
 			if (edam.getErrorCode() == EDAMErrorCode.RATE_LIMIT_REACHED) {
 				logger.severe("Waiting " + edam.getRateLimitDuration() + " seconds to continue...");
 				Thread.sleep(edam.getRateLimitDuration() * 1000);
 				checkRateTimer();
 				newNote = noteStore.createNote(note);
-			} else {
+			} else
 				throw edam;
-			}
 		}
 		logger.info("Successfully created a new note with GUID: "
 				+ newNote.getGuid() + " and name: " + newNote.getTitle());
@@ -356,22 +340,21 @@ public class EvernoteClient {
 	 * @throws Exception All exceptions are thrown ot hte calling program
 	 */
 	private synchronized Note createTroubledHTMLNote(final HtmlToENMLifier translator, final EDAMUserException edam,
-	                                                 final Notebook notebook, final List<Tag> tags, int depth) throws Exception {
+			final Notebook notebook, final List<Tag> tags, int depth) throws Exception {
 		// we don't want to keep trying endlessly until a stack overflow
 		if (depth >= MAX_RETRIES)
 			throw new RuntimeException("Exceeds retry amount");
-		
+
 		// Try to fix the html to enml error
 		translator.fixEdam(edam);
 		// Finish the translation
-		Note note = translator.toNote();
+		final Note note = translator.toNote();
 
 		// Set the notebook and tags
 		note.setNotebookGuid(notebook.getGuid());
 		final List<String> tagGuids = new LinkedList<String>();
-		for (Tag tag : tags) {
+		for (final Tag tag : tags)
 			tagGuids.add(tag.getGuid());
-		}
 		note.setTagGuids(tagGuids);
 
 		// Create an uninitialized note to hold the server note
@@ -380,7 +363,7 @@ public class EvernoteClient {
 			// Always check the rate timer to make sure we do not overburden the server
 			checkRateTimer();
 			newNote = noteStore.createNote(note);
-		} catch (EDAMUserException edam2) {
+		} catch (final EDAMUserException edam2) {
 			// The translator failed to remove an error causing html tag
 			if (edam2.getErrorCode() == EDAMErrorCode.ENML_VALIDATION) {
 				logger.severe("ENML_VALIDATION ERROR: " + edam.getParameter());
@@ -396,10 +379,9 @@ public class EvernoteClient {
 				note.setTitle(domain);
 				checkRateTimer();
 				newNote = noteStore.createNote(note);
-			} else {
+			} else
 				throw edam2;
-			}
-		} catch (EDAMSystemException edam3) {
+		} catch (final EDAMSystemException edam3) {
 			// We are being throttled by Evernote
 			if (edam3.getErrorCode() == EDAMErrorCode.RATE_LIMIT_REACHED) {
 				logger.severe("Waiting " + edam3.getRateLimitDuration() + " seconds to continue...");
@@ -407,9 +389,8 @@ public class EvernoteClient {
 				// Always check the rate timer to make sure we do not overburden the server
 				checkRateTimer();
 				newNote = noteStore.createNote(note);
-			} else {
+			} else
 				throw edam3;
-			}
 		}
 		logger.info("Successfully created a new note with GUID: "
 				+ newNote.getGuid() + " and name: " + newNote.getTitle());
@@ -434,9 +415,8 @@ public class EvernoteClient {
 		note.setTitle(title);
 		note.setNotebookGuid(notebook.getGuid());
 		final List<String> tagGuids = new LinkedList<String>();
-		for (Tag tag : tags) {
+		for (final Tag tag : tags)
 			tagGuids.add(tag.getGuid());
-		}
 		note.setTagGuids(tagGuids);
 
 		// Construct the skeleton enml
@@ -454,7 +434,7 @@ public class EvernoteClient {
 			// Always check the rate timer to make sure we do not overburden the server
 			checkRateTimer();
 			newNote = noteStore.createNote(note);
-		} catch (EDAMSystemException edam) {
+		} catch (final EDAMSystemException edam) {
 			// We are being throttled by Evernote
 			if (edam.getErrorCode() == EDAMErrorCode.RATE_LIMIT_REACHED) {
 				logger.severe("Waiting " + edam.getRateLimitDuration() + " seconds to continue...");
@@ -462,9 +442,8 @@ public class EvernoteClient {
 				// Always check the rate timer to make sure we do not overburden the server
 				checkRateTimer();
 				newNote = noteStore.createNote(note);
-			} else {
+			} else
 				throw edam;
-			}
 		}
 		logger.info("Successfully created a new note with GUID: "
 				+ newNote.getGuid() + " and name: " + newNote.getTitle());
@@ -493,11 +472,10 @@ public class EvernoteClient {
 		final Notebook notebook = new Notebook();
 		// Set the title; the title can be 100 characters max
 		String realTitle;
-		if (desiredTitle.length() > 100) {
+		if (desiredTitle.length() > 100)
 			realTitle = desiredTitle.substring(0, 99).trim();
-		} else {
+		else
 			realTitle = desiredTitle;
-		}
 		notebook.setName(realTitle);
 
 		// Create an uninitialized notebook to hold the server notebook
@@ -506,7 +484,7 @@ public class EvernoteClient {
 			// Always check the rate timer to make sure we do not overburden the server
 			checkRateTimer();
 			newNotebook = noteStore.createNotebook(notebook);
-		} catch (EDAMSystemException edam) {
+		} catch (final EDAMSystemException edam) {
 			// We are being throttled by Evernote
 			if (edam.getErrorCode() == EDAMErrorCode.RATE_LIMIT_REACHED) {
 				logger.severe("Waiting " + edam.getRateLimitDuration() + " seconds to continue...");
@@ -514,17 +492,15 @@ public class EvernoteClient {
 				// Always check the rate timer to make sure we do not overburden the server
 				checkRateTimer();
 				newNotebook = noteStore.createNotebook(notebook);
-			} else {
+			} else
 				throw edam;
-			}
 		}
 		logger.info("Successfully created a new notebook with GUID: "
 				+ newNotebook.getGuid() + " and name: " + newNotebook.getName());
 
 		// If we had to shorten the title, create a note in the folder with the desired folder
-		if (!realTitle.equals(desiredTitle)) {
+		if (!realTitle.equals(desiredTitle))
 			createTextNote("Desired Title", desiredTitle, newNotebook, new LinkedList<Tag>());
-		}
 		return newNotebook;
 	}
 
@@ -551,11 +527,10 @@ public class EvernoteClient {
 
 		// Set the name; the name can be 100 characters max; the name cannot contain commas
 		String realName;
-		if (desiredName.length() > 100) {
+		if (desiredName.length() > 100)
 			realName = desiredName.substring(0, 99).trim();
-		} else {
+		else
 			realName = desiredName;
-		}
 		realName = realName.replace(",", "");
 		tag.setName(realName);
 
@@ -565,7 +540,7 @@ public class EvernoteClient {
 			// Always check the rate timer to make sure we do not overburden the server
 			checkRateTimer();
 			newTag = noteStore.createTag(tag);
-		} catch (EDAMSystemException edam) {
+		} catch (final EDAMSystemException edam) {
 			// We are being throttled by Evernote
 			if (edam.getErrorCode() == EDAMErrorCode.RATE_LIMIT_REACHED) {
 				logger.severe("Waiting " + edam.getRateLimitDuration() + " seconds to continue...");
@@ -573,9 +548,8 @@ public class EvernoteClient {
 				// Always check the rate timer to make sure we do not overburden the server
 				checkRateTimer();
 				newTag = noteStore.createTag(tag);
-			} else {
+			} else
 				throw edam;
-			}
 		}
 
 		logger.info("Successfully created a new tag with GUID: "
@@ -601,11 +575,9 @@ public class EvernoteClient {
 	 */
 	public synchronized void deleteTag(final Tag tag) throws Exception {
 		List<Note> notes;
-		while ((notes = getNotesByTag(tag, 100)).size() != 0) {
-			for (Note note : notes) {
+		while ((notes = getNotesByTag(tag, 100)).size() != 0)
+			for (final Note note : notes)
 				deleteNote(note);
-			}
-		}
 		noteStore.expungeTag(tag.getGuid());
 	}
 
@@ -650,9 +622,8 @@ public class EvernoteClient {
 	 * @throws InterruptedException Interrupted whilst sleeping
 	 */
 	private void checkRateTimer() throws InterruptedException {
-		if (Calendar.getInstance().getTimeInMillis() < rateTimer + TIMER) {
+		if (Calendar.getInstance().getTimeInMillis() < rateTimer + TIMER)
 			Thread.sleep(rateTimer + TIMER - Calendar.getInstance().getTimeInMillis());
-		}
 		rateTimer = Calendar.getInstance().getTimeInMillis();
 	}
 }

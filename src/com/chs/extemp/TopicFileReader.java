@@ -16,13 +16,12 @@ public class TopicFileReader {
 			final BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF-8"));
 			final List<String> lines = new ArrayList<String>();
 			String line;
-			while ((line = reader.readLine()) != null) {
+			while ((line = reader.readLine()) != null)
 				lines.add(line);
-			}
 			reader.close();
 			logger.info("Topic file read successfully.");
 			return lines.toArray(new String[lines.size()]);
-		} catch (IOException io) {
+		} catch (final IOException io) {
 			logger.info("Error while reading topic file: " + io.getMessage());
 			return null;
 		}
