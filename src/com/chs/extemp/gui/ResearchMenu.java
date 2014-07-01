@@ -38,7 +38,7 @@ public class ResearchMenu extends JMenuBar {
 			}
 		});
 		
-		ResearchMenuItem deleteCache = new ResearchMenuItem("Delete Research Cache", new Runnable() {
+		ResearchMenuItem deleteCache = new ResearchMenuItem("Delete Topic Cache", new Runnable() {
 			@Override
 			public void run() {
 				gui.deleteCache();
