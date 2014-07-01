@@ -38,17 +38,18 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	public ResearchGUI() {
 		// load the logger
 		log = ExtempLogger.getLogger();
-		
-		// load the evernote client
-		evernoteWorker = new EvernoteWorker();
-		evernoteWorker.registerListener(this);
 
 		// initialize GUI
 		init();
 		pack();
 		setGUIEnabled(false);
 		setVisible(true);
+		
+		// load the evernote client
+		evernoteWorker = new EvernoteWorker();
+		evernoteWorker.registerListener(this);
 		evernoteWorker.startWorkerThreads();
+		
 		if (CacheFileHandler.cacheFileExists(CacheFileHandler.DEFAULT_CACHE_PATH)) {
 			log.info("Loading topic list from cache file...");
 			onTopicListSupplied(CacheFileHandler.loadCacheFile(CacheFileHandler.DEFAULT_CACHE_PATH));
