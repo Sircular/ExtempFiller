@@ -29,12 +29,12 @@ public class Researcher {
 
 	private Notebook HTMLNotebook;
 
-	public Researcher() throws Exception {
+	public Researcher(String token) throws Exception {
 		logger = ExtempLogger.getLogger();
 		logger.info("Attempting to initialize Evernote Client...");
 
 		try {
-			evernoteClient = new EvernoteClient();
+			evernoteClient = new EvernoteClient(token);
 			logger.info("Evernote Client initialized successfully.");
 		} catch (final Exception e) {
 			logger.severe("Could not initialize Evernote Client: " + e);

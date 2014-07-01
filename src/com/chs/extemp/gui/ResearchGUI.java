@@ -3,6 +3,7 @@ package com.chs.extemp.gui;
 import com.chs.extemp.CacheFileHandler;
 import com.chs.extemp.ExtempLogger;
 import com.chs.extemp.TopicFileReader;
+import com.chs.extemp.evernote.EvernoteClient;
 import com.chs.extemp.gui.debug.DebugPanel;
 import com.chs.extemp.gui.events.ResearchCommand;
 import com.chs.extemp.gui.events.ResearchEvent;
@@ -45,8 +46,17 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		setGUIEnabled(false);
 		setVisible(true);
 		
+		// choose with auth token to use
+		String auth_token = EvernoteClient.DEFAULT_AUTH_TOKEN;
+		
+		final int useDefaultToken = JOptionPane.showConfirmDialog(this, "Use the default Evernote account?", "Extemp Filler", 
+				JOptionPane.YES_NO_OPTION);
+		
+		if (useDefaultToken == JOptionPane.NO_OPTION)
+			auth_token = JOptionPane.showInputDialog(this, "Please enter your custom auth token.", auth_token);
+		
 		// load the evernote client
-		evernoteWorker = new EvernoteWorker();
+		evernoteWorker = new EvernoteWorker(auth_token);
 		evernoteWorker.registerListener(this);
 		evernoteWorker.startWorkerThreads();
 		

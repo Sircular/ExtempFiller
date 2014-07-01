@@ -12,6 +12,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class EvernoteWorker {
+	
+	private String EVERNOTE_TOKEN;
 
 	private final LinkedBlockingQueue<String> researchQueue;
 	private final LinkedBlockingQueue<String> deleteQueue;
@@ -24,7 +26,9 @@ public class EvernoteWorker {
 
 	private Researcher researcher;
 
-	public EvernoteWorker() {
+	public EvernoteWorker(String evernoteToken) {
+		EVERNOTE_TOKEN = evernoteToken;
+		
 		logger = ExtempLogger.getLogger();
 		researchQueue = new LinkedBlockingQueue<String>();
 		deleteQueue = new LinkedBlockingQueue<String>();
@@ -36,7 +40,7 @@ public class EvernoteWorker {
 	public void startWorkerThreads() {
 		logger.info("Starting worker threads...");
 		try {
-			researcher = new Researcher();
+			researcher = new Researcher(EVERNOTE_TOKEN);
 			dispatchEvent(ResearchEvent.Type.USERNAME, researcher.getEvernoteClient().getUsername());
 		} catch (final Exception e) {
 			dispatchEvent(ResearchEvent.Type.EVERNOTE_CONNECTION_ERROR, null);
