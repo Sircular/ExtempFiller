@@ -6,6 +6,7 @@ import org.jsoup.nodes.Attributes;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Tag;
+import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
 
 import com.chs.extemp.readability.ReadabilityClient;
@@ -168,17 +169,11 @@ public class HtmlToENMLifier {
 			final Elements troubleElements = document.select("[" + identifier + "]");
 			for (final Element troubleElement : troubleElements)
 				troubleElement.removeAttr(identifier);
-		} else if (parameter.startsWith("The reference")) { // fix invalid entity reference (caused by & symbol)
-			// instead of assuming an invalid entity reference, we will assume an unescaped &
-			// we have to use basic text search
-			final String identifier = parameter.substring(parameter.indexOf("\"") + 1, parameter.indexOf("\"", parameter.indexOf("\"") + 1));
-			final String rawHtml = document.html();
-
-			final String searchPattern = "& ?"+identifier;
-			final String newRawHtml = rawHtml.replaceFirst(searchPattern, "&amp;"+identifier);
-			System.out.println(newRawHtml.equals(rawHtml));
-			System.out.println(identifier);
-			document.html(newRawHtml);
+		} else if (parameter.startsWith("The reference")) { // we have an unescaped HTML entity
+			// the best way is to use a really lenient Jsoup.clean call
+			final String oldHTML = document.html();
+			final String newHTML = Jsoup.clean(oldHTML, Whitelist.relaxed());
+			document.html(newHTML);
 		}
 	}
 
