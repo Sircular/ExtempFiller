@@ -21,7 +21,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import com.chs.extemp.CacheFileHandler;
 import com.chs.extemp.ExtempLogger;
 import com.chs.extemp.TopicFileReader;
-import com.chs.extemp.evernote.util.AuthTokens;
+import com.chs.extemp.auth.AuthTokens;
 import com.chs.extemp.gui.debug.DebugPanel;
 import com.chs.extemp.gui.events.ResearchCommand;
 import com.chs.extemp.gui.events.ResearchEvent;

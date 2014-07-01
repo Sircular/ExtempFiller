@@ -6,7 +6,7 @@ import java.net.URL;
 import java.util.logging.Logger;
 
 import com.chs.extemp.ExtempLogger;
-import com.chs.extemp.evernote.util.AuthTokens;
+import com.chs.extemp.auth.AuthTokens;
 import com.google.gson.Gson;
 
 /**

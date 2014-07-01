@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 import com.chs.extemp.ExtempLogger;
 import com.chs.extemp.Researcher;
 import com.chs.extemp.TopicFileReader;
-import com.chs.extemp.evernote.util.AuthTokens;
+import com.chs.extemp.auth.AuthTokens;
 
 public class CLI {
 	private final Logger logger;
