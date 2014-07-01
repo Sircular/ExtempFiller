@@ -5,3 +5,5 @@ bin/*
 .project
 .settings
 .settings/*
+
+src/com/chs/extemp/evernote/util/AuthTokens.java
