@@ -100,7 +100,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 			String topicString = topicItems[i].getTopic();
 			State topicState = topicItems[i].getState();
 			
-			if (topicState == State.RESEARCHED)
+			if (topicState == State.RESEARCHED || topicState == State.RESEARCHING)
 				topicStrings.add(topicString);
 		}
 		CacheFileHandler.saveCacheFile(CacheFileHandler.DEFAULT_CACHE_PATH, topicStrings.toArray(new String[]{}));
