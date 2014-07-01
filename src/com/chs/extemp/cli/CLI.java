@@ -24,7 +24,7 @@ public class CLI {
 		//Start research
 		try {
 			// will soon implement option for custom auth token
-			researcher = new Researcher(AuthTokens.DEFAULT_EVERNOTE_AUTH_TOKEN);
+			researcher = new Researcher(AuthTokens.DEFAULT_EVERNOTE_DEV_TOKEN);
 			doResearch(topicsFilePath);
 		} catch (final Exception e) {
 			logger.log(Level.SEVERE, "", e);

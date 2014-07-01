@@ -55,7 +55,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		setVisible(true);
 
 		// choose with auth token to use
-		String auth_token = AuthTokens.DEFAULT_EVERNOTE_AUTH_TOKEN;
+		String auth_token = AuthTokens.DEFAULT_EVERNOTE_DEV_TOKEN;
 
 		final int useDefaultToken = JOptionPane.showConfirmDialog(this, "Use the default Evernote account?", "Extemp Filler",
 				JOptionPane.YES_NO_OPTION);
