@@ -17,6 +17,9 @@ public class CLI {
 		logger = ExtempLogger.getLogger();
 		logger.addHandler(new CLILogHandler());
 		logger.info("Starting CLI using questions file: " + topicsFilePath);
+		
+		// select the auth token (unfinished)
+		logger.config("Do you want to use the default Evernote account? [y/N]");
 
 		//Start research
 		try {
