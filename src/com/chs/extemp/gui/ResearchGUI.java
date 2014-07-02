@@ -67,9 +67,9 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		evernoteWorker.registerListener(this);
 		evernoteWorker.startWorkerThreads();
 
-		if (DataReader.cacheFileExists(DataReader.DEFAULT_CACHE_FILE_PATH)) {
+		if (DataReader.cacheFileExists(DataReader.DEFAULT_CACHE_PATH)) {
 			log.info("Loading topic list from cache file...");
-			onTopicListSupplied(DataReader.loadCacheFile(DataReader.DEFAULT_CACHE_FILE_PATH));
+			onTopicListSupplied(DataReader.loadCacheFile(DataReader.DEFAULT_CACHE_PATH));
 		}else{
 			log.info("No cache file found, requesting topics from Evernote...");
 			loadTopicsFromEvernote();
@@ -120,7 +120,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 			if (topicState == State.RESEARCHED || topicState == State.RESEARCHING)
 				topicStrings.add(topicString);
 		}
-		DataReader.saveCacheFile(DataReader.DEFAULT_CACHE_FILE_PATH, topicStrings.toArray(new String[]{}));
+		DataReader.saveCacheFile(DataReader.DEFAULT_CACHE_PATH, topicStrings.toArray(new String[]{}));
 
 		System.exit(0);
 	}
@@ -170,7 +170,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	}
 
 	public void deleteCache() {
-		DataReader.deleteCacheFile(DataReader.DEFAULT_CACHE_FILE_PATH);
+		DataReader.deleteCacheFile(DataReader.DEFAULT_CACHE_PATH);
 		log.info("Cleared topic cache.");
 	}
 
