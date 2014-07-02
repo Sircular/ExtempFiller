@@ -5,7 +5,7 @@ import java.util.logging.Logger;
 
 import com.chs.extemp.ExtempLogger;
 import com.chs.extemp.Researcher;
-import com.chs.extemp.TopicFileReader;
+import com.chs.extemp.DataReader;
 import com.chs.extemp.auth.AuthTokens;
 
 public class CLI {
@@ -32,7 +32,7 @@ public class CLI {
 	}
 
 	private void doResearch(String topicsFilePath) {
-		for (final String topic : TopicFileReader.readTopicFile(topicsFilePath))
+		for (final String topic : DataReader.readTopicFile(topicsFilePath))
 			try {
 				researcher.researchTopic(topic);
 			} catch (final Exception e) {

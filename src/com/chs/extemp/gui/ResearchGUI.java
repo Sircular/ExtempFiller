@@ -18,9 +18,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import com.chs.extemp.CacheFileHandler;
 import com.chs.extemp.ExtempLogger;
-import com.chs.extemp.TopicFileReader;
+import com.chs.extemp.DataReader;
 import com.chs.extemp.auth.AuthTokens;
 import com.chs.extemp.gui.debug.DebugPanel;
 import com.chs.extemp.gui.events.ResearchCommand;
@@ -68,9 +67,9 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		evernoteWorker.registerListener(this);
 		evernoteWorker.startWorkerThreads();
 
-		if (CacheFileHandler.cacheFileExists(CacheFileHandler.DEFAULT_CACHE_PATH)) {
+		if (DataReader.cacheFileExists(DataReader.DEFAULT_CACHE_FILE_PATH)) {
 			log.info("Loading topic list from cache file...");
-			onTopicListSupplied(CacheFileHandler.loadCacheFile(CacheFileHandler.DEFAULT_CACHE_PATH));
+			onTopicListSupplied(DataReader.loadCacheFile(DataReader.DEFAULT_CACHE_FILE_PATH));
 		}else{
 			log.info("No cache file found, requesting topics from Evernote...");
 			loadTopicsFromEvernote();
@@ -121,7 +120,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 			if (topicState == State.RESEARCHED || topicState == State.RESEARCHING)
 				topicStrings.add(topicString);
 		}
-		CacheFileHandler.saveCacheFile(CacheFileHandler.DEFAULT_CACHE_PATH, topicStrings.toArray(new String[]{}));
+		DataReader.saveCacheFile(DataReader.DEFAULT_CACHE_FILE_PATH, topicStrings.toArray(new String[]{}));
 
 		System.exit(0);
 	}
@@ -171,7 +170,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	}
 
 	public void deleteCache() {
-		CacheFileHandler.deleteCacheFile(CacheFileHandler.DEFAULT_CACHE_PATH);
+		DataReader.deleteCacheFile(DataReader.DEFAULT_CACHE_FILE_PATH);
 		log.info("Cleared topic cache.");
 	}
 
@@ -183,7 +182,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		if (choice == JFileChooser.APPROVE_OPTION) {
 			final File file = fileChooser.getSelectedFile();
 			final String path = file.getAbsolutePath();
-			for (final String currentTopic : TopicFileReader.readTopicFile(path))
+			for (final String currentTopic : DataReader.readTopicFile(path))
 				if (!topicPanel.hasTopic(currentTopic))
 					addTopic(currentTopic);
 		}
