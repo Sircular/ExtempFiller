@@ -168,12 +168,9 @@ public class DataReader {
 	}
 
 	public static void deleteCacheFile(String path) {
-		if (cacheFileExists(path))
-			new File(path).delete();
-	}
-
-	public static boolean cacheFileExists(String path) {
-		return new File(path).exists();
+		final File file = new File(path);
+		if(!file.exists())
+			file.delete();
 	}
 	
 	// Used to load files containing topic lists

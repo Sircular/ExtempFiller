@@ -67,7 +67,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		evernoteWorker.registerListener(this);
 		evernoteWorker.startWorkerThreads();
 
-		if (DataReader.cacheFileExists(DataReader.DEFAULT_CACHE_PATH)) {
+		if (new File(DataReader.DEFAULT_CACHE_PATH).exists()) {
 			log.info("Loading topic list from cache file...");
 			onTopicListSupplied(DataReader.loadCacheFile(DataReader.DEFAULT_CACHE_PATH));
 		}else{
