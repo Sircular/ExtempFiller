@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 import com.chs.extemp.ExtempLogger;
 import com.chs.extemp.Researcher;
 import com.chs.extemp.DataReader;
-import com.chs.extemp.auth.AuthTokens;
 
 public class CLI {
 	private final Logger logger;
@@ -24,7 +23,7 @@ public class CLI {
 		//Start research
 		try {
 			// will soon implement option for custom auth token
-			researcher = new Researcher(AuthTokens.DEFAULT_EVERNOTE_DEV_TOKEN);
+			researcher = new Researcher(DataReader.loadDevKey(DataReader.DEFAULT_DEV_KEY_PATH));
 			doResearch(topicsFilePath);
 		} catch (final Exception e) {
 			logger.log(Level.SEVERE, "", e);

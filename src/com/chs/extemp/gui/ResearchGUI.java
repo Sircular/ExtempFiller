@@ -20,7 +20,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.chs.extemp.ExtempLogger;
 import com.chs.extemp.DataReader;
-import com.chs.extemp.auth.AuthTokens;
 import com.chs.extemp.gui.debug.DebugPanel;
 import com.chs.extemp.gui.events.ResearchCommand;
 import com.chs.extemp.gui.events.ResearchEvent;
@@ -54,16 +53,28 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		setVisible(true);
 
 		// choose with auth token to use
-		String auth_token = AuthTokens.DEFAULT_EVERNOTE_DEV_TOKEN;
+		String authToken = "";
 
-		final int useDefaultToken = JOptionPane.showConfirmDialog(this, "Use the default Evernote account?", "Extemp Filler",
-				JOptionPane.YES_NO_OPTION);
+		int useDefaultToken = JOptionPane.NO_OPTION;
+		
+		if (new File(DataReader.DEFAULT_DEV_KEY_PATH).exists()) // if it doesn't exist, we need to force the user to enter one
+			useDefaultToken = JOptionPane.showConfirmDialog(this, "Use the default Evernote account?", "Extemp Filler",
+					JOptionPane.YES_NO_OPTION);
 
-		if (useDefaultToken == JOptionPane.NO_OPTION)
-			auth_token = JOptionPane.showInputDialog(this, "Please enter your custom auth token.", auth_token);
-
+		if (useDefaultToken == JOptionPane.NO_OPTION) {
+			authToken = JOptionPane.showInputDialog(this, "Please enter your account auth token.", authToken);
+			DataReader.saveDevKey(DataReader.DEFAULT_DEV_KEY_PATH, authToken);
+		} else
+			authToken = DataReader.loadDevKey(DataReader.DEFAULT_DEV_KEY_PATH);
+		
+		if (authToken == null || authToken.equals("")) {
+			displayError("No valid auth token entered.");
+			this.dispose();
+			System.exit(0);
+		}
+		
 		// load the evernote client
-		evernoteWorker = new EvernoteWorker(auth_token);
+		evernoteWorker = new EvernoteWorker(authToken);
 		evernoteWorker.registerListener(this);
 		evernoteWorker.startWorkerThreads();
 
@@ -107,7 +118,9 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 
 	@Override
 	public void dispose() {
-		evernoteWorker.interruptWorkerThreads();
+		
+		if (evernoteWorker != null)
+			evernoteWorker.interruptWorkerThreads();
 
 		// save the cache
 		final TopicListItem[] topicItems = topicPanel.getTopics();

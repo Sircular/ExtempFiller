@@ -29,7 +29,7 @@ public class DataReader {
 	public final static String DEFAULT_CACHE_PATH = "./.extempcache";
 	public final static String DEFAULT_DEV_KEY_PATH = "./extempkey";
 	
-	private final static String SECRET_KEY = "speechie";
+	private final static String SECRET_KEY = "speechies rock!!";
 	
 	// used to save and load dev keys
 	
@@ -67,7 +67,7 @@ public class DataReader {
 		
 		try {
 			final String ciphertext = DatatypeConverter.printBase64Binary(cipher.doFinal(key.getBytes()));
-			
+			System.out.println(ciphertext);
 			final OutputStream fileStream = new FileOutputStream(new File(path));
 			fileStream.write((ciphertext+'\n').getBytes());
 			fileStream.flush();
@@ -89,7 +89,7 @@ public class DataReader {
 	
 	// give us a properly initialized cipher to use for encryption/decryption
 	private static Cipher initKeyCipher(int mode) {		
-		if(mode != Cipher.DECRYPT_MODE && mode != Cipher.ENCRYPT_MODE)
+		if (mode != Cipher.DECRYPT_MODE && mode != Cipher.ENCRYPT_MODE)
 			return null;
 		
 		Cipher cipher = null;
@@ -97,11 +97,11 @@ public class DataReader {
 		try {
 			cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
 			
-			byte[] raw_key = SECRET_KEY.getBytes();
-			SecretKeySpec keySpec = new SecretKeySpec(raw_key, "AES");
+			final byte[] raw_key = SECRET_KEY.getBytes();
+			final SecretKeySpec keySpec = new SecretKeySpec(raw_key, "AES");
 			
-			byte[] iv = new byte[cipher.getBlockSize()];
-			IvParameterSpec ivSpec = new IvParameterSpec(iv);
+			final byte[] iv = new byte[cipher.getBlockSize()];
+			final IvParameterSpec ivSpec = new IvParameterSpec(iv);
 			
 			cipher.init(mode, keySpec, ivSpec);
 			
