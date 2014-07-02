@@ -8,28 +8,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Logger;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
 
 public class DataReader {
 
 	public final static String DEFAULT_CACHE_PATH = "./.extempcache";
 	public final static String DEFAULT_DEV_KEY_PATH = "./extempkey";
 	
-	private final static String SECRET_KEY = "speechies rock!!";
+	//private final static String SECRET_KEY = "speechies rock!!";
 	
 	// used to save and load dev keys
 	// WARNING: CURRENTLY SAVES IN PLAINTEXT
