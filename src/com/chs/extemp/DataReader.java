@@ -32,52 +32,39 @@ public class DataReader {
 	private final static String SECRET_KEY = "speechies rock!!";
 	
 	// used to save and load dev keys
+	// WARNING: CURRENTLY SAVES IN PLAINTEXT
 	
 	public static String loadDevKey(String path) {
-		final Cipher cipher = initKeyCipher(Cipher.DECRYPT_MODE);
 		
+		Scanner scanner = null;
 		try {
-			final Scanner scanner = new Scanner(new File(path));
-			scanner.useDelimiter("\n");
-			
-			final String ciphertext = scanner.next();
-			final byte[] cipherdata = DatatypeConverter.parseBase64Binary(ciphertext);
-			
-			scanner.close();
-			
-			final String plaintext = String.valueOf(cipher.doFinal(cipherdata));
-			
-			return plaintext;
+			scanner = new Scanner(new File(path));
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalBlockSizeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (BadPaddingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		return "";
+		if (scanner == null)
+			return "";
+		
+		scanner.useDelimiter("\n");
+		
+		final String plaintext = scanner.next();
+		
+		scanner.close();
+		
+		return plaintext;
+		
+		
 	}
 	
 	public static void saveDevKey(String path, String key) {
-		final Cipher cipher = initKeyCipher(Cipher.ENCRYPT_MODE);
 		
 		try {
-			final String ciphertext = DatatypeConverter.printBase64Binary(cipher.doFinal(key.getBytes()));
-			System.out.println(ciphertext);
 			final OutputStream fileStream = new FileOutputStream(new File(path));
-			fileStream.write((ciphertext+'\n').getBytes());
+			fileStream.write((key+'\n').getBytes());
 			fileStream.flush();
 			fileStream.close();
-		} catch (IllegalBlockSizeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (BadPaddingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -88,7 +75,8 @@ public class DataReader {
 	}
 	
 	// give us a properly initialized cipher to use for encryption/decryption
-	private static Cipher initKeyCipher(int mode) {		
+	// WARNING: NOT USED AT PRESENT
+	/*private static Cipher initKeyCipher(int mode) {		
 		if (mode != Cipher.DECRYPT_MODE && mode != Cipher.ENCRYPT_MODE)
 			return null;
 		
@@ -119,7 +107,7 @@ public class DataReader {
 			e.printStackTrace();
 		}
 		return cipher;
-	}
+	} */
 	
 	// used for working with cached topics
 
