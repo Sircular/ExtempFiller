@@ -15,8 +15,8 @@ import java.util.logging.Logger;
 
 public class DataReader {
 
-	public final static String DEFAULT_CACHE_PATH = "./.extempcache";
-	public final static String DEFAULT_DEV_KEY_PATH = "./extempkey";
+	public final static String DEFAULT_CACHE_PATH = ".extempcache";
+	public final static String DEFAULT_DEV_KEY_PATH = ".extempkey";
 	
 	// used to save and load dev keys
 	// WARNING: CURRENTLY SAVES IN PLAINTEXT
@@ -102,7 +102,8 @@ public class DataReader {
 		final ArrayList<String> topics = new ArrayList<String>();
 
 		try {
-			final Scanner fileScanner = new Scanner(new File(path));
+			final File file = new File(path);
+			final Scanner fileScanner = new Scanner(file.getAbsoluteFile());
 			fileScanner.useDelimiter("\n");
 			while(fileScanner.hasNext())
 				topics.add(fileScanner.next());
@@ -143,9 +144,10 @@ public class DataReader {
 	}
 
 	public static void deleteCacheFile(String path) {
-		final File file = new File(path);
-		if(!file.exists())
-			file.delete();
+		final File file = new File(path).getAbsoluteFile();
+		if(file.exists())
+			if(!file.delete())
+				ExtempLogger.getLogger().severe("Cannot delete cache.");
 	}
 	
 	// Used to load files containing topic lists
