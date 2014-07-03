@@ -18,8 +18,6 @@ public class DataReader {
 	public final static String DEFAULT_CACHE_PATH = "./.extempcache";
 	public final static String DEFAULT_DEV_KEY_PATH = "./extempkey";
 	
-	//private final static String SECRET_KEY = "speechies rock!!";
-	
 	// used to save and load dev keys
 	// WARNING: CURRENTLY SAVES IN PLAINTEXT
 	
