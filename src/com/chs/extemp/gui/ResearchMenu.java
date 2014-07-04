@@ -38,13 +38,6 @@ public class ResearchMenu extends JMenuBar {
 			}
 		});
 
-		final ResearchMenuItem deleteCache = new ResearchMenuItem("Delete Topic Cache", new Runnable() {
-			@Override
-			public void run() {
-				gui.deleteCache();
-			}
-		});
-
 		final ResearchMenuItem exit = new ResearchMenuItem("Exit",
 				new Runnable() {
 			public void run() {
@@ -55,7 +48,6 @@ public class ResearchMenu extends JMenuBar {
 
 		fileMenu.add(chooseFile);
 		fileMenu.add(cancelResearch);
-		fileMenu.add(deleteCache);
 		fileMenu.add(exit);
 		add(fileMenu);
 	}
