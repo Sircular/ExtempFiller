@@ -43,7 +43,7 @@ public class EvernoteWorker {
 			researcher = new Researcher(EVERNOTE_TOKEN);
 			dispatchEvent(ResearchEvent.Type.USERNAME, researcher.getEvernoteClient().getUsername());
 		} catch (final Exception e) {
-			dispatchEvent(ResearchEvent.Type.EVERNOTE_CONNECTION_ERROR, null);
+			dispatchEvent(ResearchEvent.Type.EVERNOTE_CONNECTION_ERROR, e.getMessage());
 			return;
 		}
 		researchThread.start();
@@ -185,7 +185,7 @@ public class EvernoteWorker {
 			dispatchEvent(ResearchEvent.Type.TOPIC_LIST_LOADED, tagNames);
 		} catch (final Exception e) {
 			logger.severe("Error while loading topic list: " + e);
-			dispatchEvent(ResearchEvent.Type.EVERNOTE_CONNECTION_ERROR, null);
+			dispatchEvent(ResearchEvent.Type.EVERNOTE_CONNECTION_ERROR, e);
 		}
 		return false;
 	}

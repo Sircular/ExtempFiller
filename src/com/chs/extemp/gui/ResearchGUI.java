@@ -256,10 +256,22 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 				". Please see debug log for details.");
 	}
 
-	public void onEvernoteError() {
-		displayError("There was an error connecting to evernote.\n" +
-				"Please close the program, check your internet settings, " +
-				"and try again.");
+	public void onEvernoteConnectionError(String e) {
+		String msg = "An unknown Evernote connection error occured. See debug log for details.";
+		if(e == null) {
+			log.info("Evernote Connection Error: Unknown");
+		} else {
+			log.info("Evernote Connection Error: "+e);
+			if (e.contains("UnknownHostException")) {
+				msg = "You are not connected to the internet.\n" +
+						"Please close the program, check your connection, and try again.";
+			} else if (e.contains("EDAMUserException") && e.contains("authenticationToken")) {
+				msg = "You have entered an invalid authentication token.\n" +
+						"Please close the program, double-check your authentication token,\n" +
+						"and try again.";
+			}
+		}
+		displayError(msg);
 	}
 
 	public void displayError(final String error) {
@@ -289,7 +301,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 				else if (e.getType() == ResearchEvent.Type.RESEARCH_ERROR)
 					onTopicError((String) e.getData());
 				else if (e.getType() == ResearchEvent.Type.EVERNOTE_CONNECTION_ERROR)
-					onEvernoteError();
+					onEvernoteConnectionError((String)e.getData());
 			}
 		});
 	}
