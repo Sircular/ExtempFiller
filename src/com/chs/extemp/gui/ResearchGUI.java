@@ -68,7 +68,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 			authToken = DataReader.loadDevKey(DataReader.DEFAULT_DEV_KEY_PATH);
 		
 		if (authToken == null || authToken.equals("")) {
-			displayError("No auth token entered.", false);
+			displayError("No auth token entered.\nPlease enter a valid auth token and try again.", true);
 		}
 		
 		// load the evernote client
