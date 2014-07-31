@@ -43,11 +43,15 @@ public class EvernoteWorker {
 			researcher = new Researcher(EVERNOTE_TOKEN);
 			dispatchEvent(ResearchEvent.Type.USERNAME, researcher.getEvernoteClient().getUsername());
 		} catch (final Exception e) {
-			dispatchEvent(ResearchEvent.Type.EVERNOTE_CONNECTION_ERROR, e.getMessage());
+			dispatchEvent(ResearchEvent.Type.EVERNOTE_CONNECTION_ERROR, e);
 			return;
 		}
 		researchThread.start();
 		deletionThread.start();
+	}
+	
+	public boolean workerThreadsStarted() {
+		return researchThread.isAlive() && deletionThread.isAlive();
 	}
 
 	public void interruptWorkerThreads() {

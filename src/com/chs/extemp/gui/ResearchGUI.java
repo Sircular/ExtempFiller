@@ -68,22 +68,22 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 			authToken = DataReader.loadDevKey(DataReader.DEFAULT_DEV_KEY_PATH);
 		
 		if (authToken == null || authToken.equals("")) {
-			displayError("No valid auth token entered.");
-			this.dispose();
-			System.exit(0);
+			displayError("No auth token entered.", false);
 		}
 		
 		// load the evernote client
 		evernoteWorker = new EvernoteWorker(authToken);
 		evernoteWorker.registerListener(this);
 		evernoteWorker.startWorkerThreads();
-
-		if (new File(DataReader.DEFAULT_CACHE_PATH).exists()) {
-			log.info("Loading topic list from cache file...");
-			onTopicListSupplied(DataReader.loadCacheFile(DataReader.DEFAULT_CACHE_PATH));
-		}else{
-			log.info("No cache file found, requesting topics from Evernote...");
-			loadTopicsFromEvernote();
+		
+		if (evernoteWorker.workerThreadsStarted()) {
+			if (new File(DataReader.DEFAULT_CACHE_PATH).exists()) {
+				log.info("Loading topic list from cache file...");
+				onTopicListSupplied(DataReader.loadCacheFile(DataReader.DEFAULT_CACHE_PATH));
+			} else {
+				log.info("No cache file found, requesting topics from Evernote...");
+				loadTopicsFromEvernote();
+			}
 		}
 	}
 
@@ -170,7 +170,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 									)
 							);
 			} else
-				displayError("Please wait until the topic finishes out the current operation.");
+				displayError("Please wait until the topic finishes out the current operation.", false);
 	}
 
 	public void cancelResearch() {
@@ -253,31 +253,36 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	public void onTopicError(String topic) {
 		topicPanel.setTopicState(topic, TopicListItem.State.RESEARCH_ERROR);
 		displayError("Error while editing topic: " + topic +
-				". Please see debug log for details.");
+				". Please see debug log for details.", false);
 	}
 
-	public void onEvernoteConnectionError(String e) {
+	public void onEvernoteConnectionError(Exception e) {
 		String msg = "An unknown Evernote connection error occured. See debug log for details.";
 		if(e == null) {
 			log.info("Evernote Connection Error: Unknown");
 		} else {
-			log.info("Evernote Connection Error: "+e);
-			if (e.contains("UnknownHostException")) {
+			String data = e.toString();
+			log.info("Evernote Connection Error: "+data);
+			if (data.contains("UnknownHostException")) {
 				msg = "You are not connected to the internet.\n" +
 						"Please close the program, check your connection, and try again.";
-			} else if (e.contains("EDAMUserException") && e.contains("authenticationToken")) {
+			} else if (data.contains("EDAMUserException") && data.contains("parameter:authenticationToken")) {
 				msg = "You have entered an invalid authentication token.\n" +
 						"Please close the program, double-check your authentication token,\n" +
 						"and try again.";
+				// we want to get rid of the bad auth token
+				DataReader.deleteAuthTokenFile(DataReader.DEFAULT_DEV_KEY_PATH);
 			}
 		}
-		displayError(msg);
+		displayError(msg, true); // we do want it to close afterwards
 	}
 
-	public void displayError(final String error) {
+	public void displayError(final String error, final boolean terminal) {
 		// displays an error message in
 		// a message box
-		JOptionPane.showMessageDialog(this, error);
+		JOptionPane.showMessageDialog(this, error, "ExtempFiller", JOptionPane.ERROR_MESSAGE);
+		if (terminal)
+			this.dispose();
 	}
 
 	public void handleMessageEvent(final ResearchEvent e) {
@@ -301,7 +306,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 				else if (e.getType() == ResearchEvent.Type.RESEARCH_ERROR)
 					onTopicError((String) e.getData());
 				else if (e.getType() == ResearchEvent.Type.EVERNOTE_CONNECTION_ERROR)
-					onEvernoteConnectionError((String)e.getData());
+					onEvernoteConnectionError((Exception)e.getData());
 			}
 		});
 	}

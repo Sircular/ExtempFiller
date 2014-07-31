@@ -170,4 +170,11 @@ public class DataReader {
 		}
 	}
 
+	public static void deleteAuthTokenFile(String path) {
+		final File file = new File(path).getAbsoluteFile();
+		if(file.exists())
+			if(!file.delete())
+				ExtempLogger.getLogger().severe("Cannot delete auth token.");		
+	}
+
 }
