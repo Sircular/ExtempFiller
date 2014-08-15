@@ -33,7 +33,7 @@ public class CLI {
 	private void doResearch(String topicsFilePath) {
 		for (final String topic : DataReader.readTopicFile(topicsFilePath))
 			try {
-				researcher.researchTopic(topic);
+				researcher.researchTopic(topic, 12);
 			} catch (final Exception e) {
 				logger.severe("Error researching topic \"" + topic + "\": " + e.toString());
 			}

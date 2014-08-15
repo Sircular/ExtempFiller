@@ -15,9 +15,6 @@ import com.evernote.edam.type.Tag;
 
 public class Researcher {
 
-	// DuckDuckGo supplies 28 results; we don't need all of these
-	private final int MAXIMUM_ARTICLE_COUNT = 12;
-
 	private final EvernoteClient evernoteClient;
 	private final Logger logger;
 
@@ -56,7 +53,7 @@ public class Researcher {
 		}
 	}
 
-	public void researchTopic(final String topic) throws Exception {
+	public void researchTopic(final String topic, final int maxSourceCount) throws Exception {
 		// Check if the question has already been researched
 		logger.info("Searching for tag: " + topic);
 		Tag tag = evernoteClient.getTag(topic);
@@ -88,7 +85,7 @@ public class Researcher {
 				} catch (final Exception e) {
 					logger.log(Level.SEVERE, "Skipping source", e);
 				}
-				if(topicCount >= MAXIMUM_ARTICLE_COUNT)
+				if(topicCount >= maxSourceCount)
 					break;
 			}
 

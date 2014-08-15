@@ -25,6 +25,9 @@ public class EvernoteWorker {
 	private final Logger logger;
 
 	private Researcher researcher;
+	
+	private int maxResearchSources = 12;// arbitrary, but it doesn't make sense to have more by default
+										// can be set during runtime
 
 	public EvernoteWorker(String evernoteToken) {
 		EVERNOTE_TOKEN = evernoteToken;
@@ -61,6 +64,10 @@ public class EvernoteWorker {
 
 	public void registerListener(final ResearchListener listener) {
 		listeners.add(listener);
+	}
+	
+	public void setMaxArticleCount(int value) {
+		maxResearchSources = value;
 	}
 
 	public void enqueueCommand(final ResearchCommand command) {
@@ -144,7 +151,7 @@ public class EvernoteWorker {
 	private boolean researchTopic(final String topic) {
 		try {
 			dispatchEvent(ResearchEvent.Type.TOPIC_RESEARCHING, topic);
-			researcher.researchTopic(topic);
+			researcher.researchTopic(topic, maxResearchSources);
 			dispatchEvent(ResearchEvent.Type.TOPIC_RESEARCHED, topic);
 			return true;
 		} catch (final Exception e) {
@@ -203,6 +210,6 @@ public class EvernoteWorker {
 	private void dispatchEvent(ResearchEvent.Type eventType, Object data) {
 		final ResearchEvent event = new ResearchEvent(this, eventType, data);
 		for (final ResearchListener listener : listeners)
-			listener.handleMessageEvent(event);
+			listener.handleResearchEvent(event);
 	}
 }

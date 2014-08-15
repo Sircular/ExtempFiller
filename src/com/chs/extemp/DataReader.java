@@ -15,8 +15,8 @@ import java.util.logging.Logger;
 
 public class DataReader {
 
-	public final static String DEFAULT_CACHE_PATH = ".extempcache";
-	public final static String DEFAULT_DEV_KEY_PATH = ".extempkey";
+	public final static String DEFAULT_CACHE_PATH = "./.extempcache";
+	public final static String DEFAULT_DEV_KEY_PATH = "./.extempkey";
 	
 	// used to save and load dev keys
 	// WARNING: CURRENTLY SAVES IN PLAINTEXT
@@ -35,6 +35,10 @@ public class DataReader {
 			return "";
 		
 		scanner.useDelimiter("\n");
+		
+		// weird, weird, weird... but I ran into a problem that caused this, so I have to fix it.
+		if (!scanner.hasNext())
+			return "";
 		
 		final String plaintext = scanner.next();
 		

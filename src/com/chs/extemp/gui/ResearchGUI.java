@@ -23,6 +23,8 @@ import com.chs.extemp.DataReader;
 import com.chs.extemp.gui.debug.DebugPanel;
 import com.chs.extemp.gui.events.ResearchCommand;
 import com.chs.extemp.gui.events.ResearchEvent;
+import com.chs.extemp.gui.events.SettingsEvent;
+import com.chs.extemp.gui.settings.SettingsPanel;
 import com.chs.extemp.gui.topicview.TopicListItem;
 import com.chs.extemp.gui.topicview.TopicListItem.State;
 import com.chs.extemp.gui.topicview.TopicPanel;
@@ -37,6 +39,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 
 	private TopicPanel topicPanel;
 	private DebugPanel debugPanel;
+	private SettingsPanel settingsPanel;
 	private ResearchMenu menuBar;
 	private JProgressBar waitingBar;
 
@@ -96,11 +99,14 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		final JTabbedPane tabs = new JTabbedPane();
 		topicPanel = new TopicPanel(this);
 		debugPanel = new DebugPanel();
+		settingsPanel = new SettingsPanel(this);
 		menuBar = new ResearchMenu(this);
 		waitingBar = new JProgressBar();
 
 		tabs.addTab("Topics", topicPanel);
+		tabs.addTab("Settings", settingsPanel);
 		tabs.addTab("Debug", debugPanel);
+		
 		tabs.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -199,6 +205,8 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	private void loadTopicsFromEvernote() {
 		evernoteWorker.enqueueCommand(new ResearchCommand(this, ResearchCommand.Type.LOAD_TOPICS, null));
 	}
+	
+	// The following functions are all handlers for individual research events
 
 	public void onTopicQueuedForResearch(final String topic) {
 		topicPanel.setTopicState(topic, TopicListItem.State.QUEUED_FOR_RESEARCH);
@@ -285,7 +293,8 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 			this.dispose();
 	}
 
-	public void handleMessageEvent(final ResearchEvent e) {
+	public void handleResearchEvent(final ResearchEvent e) {
+		// YAY CONCURRENCY!
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -308,6 +317,24 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 				else if (e.getType() == ResearchEvent.Type.EVERNOTE_CONNECTION_ERROR)
 					onEvernoteConnectionError((Exception)e.getData());
 			}
+		});
+	}
+	
+	// the following functions are all handlers for individual settings events
+	
+	private void onArticleCountSet(int num) {
+		evernoteWorker.setMaxArticleCount(num);
+	}
+	
+	public void handleSettingsEvent(final SettingsEvent e) {
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				if (e.getType() == SettingsEvent.Type.MAX_SOURCES_SET)
+					onArticleCountSet((Integer)e.getData());
+			}
+			
 		});
 	}
 
