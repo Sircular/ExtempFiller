@@ -2,6 +2,7 @@ bin
 bin/*
 .classpath
 .extempcache
+.extempkey
 .project
 .settings
 .settings/*
