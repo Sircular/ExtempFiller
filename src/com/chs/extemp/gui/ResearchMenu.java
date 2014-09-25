@@ -14,6 +14,7 @@ public class ResearchMenu extends JMenuBar {
 
 	private final ResearchGUI gui;
 	private JMenu fileMenu;
+	private JMenu helpMenu;
 
 	public ResearchMenu(ResearchGUI gui) {
 		this.gui = gui;
@@ -39,21 +40,38 @@ public class ResearchMenu extends JMenuBar {
 		});
 
 		final ResearchMenuItem exit = new ResearchMenuItem("Exit",
-				new Runnable() {
+		new Runnable() {
 			public void run() {
 				gui.dispose();
 			}
-		}
-				);
+		});
 
 		fileMenu.add(chooseFile);
 		fileMenu.add(cancelResearch);
 		fileMenu.add(exit);
 		add(fileMenu);
+		
+		helpMenu = new JMenu("Help");
+		// not yet implemented in GUI
+		/*final ResearchMenuItem help = new ResearchMenuItem("Help Contents",
+		new Runnable() {
+			public void run() {
+				gui.showHelp();
+			}
+		});*/
+		final ResearchMenuItem about = new ResearchMenuItem("About",
+		new Runnable() {
+			public void run() {
+				gui.showAbout();
+			}
+		});
+		helpMenu.add(about);
+		add(helpMenu);
 	}
 
 	public void setContentsEnabled(boolean state) {
 		fileMenu.setEnabled(state);
+		helpMenu.setEnabled(state);
 	}
 }
 

@@ -34,6 +34,8 @@ import com.chs.extemp.gui.topicview.TopicPanel;
 public class ResearchGUI extends JFrame implements ResearchListener {
 	public static final int GUI_WIDTH = 800;
 	public static final int GUI_HEIGHT = 600;
+	
+	public static final String VERSION = "0.3b";
 
 	private final EvernoteWorker evernoteWorker;
 
@@ -204,6 +206,11 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 
 	private void loadTopicsFromEvernote() {
 		evernoteWorker.enqueueCommand(new ResearchCommand(this, ResearchCommand.Type.LOAD_TOPICS, null));
+	}
+	
+	public void showAbout() {
+		JOptionPane.showMessageDialog(this, "Extemp Filler\nVersion "+VERSION+"\nLogan Lembke, Walt Mays 2014",
+				"About Extemp Filler", JOptionPane.PLAIN_MESSAGE);
 	}
 	
 	// The following functions are all handlers for individual research events
