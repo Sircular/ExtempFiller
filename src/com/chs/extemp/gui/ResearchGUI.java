@@ -1,8 +1,12 @@
 package com.chs.extemp.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -18,8 +22,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import com.chs.extemp.ExtempLogger;
 import com.chs.extemp.DataReader;
+import com.chs.extemp.ExtempLogger;
 import com.chs.extemp.gui.debug.DebugPanel;
 import com.chs.extemp.gui.events.ResearchCommand;
 import com.chs.extemp.gui.events.ResearchEvent;
@@ -211,6 +215,36 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	public void showAbout() {
 		JOptionPane.showMessageDialog(this, "Extemp Filler\nVersion "+VERSION+"\nLogan Lembke, Walt Mays 2014",
 				"About Extemp Filler", JOptionPane.PLAIN_MESSAGE);
+	}
+	
+	public void showHelp() {
+		// display the manual (in the form of a PDF)
+		// to do this, we have to actually copy the file to the filesystem,
+		// then open it
+		try {
+			final File dstFile = new File(DataReader.MANUAL_PATH);
+			if(!dstFile.exists()) { // we have to copy it
+				dstFile.createNewFile();
+				
+				InputStream readStream = this.getClass().getResourceAsStream("/com/chs/extemp/data/Manual.pdf");
+				FileOutputStream writeStream = new FileOutputStream(dstFile);
+				
+				byte[] byteBuffer = new byte[1024]; // 1kb should be a good buffer size
+				int numRead = 0;
+				do {
+					numRead = readStream.read(byteBuffer, 0, byteBuffer.length);
+					writeStream.write(byteBuffer, 0, numRead);
+				} while (numRead == byteBuffer.length);
+				
+				writeStream.close();
+				readStream.close();
+			}
+			Desktop.getDesktop().open(dstFile);
+			log.info("Opened manual.");
+		} catch (IOException e) {
+			log.severe("Error opening manual.");
+			log.severe(e.getMessage());
+		}
 	}
 	
 	// The following functions are all handlers for individual research events

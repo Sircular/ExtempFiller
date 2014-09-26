@@ -14,4 +14,11 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>src/com/chs/extemp/data/Manual.pdf</name>
+			<type>1</type>
+			<location>/home/walt/Documents/ExtempFillerManual.pdf</location>
+		</link>
+	</linkedResources>
 </projectDescription>

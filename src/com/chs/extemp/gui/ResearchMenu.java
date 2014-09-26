@@ -52,19 +52,19 @@ public class ResearchMenu extends JMenuBar {
 		add(fileMenu);
 		
 		helpMenu = new JMenu("Help");
-		// not yet implemented in GUI
-		/*final ResearchMenuItem help = new ResearchMenuItem("Help Contents",
+		final ResearchMenuItem help = new ResearchMenuItem("Help Contents",
 		new Runnable() {
 			public void run() {
 				gui.showHelp();
 			}
-		});*/
+		});
 		final ResearchMenuItem about = new ResearchMenuItem("About",
 		new Runnable() {
 			public void run() {
 				gui.showAbout();
 			}
 		});
+		helpMenu.add(help);
 		helpMenu.add(about);
 		add(helpMenu);
 	}
