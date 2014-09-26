@@ -15,9 +15,9 @@ import java.util.logging.Logger;
 
 public class DataReader {
 
-	public final static String DEFAULT_CACHE_PATH = "./.extempcache";
-	public final static String DEFAULT_DEV_KEY_PATH = "./.extempkey";
-	public final static String MANUAL_PATH = "./ExtempFillerManual.pdf";
+	public final static String DEFAULT_CACHE_PATH = ".extempcache";
+	public final static String DEFAULT_DEV_KEY_PATH = ".extempkey";
+	public final static String MANUAL_PATH = "ExtempFillerManual.pdf";
 	
 	// used to save and load dev keys
 	// WARNING: CURRENTLY SAVES IN PLAINTEXT

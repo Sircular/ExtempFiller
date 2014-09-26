@@ -261,10 +261,14 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 				writeStream.close();
 				readStream.close();
 			}
-			Desktop.getDesktop().open(dstFile);
-			log.info("Opened manual.");
+			if (Desktop.isDesktopSupported()) {
+				Desktop.getDesktop().open(dstFile);
+				log.info("Opened manual.");
+			} else {
+				log.severe("Error opening manual; open the file "+dstFile.getAbsolutePath());
+			}
 		} catch (IOException e) {
-			log.severe("Error opening manual.");
+			log.severe("Error copying manual.");
 			log.severe(e.getMessage());
 		}
 	}
