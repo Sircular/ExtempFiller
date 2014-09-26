@@ -245,17 +245,18 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		try {
 			final File dstFile = new File(DataReader.MANUAL_PATH);
 			if(!dstFile.exists()) { // we have to copy it
-				dstFile.createNewFile();
-				
 				InputStream readStream = this.getClass().getResourceAsStream("/com/chs/extemp/data/Manual.pdf");
 				FileOutputStream writeStream = new FileOutputStream(dstFile);
 				
-				byte[] byteBuffer = new byte[1024]; // 1kb should be a good buffer size
+				byte[] byteBuffer = new byte[1024*1024]; // 1mb should be a good buffer size
 				int numRead = 0;
+				
 				do {
-					numRead = readStream.read(byteBuffer, 0, byteBuffer.length);
+					numRead = readStream.read(byteBuffer);
 					writeStream.write(byteBuffer, 0, numRead);
-				} while (numRead == byteBuffer.length);
+				} while(numRead >= 0);
+				
+				writeStream.flush();
 				
 				writeStream.close();
 				readStream.close();
