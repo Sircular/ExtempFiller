@@ -3,6 +3,9 @@ package com.chs.extemp.gui;
 import java.awt.BorderLayout;
 import java.awt.Desktop;
 import java.awt.Dimension;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -120,7 +123,25 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 					topicPanel.getAddTopicPanel().requestFocusInWindow();
 			}
 		});
+		
+		// quick and dirty handler for keyboard shortcuts
+		
+		KeyboardFocusManager.getCurrentKeyboardFocusManager()
+			.addKeyEventDispatcher(new KeyEventDispatcher() {
 
+				@Override
+				public boolean dispatchKeyEvent(KeyEvent e) {
+					if (e.getID() == KeyEvent.KEY_PRESSED && 
+							e.getKeyCode() == KeyEvent.VK_F1 && 
+							!e.isConsumed()) {
+						showHelp();
+						e.consume();
+					}
+					return false;
+				}
+				
+			});;
+		
 		add(tabs, BorderLayout.CENTER);
 
 		setJMenuBar(menuBar);
