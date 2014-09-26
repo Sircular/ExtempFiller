@@ -3,7 +3,7 @@ package com.chs.extemp.gui.settings;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
-import javax.swing.JComponent;
+// import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -67,7 +67,7 @@ public class SettingsPanel extends JPanel {
 	
 	// convenience function to quickly make nice-looking layout
 	// not used at present, may be removed in the future
-	private JPanel createLayoutPanel(int spacing, JComponent... components) {
+	/*private JPanel createLayoutPanel(int spacing, JComponent... components) {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
 		
@@ -78,6 +78,6 @@ public class SettingsPanel extends JPanel {
 		}
 		
 		return panel;
-	}
+	}*/
 
 }
