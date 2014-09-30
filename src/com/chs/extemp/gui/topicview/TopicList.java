@@ -61,6 +61,7 @@ public class TopicList extends JList<TopicListItem> {
 	}
 
 	public List<TopicListItem> getSelectedTopicsList() {
-		return this.getSelectedValuesList();
+		TopicListItem[] itemArray = this.getSelectedValues();
+		return new ArrayList<TopicListItem>(Arrays.asList(itemArray));
 	}
 }
