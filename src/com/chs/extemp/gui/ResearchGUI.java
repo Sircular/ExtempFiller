@@ -48,6 +48,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 
 	private TopicPanel topicPanel;
 	private DebugPanel debugPanel;
+	private PrintPanel printPanel;
 	private SettingsPanel settingsPanel;
 	private ResearchMenu menuBar;
 	private JProgressBar waitingBar;
@@ -108,12 +109,14 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		final JTabbedPane tabs = new JTabbedPane();
 		topicPanel = new TopicPanel(this);
 		debugPanel = new DebugPanel();
+		printPanel = new PrintPanel();
 		settingsPanel = new SettingsPanel(this);
 		menuBar = new ResearchMenu(this);
 		waitingBar = new JProgressBar();
 
 		tabs.addTab("Topics", topicPanel);
 		tabs.addTab("Settings", settingsPanel);
+		tabs.addTab("Print", printPanel);
 		tabs.addTab("Debug", debugPanel);
 		
 		tabs.addChangeListener(new ChangeListener() {

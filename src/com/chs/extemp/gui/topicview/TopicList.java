@@ -1,5 +1,6 @@
 package com.chs.extemp.gui.topicview;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -61,7 +62,8 @@ public class TopicList extends JList<TopicListItem> {
 	}
 
 	public List<TopicListItem> getSelectedTopicsList() {
-		TopicListItem[] itemArray = this.getSelectedValues();
+		@SuppressWarnings("deprecation") // this function is necessary for Java 6
+		TopicListItem[] itemArray = (TopicListItem[]) this.getSelectedValues();
 		return new ArrayList<TopicListItem>(Arrays.asList(itemArray));
 	}
 }

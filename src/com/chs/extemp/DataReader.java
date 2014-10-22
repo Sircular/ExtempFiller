@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
+import javax.crypto.Cipher;
+
 public class DataReader {
 
 	public final static String DEFAULT_CACHE_PATH = ".extempcache";
@@ -66,40 +68,10 @@ public class DataReader {
 		}
 	}
 	
-	// give us a properly initialized cipher to use for encryption/decryption
-	// WARNING: NOT USED AT PRESENT
-	/*private static Cipher initKeyCipher(int mode) {		
-		if (mode != Cipher.DECRYPT_MODE && mode != Cipher.ENCRYPT_MODE)
-			return null;
+	public Cipher generateCipher() {
 		
-		Cipher cipher = null;
-		
-		try {
-			cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-			
-			final byte[] raw_key = SECRET_KEY.getBytes();
-			final SecretKeySpec keySpec = new SecretKeySpec(raw_key, "AES");
-			
-			final byte[] iv = new byte[cipher.getBlockSize()];
-			final IvParameterSpec ivSpec = new IvParameterSpec(iv);
-			
-			cipher.init(mode, keySpec, ivSpec);
-			
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchPaddingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvalidKeyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvalidAlgorithmParameterException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return cipher;
-	} */
+		return null;
+	}
 	
 	// used for working with cached topics
 
