@@ -9,10 +9,11 @@ public class TopicListItem {
 		RESEARCHED,
 		RESEARCH_ERROR,
 		// printing specific stuff
-		NOT_QUEUED_FOR_PRINTING, // for the print dialog
+		NOT_QUEUED_FOR_PRINTING, // to indicate completely unselected ones
 		QUEUED_FOR_PRINTING,
 		PRINTING,
 		PRINTED,
+		PRINTING_CANCELLED,
 	}
 
 	private State currentState;

@@ -4,10 +4,13 @@ import java.awt.BorderLayout;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import com.chs.extemp.gui.ResearchGUI;
 import com.chs.extemp.gui.topicview.TopicList;
@@ -17,6 +20,8 @@ import com.chs.extemp.gui.topicview.TopicListItem;
 public class PrintPanel extends JPanel {
 	private TopicList topicList;
 	private JScrollPane topicListScroll;
+	private JButton printButton;
+	
 	private ResearchGUI gui;
 	
 	public PrintPanel(ResearchGUI gui) {
@@ -31,13 +36,24 @@ public class PrintPanel extends JPanel {
 		
 		this.topicList = new TopicList();
 		
-		topicListScroll = new JScrollPane(topicList);
-		topicListScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		topicListScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		topicListScroll.setBorder(BorderFactory.createCompoundBorder(new EmptyBorder(0, 0, 10, 0), new EtchedBorder()));
+		this.topicListScroll = new JScrollPane(topicList);
+		this.topicListScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		this.topicListScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		this.topicListScroll.setBorder(BorderFactory.createCompoundBorder(new EmptyBorder(0, 0, 10, 0), new EtchedBorder()));
+		
+		this.printButton = new JButton("Print");
+		this.printButton.setEnabled(false); // only enabled once we select something
+		
+		this.topicList.addListSelectionListener(new PrintSelectionListener(printButton));
 		
 		this.add(topicListScroll, BorderLayout.CENTER);
 		syncLists();	
+	}
+	
+	public void setContentsEnabled(boolean value) {
+		this.printButton.setEnabled(value && this.topicList.getSelectedTopicsList() != null &&
+				this.topicList.getSelectedTopicsList().size() != 0);
+		this.topicList.setEnabled(value);
 	}
 	
 	public void syncLists() {
@@ -58,5 +74,21 @@ public class PrintPanel extends JPanel {
 					this.topicList.removeTopic(t.getTopic());
 			}
 		}
+	}
+	
+	private class PrintSelectionListener implements ListSelectionListener {
+		
+		private JButton printButton;
+		
+		public PrintSelectionListener(JButton printButton) {
+			this.printButton = printButton;
+		}
+
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+			TopicList topicList = (TopicList)e.getSource();
+			printButton.setEnabled(topicList.getSelectedTopicsList().size() > 0);
+		}
+		
 	}
 }

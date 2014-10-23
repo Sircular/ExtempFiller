@@ -420,6 +420,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 			waitingBar.setIndeterminate(false);
 			remove(waitingBar);
 			topicPanel.setContentsEnabled(true);
+			printPanel.setContentsEnabled(true);
 			menuBar.setContentsEnabled(true);
 			validate();
 			repaint();
@@ -427,6 +428,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 			add(waitingBar, BorderLayout.PAGE_END);
 			waitingBar.setIndeterminate(true);
 			topicPanel.setContentsEnabled(false);
+			printPanel.setContentsEnabled(false);
 			menuBar.setContentsEnabled(false);
 			validate();
 			repaint();
