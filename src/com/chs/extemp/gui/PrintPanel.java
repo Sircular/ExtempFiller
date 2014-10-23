@@ -1,16 +1,21 @@
 package com.chs.extemp.gui;
 
+import java.awt.BorderLayout;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
 
+import com.chs.extemp.gui.topicview.TopicList;
 import com.chs.extemp.gui.topicview.TopicListItem;
-import com.chs.extemp.gui.topicview.TopicListPanel;
 
 @SuppressWarnings("serial")
 public class PrintPanel extends JPanel {
-	private TopicListPanel topicList;
+	private TopicList topicList;
+	private JScrollPane topicListScroll;
 	private ResearchGUI gui;
 	
 	public PrintPanel(ResearchGUI gui) {
@@ -21,11 +26,20 @@ public class PrintPanel extends JPanel {
 	private void init() {
 		setBorder(new EmptyBorder(10, 10, 10, 10));
 		
-		this.topicList = new TopicListPanel(this.gui);
+		this.setLayout(new BorderLayout());
+		
+		this.topicList = new TopicList();
+		
+		topicListScroll = new JScrollPane(topicList);
+		topicListScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		topicListScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		topicListScroll.setBorder(BorderFactory.createCompoundBorder(new EmptyBorder(0, 0, 10, 0), new EtchedBorder()));
+		
+		this.add(topicListScroll, BorderLayout.CENTER);
 		syncLists();	
 	}
 	
-	private void syncLists() {
+	public void syncLists() {
 		List<TopicListItem> topics = gui.getCurrentTopicList();
 		if (topics == null) // no topics to load yet
 			return;

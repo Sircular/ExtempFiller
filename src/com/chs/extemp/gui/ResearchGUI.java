@@ -120,6 +120,8 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 			public void stateChanged(ChangeEvent e) {
 				if (((JTabbedPane) (e.getSource())).getSelectedIndex() == 0)
 					topicPanel.getAddTopicPanel().requestFocusInWindow();
+				else if (((JTabbedPane) (e.getSource())).getSelectedIndex() == 1)
+					printPanel.syncLists();
 			}
 		});
 		
