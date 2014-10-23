@@ -1,4 +1,4 @@
-package com.chs.extemp.gui;
+package com.chs.extemp.gui.print;
 
 import java.awt.BorderLayout;
 import java.util.List;
@@ -9,6 +9,7 @@ import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
+import com.chs.extemp.gui.ResearchGUI;
 import com.chs.extemp.gui.topicview.TopicList;
 import com.chs.extemp.gui.topicview.TopicListItem;
 

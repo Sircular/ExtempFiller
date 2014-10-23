@@ -31,6 +31,7 @@ import com.chs.extemp.gui.debug.DebugPanel;
 import com.chs.extemp.gui.events.ResearchCommand;
 import com.chs.extemp.gui.events.ResearchEvent;
 import com.chs.extemp.gui.events.SettingsEvent;
+import com.chs.extemp.gui.print.PrintPanel;
 import com.chs.extemp.gui.topicview.TopicListItem;
 import com.chs.extemp.gui.topicview.TopicListItem.State;
 import com.chs.extemp.gui.topicview.TopicPanel;
