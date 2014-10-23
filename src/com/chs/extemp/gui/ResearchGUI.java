@@ -31,7 +31,6 @@ import com.chs.extemp.gui.debug.DebugPanel;
 import com.chs.extemp.gui.events.ResearchCommand;
 import com.chs.extemp.gui.events.ResearchEvent;
 import com.chs.extemp.gui.events.SettingsEvent;
-import com.chs.extemp.gui.settings.SettingsPanel;
 import com.chs.extemp.gui.topicview.TopicListItem;
 import com.chs.extemp.gui.topicview.TopicListItem.State;
 import com.chs.extemp.gui.topicview.TopicPanel;
@@ -49,7 +48,6 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	private TopicPanel topicPanel;
 	private DebugPanel debugPanel;
 	private PrintPanel printPanel;
-	private SettingsPanel settingsPanel;
 	private ResearchMenu menuBar;
 	private JProgressBar waitingBar;
 
@@ -110,12 +108,10 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		topicPanel = new TopicPanel(this);
 		debugPanel = new DebugPanel();
 		printPanel = new PrintPanel(this);
-		settingsPanel = new SettingsPanel(this);
 		menuBar = new ResearchMenu(this);
 		waitingBar = new JProgressBar();
 
 		tabs.addTab("Topics", topicPanel);
-		tabs.addTab("Settings", settingsPanel);
 		tabs.addTab("Print", printPanel);
 		tabs.addTab("Debug", debugPanel);
 		
