@@ -156,16 +156,18 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 
 		// save the cache
 		final List<TopicListItem> topicItems = topicPanel.getTopics();
-		final ArrayList<String> topicStrings = new ArrayList<String>();
-
-		for (final TopicListItem topicItem : topicItems) {
-			final String topicString = topicItem.getTopic();
-			final State topicState = topicItem.getState();
-
-			if (topicState == State.RESEARCHED || topicState == State.RESEARCHING)
-				topicStrings.add(topicString);
+		if (topicItems != null && topicItems.size() > 0) {
+			final ArrayList<String> topicStrings = new ArrayList<String>();
+	
+			for (final TopicListItem topicItem : topicItems) {
+				final String topicString = topicItem.getTopic();
+				final State topicState = topicItem.getState();
+	
+				if (topicState == State.RESEARCHED || topicState == State.RESEARCHING)
+					topicStrings.add(topicString);
+			}
+			DataReader.saveCacheFile(DataReader.DEFAULT_CACHE_PATH, topicStrings.toArray(new String[]{}));
 		}
-		DataReader.saveCacheFile(DataReader.DEFAULT_CACHE_PATH, topicStrings.toArray(new String[]{}));
 
 		System.exit(0);
 	}

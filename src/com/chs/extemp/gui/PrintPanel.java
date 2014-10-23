@@ -27,6 +27,8 @@ public class PrintPanel extends JPanel {
 	
 	private void syncLists() {
 		List<TopicListItem> topics = gui.getCurrentTopicList();
+		if (topics == null) // no topics to load yet
+			return;
 		for (TopicListItem t : topics) {
 			if(!this.topicList.hasTopic(t.getTopic()) && 
 					t.getState() == TopicListItem.State.RESEARCHED) { // we want to make sure that the research is done
