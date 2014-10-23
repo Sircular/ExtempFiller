@@ -7,7 +7,12 @@ public class TopicListItem {
 		QUEUED_FOR_RESEARCH,
 		RESEARCHING,
 		RESEARCHED,
-		RESEARCH_ERROR
+		RESEARCH_ERROR,
+		// printing specific stuff
+		NOT_QUEUED_FOR_PRINTING, // for the print dialog
+		QUEUED_FOR_PRINTING,
+		PRINTING,
+		PRINTED,
 	}
 
 	private State currentState;
@@ -31,28 +36,7 @@ public class TopicListItem {
 	}
 
 	public String toString() {
-		String stateString = "";
-		switch (this.currentState) {
-		case DELETING:
-			stateString = "Deleting...";
-			break;
-		case NOT_RESEARCHED:
-			stateString = "Not Researched";
-			break;
-		case QUEUED_FOR_RESEARCH:
-			stateString = "Queued For Research";
-			break;
-		case RESEARCHING:
-			stateString = "Researching...";
-			break;
-		case RESEARCHED:
-			stateString = "Researched";
-			break;
-		case RESEARCH_ERROR:
-			stateString = "Error";
-			break;
-		}
-		return "(" + stateString + ") " + this.topic;
+		return "(" + this.currentState.toString().replace('_', ' ') + ") " + this.topic;
 	}
 
 }

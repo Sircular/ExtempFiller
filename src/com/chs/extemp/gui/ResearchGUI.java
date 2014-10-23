@@ -109,7 +109,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		final JTabbedPane tabs = new JTabbedPane();
 		topicPanel = new TopicPanel(this);
 		debugPanel = new DebugPanel();
-		printPanel = new PrintPanel();
+		printPanel = new PrintPanel(this);
 		settingsPanel = new SettingsPanel(this);
 		menuBar = new ResearchMenu(this);
 		waitingBar = new JProgressBar();
