@@ -102,7 +102,7 @@ public class TopicListPanel extends JPanel {
 		topicList.removeTopic(topic);
 	}
 
-	public TopicListItem[] getTopics() {
+	public List<TopicListItem> getTopics() {
 		return topicList.getTopics();
 	}
 

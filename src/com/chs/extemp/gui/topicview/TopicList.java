@@ -17,10 +17,16 @@ public class TopicList extends JList<TopicListItem> {
 
 		this.setModel(listModel);
 	}
+	
+	public TopicList(DefaultListModel<TopicListItem> model) {
+		this.listModel = model;
+		this.setModel(model);
+		this.refresh();
+	}
 
 	public void addTopic(final String topic, final TopicListItem.State state) {
 		listModel.addElement(new TopicListItem(topic, state));
-		refresh();
+		this.refresh();
 	}
 
 	public void removeTopic(final String topic) {
@@ -28,7 +34,7 @@ public class TopicList extends JList<TopicListItem> {
 			final TopicListItem currentTopic = listModel.get(i);
 			if (currentTopic.getTopic().equals(topic)) {
 				listModel.remove(i);
-				refresh();
+				this.refresh();
 			}
 		}
 	}
@@ -53,12 +59,12 @@ public class TopicList extends JList<TopicListItem> {
 	}
 
 	public void refresh() {
-		validate();
-		repaint();
+		this.validate();
+		this.repaint();
 	}
 
-	public TopicListItem[] getTopics() {
-		return Arrays.copyOf(listModel.toArray(), listModel.size(), TopicListItem[].class);
+	public List<TopicListItem> getTopics() {
+		return Arrays.asList((TopicListItem[])this.listModel.toArray());
 	}
 
 	public List<TopicListItem> getSelectedTopicsList() {

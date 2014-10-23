@@ -159,7 +159,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 			evernoteWorker.interruptWorkerThreads();
 
 		// save the cache
-		final TopicListItem[] topicItems = topicPanel.getTopics();
+		final List<TopicListItem> topicItems = topicPanel.getTopics();
 		final ArrayList<String> topicStrings = new ArrayList<String>();
 
 		for (final TopicListItem topicItem : topicItems) {
@@ -299,7 +299,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	}
 
 	public void onTopicListSupplied(final String[] topics) {
-		final TopicListItem[] currentTopics = topicPanel.getTopics();
+		final List<TopicListItem> currentTopics = topicPanel.getTopics();
 
 		for (final String topic : topics) {
 			boolean found = false;
@@ -322,6 +322,10 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		setGUIEnabled(true);
 		topicPanel.getAddTopicPanel().requestFocusInWindow();
 		log.info("Successfully loaded topic list.");
+	}
+	
+	public List<TopicListItem> getCurrentTopicList() {
+		return topicPanel.getTopics();
 	}
 
 	public void onUsernameLoaded(final String username) {
