@@ -297,7 +297,9 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	}
 
 	public void onTopicListSupplied(final String[] topics) {
-		final List<TopicListItem> currentTopics = topicPanel.getTopics();
+		List<TopicListItem> currentTopics = topicPanel.getTopics();
+		if (currentTopics == null) // WHY?
+			currentTopics = new ArrayList<TopicListItem>();
 
 		for (final String topic : topics) {
 			boolean found = false;
