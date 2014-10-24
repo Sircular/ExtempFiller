@@ -13,7 +13,8 @@ public class ResearchEvent extends EventObject {
 		TOPIC_LIST_LOADED,
 		USERNAME,
 		RESEARCH_ERROR,
-		EVERNOTE_CONNECTION_ERROR
+		EVERNOTE_CONNECTION_ERROR,
+		NOTES_LOADED
 	}
 
 	private final Type type;

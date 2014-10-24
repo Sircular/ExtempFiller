@@ -2,9 +2,15 @@ package com.chs.extemp.gui.print;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
+import javax.print.PrintService;
+import javax.print.attribute.PrintRequestAttributeSet;
+
+import com.chs.extemp.gui.EvernoteWorker;
+import com.chs.extemp.gui.ResearchListener;
+import com.chs.extemp.gui.events.ResearchEvent;
 import com.evernote.edam.type.Note;
 
-public class PrintWorker {
+public class PrintWorker implements ResearchListener{
 	
 	private final LinkedBlockingQueue<Note> downloadQueue;
 	private final LinkedBlockingQueue<PrintDocument> printQueue;
@@ -12,29 +18,61 @@ public class PrintWorker {
 	private final Thread downloadThread;
 	private final Thread spoolerThread;
 	
-	private final Runnable downloadRunnable; // we need to be able to pass it some messages
+	private final DownloadRunnable downloadRunnable; // we need to be able to pass it some messages
+	private final SpoolerRunnable spoolerRunnable;
 	
-	public PrintWorker() {
+	private final EvernoteWorker evWorker;
+	
+	public PrintWorker(EvernoteWorker evWorker) {
+		this.evWorker = evWorker;
+		
 		downloadRunnable = new DownloadRunnable();
+		spoolerRunnable = new SpoolerRunnable();
 		
 		downloadThread = new Thread(downloadRunnable, "Download Thread");
-		spoolerThread = new Thread(new SpoolerRunnable(), "Spooler Thread");
+		spoolerThread = new Thread(spoolerRunnable, "Spooler Thread");
 		
 		downloadQueue = new LinkedBlockingQueue<Note>();
 		printQueue = new LinkedBlockingQueue<PrintDocument>();
 	}
 	
+	public void startPrintThreads() {
+		downloadThread.start();
+		spoolerThread.start();
+	}
+	
+	public boolean threadsStarted() {
+		return downloadThread.isAlive() && spoolerThread.isAlive();
+	}
+	
+	public void beginPrinting() {
+		
+		spoolerRunnable.beginPrinting();
+	}
+	
+	public void cancelPrinting() {
+		downloadRunnable.cancelDownloads();
+		spoolerRunnable.cancelJobs();
+	}
+	
+	@Override
+	public void handleResearchEvent(ResearchEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	private class DownloadRunnable implements Runnable {
 		
-		private boolean cancelled = false;
+		private boolean running = true;
 
 		@Override
 		public void run() {
 			while(true) {
 				try {
 					Note note = downloadQueue.take();
-					if (!cancelled) {
+					if (running) {
 						String data = note.getContent();
+						// parsing code here
 						String title = note.getTitle();
 						String tag = "";
 						if (note.getTagNamesSize() > 0) {
@@ -43,10 +81,9 @@ public class PrintWorker {
 						PrintDocument doc = new PrintDocument(data, "{0} " + title + " - " + tag);
 						printQueue.add(doc);
 					} else {
-						while(downloadQueue.size() > 0)
-							downloadQueue.take();
+						downloadQueue.clear();
 					}
-					cancelled = false; // at this point, we've done everything that needs to be done
+					running = true; // at this point, we've done everything that needs to be done
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -55,27 +92,31 @@ public class PrintWorker {
 		}
 		
 		public void cancelDownloads() {
-			this.cancelled = true;
+			this.running = false;
 		}
 		
 	}
 	
 	private class SpoolerRunnable implements Runnable {
 		
-		private boolean cancelled = false;
+		private boolean running = false;
+		private final Object trigger = new Object(); // used as a lock
+		private PrintService service = null;
+		private PrintRequestAttributeSet attributes = null;
 
 		@Override
 		public void run() {
 			while (true) {
 				try {
+					if (!running)
+						synchronized (trigger) { trigger.wait(); }
+					
 					PrintDocument doc = printQueue.take();
-					if (!this.cancelled) {
-						
+					if (this.running && service != null && attributes != null) {
+						doc.print(this.service, this.attributes);
 					} else {
-						while (printQueue.size() > 0)
-							printQueue.take();
+						printQueue.clear();
 					}
-					this.cancelled = false;
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -83,8 +124,21 @@ public class PrintWorker {
 			}
 		}
 		
+		public void setPrintSettings(PrintService service, PrintRequestAttributeSet attributes) {
+			this.service = service;
+			this.attributes = attributes;
+		}
+		
+		public boolean beginPrinting() {
+			if (this.service == null || this.attributes == null)
+				return false;
+			this.running = true;
+			trigger.notify();
+			return true;
+		}
+		
 		public void cancelJobs() {
-			this.cancelled = false;
+			this.running = false;
 		}
 		
 	}

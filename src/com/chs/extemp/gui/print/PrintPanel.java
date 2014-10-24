@@ -1,6 +1,8 @@
 package com.chs.extemp.gui.print;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -23,9 +25,11 @@ public class PrintPanel extends JPanel {
 	private JButton printButton;
 	
 	private ResearchGUI gui;
+	private PrintWorker prWorker;
 	
-	public PrintPanel(ResearchGUI gui) {
+	public PrintPanel(ResearchGUI gui, PrintWorker prWorker) {
 		this.gui = gui;
+		this.prWorker = prWorker;
 		init();
 	}
 	
@@ -44,7 +48,7 @@ public class PrintPanel extends JPanel {
 		this.printButton = new JButton("Print");
 		this.printButton.setEnabled(false); // only enabled once we select something
 		
-		this.topicList.addListSelectionListener(new PrintSelectionListener(printButton));
+		this.topicList.addListSelectionListener(new PrintButtonListener(printButton));
 		
 		this.add(topicListScroll, BorderLayout.CENTER);
 		syncLists();	
@@ -76,11 +80,11 @@ public class PrintPanel extends JPanel {
 		}
 	}
 	
-	private class PrintSelectionListener implements ListSelectionListener {
+	private class PrintButtonListener implements ActionListener, ListSelectionListener {
 		
 		private JButton printButton;
 		
-		public PrintSelectionListener(JButton printButton) {
+		public PrintButtonListener(JButton printButton) {
 			this.printButton = printButton;
 		}
 
@@ -88,6 +92,11 @@ public class PrintPanel extends JPanel {
 		public void valueChanged(ListSelectionEvent e) {
 			TopicList topicList = (TopicList)e.getSource();
 			printButton.setEnabled(topicList.getSelectedTopicsList().size() > 0);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			prWorker.beginPrinting();	
 		}
 		
 	}

@@ -32,6 +32,7 @@ import com.chs.extemp.gui.events.ResearchCommand;
 import com.chs.extemp.gui.events.ResearchEvent;
 import com.chs.extemp.gui.events.SettingsEvent;
 import com.chs.extemp.gui.print.PrintPanel;
+import com.chs.extemp.gui.print.PrintWorker;
 import com.chs.extemp.gui.topicview.TopicListItem;
 import com.chs.extemp.gui.topicview.TopicListItem.State;
 import com.chs.extemp.gui.topicview.TopicPanel;
@@ -45,6 +46,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	public static final String VERSION = "0.3b";
 
 	private final EvernoteWorker evernoteWorker;
+	private final PrintWorker printWorker;
 
 	private TopicPanel topicPanel;
 	private DebugPanel debugPanel;
@@ -88,6 +90,9 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		evernoteWorker.registerListener(this);
 		evernoteWorker.startWorkerThreads();
 		
+		printWorker = new PrintWorker(evernoteWorker);
+		printWorker.startPrintThreads();
+		
 		if (evernoteWorker.workerThreadsStarted()) {
 			if (new File(DataReader.DEFAULT_CACHE_PATH).exists()) {
 				log.info("Loading topic list from cache file...");
@@ -108,7 +113,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		final JTabbedPane tabs = new JTabbedPane();
 		topicPanel = new TopicPanel(this);
 		debugPanel = new DebugPanel();
-		printPanel = new PrintPanel(this);
+		printPanel = new PrintPanel(this, this.printWorker);
 		menuBar = new ResearchMenu(this);
 		waitingBar = new JProgressBar();
 

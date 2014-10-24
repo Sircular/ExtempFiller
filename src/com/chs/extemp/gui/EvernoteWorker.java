@@ -9,6 +9,7 @@ import com.chs.extemp.ExtempLogger;
 import com.chs.extemp.Researcher;
 import com.chs.extemp.gui.events.ResearchCommand;
 import com.chs.extemp.gui.events.ResearchEvent;
+import com.evernote.edam.type.Note;
 import com.evernote.edam.type.Tag;
 
 public class EvernoteWorker {
@@ -102,6 +103,9 @@ public class EvernoteWorker {
 							}
 						}
 						, "Topic Download Thread").start();
+				break;
+			case LOAD_NOTES:
+				
 				break;
 			}
 		} catch (final Exception e) {
@@ -199,6 +203,21 @@ public class EvernoteWorker {
 			dispatchEvent(ResearchEvent.Type.EVERNOTE_CONNECTION_ERROR, e);
 		}
 		return false;
+	}
+	
+	private List<Note> loadArticles() {
+		try {
+			logger.info("Attempting to load notes for printing...");
+			final List<Note> notes = researcher.getEvernoteClient().getNotesInNotebook(
+					researcher.getEvernoteClient().getNotebook("Web Notes"),
+					10000); // no idea what the upper limit is
+			logger.info("Loaded all notes for printing");
+			dispatchEvent(ResearchEvent.Type.NOTES_LOADED, notes);
+		} catch (final Exception e) {
+			logger.severe("Error while loading notes.");
+			dispatchEvent(ResearchEvent.Type.EVERNOTE_CONNECTION_ERROR, e);
+		}
+		return null;
 	}
 
 	public void cancelResearch() {

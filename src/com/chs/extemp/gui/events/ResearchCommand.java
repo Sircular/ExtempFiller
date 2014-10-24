@@ -8,7 +8,8 @@ public class ResearchCommand extends EventObject {
 		RESEARCH_TOPIC,
 		UNQUEUE_TOPIC,
 		DELETE_TOPIC,
-		LOAD_TOPICS
+		LOAD_TOPICS,
+		LOAD_NOTES, // used for printing
 	}
 
 	private final Type type;
