@@ -14,7 +14,6 @@ public class ResearchEvent extends EventObject {
 		USERNAME,
 		RESEARCH_ERROR,
 		EVERNOTE_CONNECTION_ERROR,
-		NOTES_LOADED
 	}
 
 	private final Type type;

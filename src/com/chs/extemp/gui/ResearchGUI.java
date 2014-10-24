@@ -31,8 +31,6 @@ import com.chs.extemp.gui.debug.DebugPanel;
 import com.chs.extemp.gui.events.ResearchCommand;
 import com.chs.extemp.gui.events.ResearchEvent;
 import com.chs.extemp.gui.events.SettingsEvent;
-import com.chs.extemp.gui.print.PrintPanel;
-import com.chs.extemp.gui.print.PrintWorker;
 import com.chs.extemp.gui.topicview.TopicListItem;
 import com.chs.extemp.gui.topicview.TopicListItem.State;
 import com.chs.extemp.gui.topicview.TopicPanel;
@@ -46,11 +44,9 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	public static final String VERSION = "0.3b";
 
 	private final EvernoteWorker evernoteWorker;
-	private final PrintWorker printWorker;
 
 	private TopicPanel topicPanel;
 	private DebugPanel debugPanel;
-	private PrintPanel printPanel;
 	private ResearchMenu menuBar;
 	private JProgressBar waitingBar;
 
@@ -90,9 +86,6 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		evernoteWorker.registerListener(this);
 		evernoteWorker.startWorkerThreads();
 		
-		printWorker = new PrintWorker(evernoteWorker);
-		printWorker.startPrintThreads();
-		
 		if (evernoteWorker.workerThreadsStarted()) {
 			if (new File(DataReader.DEFAULT_CACHE_PATH).exists()) {
 				log.info("Loading topic list from cache file...");
@@ -113,12 +106,10 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		final JTabbedPane tabs = new JTabbedPane();
 		topicPanel = new TopicPanel(this);
 		debugPanel = new DebugPanel();
-		printPanel = new PrintPanel(this, this.printWorker);
 		menuBar = new ResearchMenu(this);
 		waitingBar = new JProgressBar();
 
 		tabs.addTab("Topics", topicPanel);
-		tabs.addTab("Print", printPanel);
 		tabs.addTab("Debug", debugPanel);
 		
 		tabs.addChangeListener(new ChangeListener() {
@@ -126,8 +117,6 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 			public void stateChanged(ChangeEvent e) {
 				if (((JTabbedPane) (e.getSource())).getSelectedIndex() == 0)
 					topicPanel.getAddTopicPanel().requestFocusInWindow();
-				else if (((JTabbedPane) (e.getSource())).getSelectedIndex() == 1)
-					printPanel.syncLists();
 			}
 		});
 		
@@ -425,7 +414,6 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 			waitingBar.setIndeterminate(false);
 			remove(waitingBar);
 			topicPanel.setContentsEnabled(true);
-			printPanel.setContentsEnabled(true);
 			menuBar.setContentsEnabled(true);
 			validate();
 			repaint();
@@ -433,7 +421,6 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 			add(waitingBar, BorderLayout.PAGE_END);
 			waitingBar.setIndeterminate(true);
 			topicPanel.setContentsEnabled(false);
-			printPanel.setContentsEnabled(false);
 			menuBar.setContentsEnabled(false);
 			validate();
 			repaint();
