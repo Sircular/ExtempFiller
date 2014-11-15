@@ -136,7 +136,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 					return false;
 				}
 				
-			});;
+			});
 		
 		add(tabs, BorderLayout.CENTER);
 
