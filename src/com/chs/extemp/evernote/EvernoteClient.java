@@ -33,10 +33,10 @@ public class EvernoteClient {
 	private static final int MAX_RETRIES = 15;
 
 	// Used for Authentication
-	private final UserStoreClient userStore;
+	private UserStoreClient userStore;
 
 	// Used for interacting with user data
-	private final NoteStoreClient noteStore;
+	private NoteStoreClient noteStore;
 
 	// Used for timing api requests
 	private long rateTimer = 0;
@@ -52,12 +52,22 @@ public class EvernoteClient {
 	 * @throws Exception All exceptions are thrown to the calling program
 	 */
 	public EvernoteClient(String token) throws Exception {
-
-		// Set up the UserStore client and check that we can speak to the server
-		// Make sure to change the EvernoteService argument to either SANDBOX or PRODUCTION
-		final EvernoteAuth evernoteAuth = new EvernoteAuth(EvernoteService.SANDBOX, token);
+		try {
+			initializeStores(EvernoteService.PRODUCTION, token);
+		} catch (EDAMSystemException e) {
+			// we only catch this one because it may be thrown in normal operation
+			if (e.getErrorCode() == EDAMErrorCode.INVALID_AUTH) {
+				// it's probably a sandbox token
+				// is there a better way than nested try/catches?
+				initializeStores(EvernoteService.SANDBOX, token);
+			}
+		}
+	}
+	
+	private void initializeStores(EvernoteService type, String token) throws EDAMSystemException, RuntimeException, Exception {
+		final EvernoteAuth evernoteAuth = new EvernoteAuth(type, token);
 		final ClientFactory factory = new ClientFactory(evernoteAuth);
-
+		
 		userStore = factory.createUserStoreClient();
 
 		// Check that API is current with standards
