@@ -42,7 +42,7 @@ public class EvernoteClient {
 	private long rateTimer = 0;
 
 	// How long to wait between each api request in milliseconds
-	private final int TIMER = 250;
+	private final int TIMER = 500;
 
 	private final Logger logger = ExtempLogger.getLogger();
 
