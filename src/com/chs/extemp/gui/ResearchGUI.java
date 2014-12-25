@@ -169,7 +169,10 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		System.exit(0);
 	}
 
-	public void addTopic(final String topic) {
+	public void addTopic(final String rawTopic) {
+		String topic = rawTopic.trim(); // Evernote doesn't like leading or trailing spaces
+		if (topicPanel.hasTopic(topic))
+			return;
 		topicPanel.addTopic(topic);
 		evernoteWorker.enqueueCommand(
 				new ResearchCommand(
@@ -222,8 +225,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 			final File file = fileChooser.getSelectedFile();
 			final String path = file.getAbsolutePath();
 			for (final String currentTopic : DataReader.readTopicFile(path))
-				if (!topicPanel.hasTopic(currentTopic))
-					addTopic(currentTopic);
+				addTopic(currentTopic);
 		}
 	}
 
