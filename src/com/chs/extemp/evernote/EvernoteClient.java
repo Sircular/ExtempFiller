@@ -59,6 +59,7 @@ public class EvernoteClient {
 			if (e.getErrorCode() == EDAMErrorCode.INVALID_AUTH) {
 				// it's probably a sandbox token
 				// is there a better way than nested try/catches?
+				logger.info("Is it sandbox?");
 				initializeStores(EvernoteService.SANDBOX, token);
 			}
 		}
@@ -538,7 +539,7 @@ public class EvernoteClient {
 		if (desiredName.length() > 100)
 			realName = desiredName.substring(0, 99).trim();
 		else
-			realName = desiredName;
+			realName = desiredName.trim();
 		realName = realName.replace(",", "");
 		tag.setName(realName);
 
