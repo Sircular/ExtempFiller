@@ -250,11 +250,12 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 				
 				byte[] byteBuffer = new byte[1024*1024]; // 1mb should be a good buffer size
 				int numRead = 0;
+				numRead = readStream.read(byteBuffer);
 				
-				do {
-					numRead = readStream.read(byteBuffer);
+				while(numRead >= 0) {
 					writeStream.write(byteBuffer, 0, numRead);
-				} while(numRead >= 0);
+					numRead = readStream.read(byteBuffer);
+				}
 				
 				writeStream.flush();
 				

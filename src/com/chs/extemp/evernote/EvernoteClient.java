@@ -17,6 +17,8 @@ import com.evernote.edam.error.EDAMErrorCode;
 import com.evernote.edam.error.EDAMSystemException;
 import com.evernote.edam.error.EDAMUserException;
 import com.evernote.edam.notestore.NoteFilter;
+import com.evernote.edam.notestore.NoteMetadata;
+import com.evernote.edam.notestore.NotesMetadataResultSpec;
 import com.evernote.edam.type.Note;
 import com.evernote.edam.type.NoteSortOrder;
 import com.evernote.edam.type.Notebook;
@@ -96,11 +98,13 @@ public class EvernoteClient {
 	 */
 	public synchronized List<Note> getNotes(final NoteFilter filter, final int amount) throws Exception {
 		try {
+			// it looks like the default gets us what we need (GUID)
+			NotesMetadataResultSpec resultSpec = new NotesMetadataResultSpec();
 			// Always check the rate timer to make sure we do not overburden the server
 			checkRateTimer();
-			final List<Note> noteList = noteStore.findNotes(filter, 0, amount).getNotes();
+			final List<NoteMetadata> noteList = noteStore.findNotesMetadata(filter, 0, amount, resultSpec).getNotes();
 			final LinkedList<Note> downloadedNotes = new LinkedList<Note>();
-			for (final Note note : noteList)
+			for (final NoteMetadata note : noteList)
 				downloadedNotes.add(noteStore.getNote(note.getGuid(), true, true, true, true));
 			return downloadedNotes;
 		} catch (final EDAMSystemException edam) {
@@ -225,7 +229,8 @@ public class EvernoteClient {
 	public synchronized List<Tag> getTags() throws Exception {
 		try {
 			checkRateTimer();
-			return noteStore.listTags();
+			List<Tag> tags = noteStore.listTags();
+			return tags;
 		} catch (final EDAMSystemException edam) {
 			if (edam.getErrorCode() == EDAMErrorCode.RATE_LIMIT_REACHED) {
 				logger.severe("Waiting " + edam.getRateLimitDuration() + " seconds to continue...");
