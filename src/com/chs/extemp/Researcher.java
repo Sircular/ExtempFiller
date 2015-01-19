@@ -131,6 +131,8 @@ public class Researcher {
 			} else if (dResult.getUrl().endsWith(".rtf")) {
 				logger.info("Filetype is RTF. Excluding page.");
 				continue;
+			} else if (dResult.getUrl().endsWith(".swf")) {
+				logger.info("Filetype is SWF. Excluding page.");
 			}
 			results.add(dResult);
 		}
