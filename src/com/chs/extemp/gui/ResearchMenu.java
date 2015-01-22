@@ -9,6 +9,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+import com.chs.extemp.gui.events.ResearchEvent;
+
 @SuppressWarnings("serial")
 public class ResearchMenu extends JMenuBar {
 
@@ -73,6 +75,10 @@ public class ResearchMenu extends JMenuBar {
 		fileMenu.setEnabled(state);
 		helpMenu.setEnabled(state);
 	}
+}
+
+interface ResearchListener {
+	public void handleResearchEvent(final ResearchEvent e);
 }
 
 @SuppressWarnings("serial")
