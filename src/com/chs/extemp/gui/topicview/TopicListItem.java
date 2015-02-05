@@ -8,12 +8,6 @@ public class TopicListItem {
 		RESEARCHING,
 		RESEARCHED,
 		RESEARCH_ERROR,
-		// printing specific stuff
-		NOT_QUEUED_FOR_PRINTING, // to indicate completely unselected ones
-		QUEUED_FOR_PRINTING,
-		PRINTING,
-		PRINTED,
-		PRINTING_CANCELLED,
 	}
 
 	private State currentState;
@@ -38,6 +32,15 @@ public class TopicListItem {
 
 	public String toString() {
 		return "(" + this.currentState.toString().replace('_', ' ') + ") " + this.topic;
+	}
+	
+	public boolean equals(Object t2) {
+		if (t2 instanceof String)
+			return ((String)t2).equals(this.topic);
+		else if (t2 instanceof TopicListItem)
+			return ((TopicListItem)t2).getTopic().equals(this.topic);
+		else // what else could it be?
+			return false;
 	}
 
 }

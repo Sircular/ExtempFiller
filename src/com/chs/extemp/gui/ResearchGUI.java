@@ -10,7 +10,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -32,7 +32,6 @@ import com.chs.extemp.gui.events.ResearchCommand;
 import com.chs.extemp.gui.events.ResearchEvent;
 import com.chs.extemp.gui.events.SettingsEvent;
 import com.chs.extemp.gui.topicview.TopicListItem;
-import com.chs.extemp.gui.topicview.TopicListItem.State;
 import com.chs.extemp.gui.topicview.TopicPanel;
 
 @SuppressWarnings("serial")
@@ -61,39 +60,19 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		pack();
 		setGUIEnabled(false);
 		setVisible(true);
-
-		// choose with auth token to use
-		String authToken = "";
-
-		int useDefaultToken = JOptionPane.NO_OPTION;
-		
-		if (new File(DataReader.DEFAULT_DEV_KEY_PATH).exists()) // if it doesn't exist, we need to force the user to enter one
-			useDefaultToken = JOptionPane.showConfirmDialog(this, "Use the default Evernote account?", "Extemp Filler",
-					JOptionPane.YES_NO_OPTION);
-
-		if (useDefaultToken == JOptionPane.NO_OPTION) {
-			authToken = JOptionPane.showInputDialog(this, "Please enter your account auth token.", authToken);
-			DataReader.saveDevKey(DataReader.DEFAULT_DEV_KEY_PATH, authToken);
-		} else
-			authToken = DataReader.loadDevKey(DataReader.DEFAULT_DEV_KEY_PATH);
-		
-		if (authToken == null || authToken.equals("")) {
-			displayError("No auth token entered.\nPlease enter a valid auth token and try again.", true);
-		}
 		
 		// load the evernote client
+		String authToken = selectAuthToken();
 		evernoteWorker = new EvernoteWorker(authToken);
 		evernoteWorker.registerListener(this);
 		evernoteWorker.startWorkerThreads();
 		
-		if (evernoteWorker.workerThreadsStarted()) {
-			if (new File(DataReader.DEFAULT_CACHE_PATH).exists()) {
-				log.info("Loading topic list from cache file...");
-				onTopicListSupplied(DataReader.loadCacheFile(DataReader.DEFAULT_CACHE_PATH));
-			} else {
-				log.info("No cache file found, requesting topics from Evernote...");
-				loadTopicsFromEvernote();
-			}
+		if (new File(DataReader.DEFAULT_CACHE_PATH).exists()) {
+			log.info("Loading topic list from cache file...");
+			onTopicListSupplied(DataReader.loadCacheFile(DataReader.DEFAULT_CACHE_PATH));
+		} else {
+			log.info("No cache file found, requesting topics from Evernote...");
+			loadTopicsFromEvernote();
 		}
 	}
 
@@ -144,6 +123,29 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 
 		setPreferredSize(new Dimension(GUI_WIDTH, GUI_HEIGHT));
 	}
+	
+	public String selectAuthToken() {
+		// choose with auth token to use
+		String authToken = "";
+
+		int useDefaultToken = JOptionPane.NO_OPTION;
+				
+		if (new File(DataReader.DEFAULT_DEV_KEY_PATH).exists()) // if it doesn't exist, we need to force the user to enter one
+			useDefaultToken = JOptionPane.showConfirmDialog(this, "Use the default Evernote account?", "Extemp Filler",
+					JOptionPane.YES_NO_OPTION);
+
+		if (useDefaultToken == JOptionPane.NO_OPTION) {
+			authToken = JOptionPane.showInputDialog(this, "Please enter your account auth token.", authToken);
+			DataReader.saveDevKey(DataReader.DEFAULT_DEV_KEY_PATH, authToken);
+		} else
+			authToken = DataReader.loadDevKey(DataReader.DEFAULT_DEV_KEY_PATH);
+				
+		if (authToken == null || authToken.equals("")) {
+			displayError("No auth token entered.\nPlease enter a valid auth token and try again.", true);
+		}
+		
+		return authToken;
+	}
 
 	@Override
 	public void dispose() {
@@ -151,20 +153,7 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 		if (evernoteWorker != null)
 			evernoteWorker.interruptWorkerThreads();
 
-		// save the cache
-		final List<TopicListItem> topicItems = topicPanel.getTopics();
-		if (topicItems != null && topicItems.size() > 0) {
-			final ArrayList<String> topicStrings = new ArrayList<String>();
-	
-			for (final TopicListItem topicItem : topicItems) {
-				final String topicString = topicItem.getTopic();
-				final State topicState = topicItem.getState();
-	
-				if (topicState == State.RESEARCHED || topicState == State.RESEARCHING)
-					topicStrings.add(topicString);
-			}
-			DataReader.saveCacheFile(DataReader.DEFAULT_CACHE_PATH, topicStrings.toArray(new String[]{}));
-		}
+		topicPanel.cleanup();
 
 		System.exit(0);
 	}
@@ -297,28 +286,8 @@ public class ResearchGUI extends JFrame implements ResearchListener {
 	}
 
 	public void onTopicListSupplied(final String[] topics) {
-		List<TopicListItem> currentTopics = topicPanel.getTopics();
-		if (currentTopics == null) // WHY?
-			currentTopics = new ArrayList<TopicListItem>();
-
-		for (final String topic : topics) {
-			boolean found = false;
-			for (final TopicListItem topicListItem : currentTopics)
-				if (topic.equals(topicListItem.getTopic()))
-					found = true;
-			if (!found)
-				topicPanel.addTopic(topic, TopicListItem.State.RESEARCHED);
-		}
-		for (final TopicListItem topicListItem : currentTopics) {
-			boolean found = false;
-			for (final String topic : topics)
-				if (topicListItem.getTopic().equals(topic))
-					found = true;
-			if (!found
-					&& topicListItem.getState() != TopicListItem.State.QUEUED_FOR_RESEARCH
-					&& topicListItem.getState() != TopicListItem.State.RESEARCHING)
-				topicPanel.removeTopic(topicListItem.getTopic());
-		}
+		List<String> topicList = Arrays.asList(topics);
+		topicPanel.setTopics(topicList);
 		setGUIEnabled(true);
 		topicPanel.getAddTopicPanel().requestFocusInWindow();
 		log.info("Successfully loaded topic list.");
